@@ -33,7 +33,6 @@ class QueryBuilder
 
         return $statement->fetchAll(PDO::FETCH_CLASS);
     }
-
     /**
      *
      * @param  string $table
@@ -58,7 +57,10 @@ class QueryBuilder
         }
         return false;
     }
-
+    /**
+     *
+     * @param  string $sql
+     */
     public function rawQuery($sql)
     {
         $statement = $this->pdo->prepare($sql);
