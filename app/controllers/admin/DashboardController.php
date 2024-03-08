@@ -9,7 +9,7 @@ class DashboardController
     #[Route("", "GET")]
     public function index()
     {
-        require_once "src/views/admin/index.php";
+        echo "admin", "GET";
     }
     #[Route("/{id1}/check/{id2}", "GET")]
     public function product($params)

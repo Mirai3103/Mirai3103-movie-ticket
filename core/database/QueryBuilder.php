@@ -52,7 +52,17 @@ class QueryBuilder
             $statement = $this->pdo->prepare($sql);
 
             $statement->execute($parameters);
+            $lastId = $this->pdo->lastInsertId();
+            return $lastId;
         } catch (\Exception $e) {
         }
+        return false;
+    }
+
+    public function rawQuery($sql)
+    {
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_CLASS);
     }
 }
