@@ -7,7 +7,7 @@ use App\Core\{Router, Request};
 use Core\Attributes\Controller;
 
 if (!Request::uri()) {
-    redirect("home");
+    redirect("trang-chu");
 }
 
 function getControllers($dir)

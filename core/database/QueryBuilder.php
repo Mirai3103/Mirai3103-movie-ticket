@@ -33,6 +33,17 @@ class QueryBuilder
 
         return $statement->fetchAll(PDO::FETCH_CLASS);
     }
+    public function select($table, $column)
+    {
+        $sql = sprintf(
+            'select %s from %s',
+            implode(', ', $column),
+            $table
+        );
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_CLASS);
+    }
     /**
      *
      * @param  string $table
