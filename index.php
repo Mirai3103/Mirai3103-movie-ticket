@@ -3,7 +3,8 @@
 require 'vendor/autoload.php';
 require 'core/bootstrap.php';
 
-use App\Core\{Router, Request};
+use Dotenv\Dotenv;
+use App\Core\{Request};
 use Core\Attributes\Controller;
 
 if (!Request::uri()) {

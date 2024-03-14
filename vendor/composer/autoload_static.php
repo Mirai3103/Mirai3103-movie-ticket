@@ -11,12 +11,27 @@ class ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a
     );
 
     public static $classMap = array (
+        'AcctionMap' => __DIR__ . '/../..' . '/core/ControllerMap.php',
         'App\\Core\\App' => __DIR__ . '/../..' . '/core/App.php',
         'App\\Core\\Database\\Connection' => __DIR__ . '/../..' . '/core/database/Connection.php',
         'App\\Core\\Database\\QueryBuilder' => __DIR__ . '/../..' . '/core/database/QueryBuilder.php',
         'App\\Core\\Request' => __DIR__ . '/../..' . '/core/Request.php',
         'App\\Core\\Router' => __DIR__ . '/../..' . '/core/Router.php',
+        'App\\Services\\Payments\\Models\\CreatePaymentResponse' => __DIR__ . '/../..' . '/app/services/payments/models/CreatePaymentResponse.php',
+        'App\\Services\\Payments\\MomoPaymentStrategy' => __DIR__ . '/../..' . '/app/services/payments/MomoStrategy.php',
+        'App\\Services\\Payments\\PaymentStrategy' => __DIR__ . '/../..' . '/app/services/payments/PaymentStrategy.php',
+        'ComposerAutoloaderInit7d8cde7a46b174acd021ce9a6503a48a' => __DIR__ . '/..' . '/composer/autoload_real.php',
+        'Composer\\Autoload\\ClassLoader' => __DIR__ . '/..' . '/composer/ClassLoader.php',
+        'Composer\\Autoload\\ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a' => __DIR__ . '/..' . '/composer/autoload_static.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'ControllerMap' => __DIR__ . '/../..' . '/core/ControllerMap.php',
+        'Core\\Attributes\\Controller' => __DIR__ . '/../..' . '/core/attributes/ControllerAttribute.php',
+        'Core\\Attributes\\Route' => __DIR__ . '/../..' . '/core/attributes/RouteAtributte.php',
+        'DashboardController' => __DIR__ . '/../..' . '/app/controllers/admin/DashboardController.php',
+        'HomeController' => __DIR__ . '/../..' . '/app/controllers/HomeController.php',
+        'PayController' => __DIR__ . '/../..' . '/app/controllers/PayController.php',
+        'PaymentType' => __DIR__ . '/../..' . '/app/services/payments/index.php',
+        'TestController' => __DIR__ . '/../..' . '/app/controllers/TestController.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

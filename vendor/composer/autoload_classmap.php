@@ -6,10 +6,25 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AcctionMap' => $baseDir . '/core/ControllerMap.php',
     'App\\Core\\App' => $baseDir . '/core/App.php',
     'App\\Core\\Database\\Connection' => $baseDir . '/core/database/Connection.php',
     'App\\Core\\Database\\QueryBuilder' => $baseDir . '/core/database/QueryBuilder.php',
     'App\\Core\\Request' => $baseDir . '/core/Request.php',
     'App\\Core\\Router' => $baseDir . '/core/Router.php',
+    'App\\Services\\Payments\\Models\\CreatePaymentResponse' => $baseDir . '/app/services/payments/models/CreatePaymentResponse.php',
+    'App\\Services\\Payments\\MomoPaymentStrategy' => $baseDir . '/app/services/payments/MomoStrategy.php',
+    'App\\Services\\Payments\\PaymentStrategy' => $baseDir . '/app/services/payments/PaymentStrategy.php',
+    'ComposerAutoloaderInit7d8cde7a46b174acd021ce9a6503a48a' => $vendorDir . '/composer/autoload_real.php',
+    'Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
+    'Composer\\Autoload\\ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a' => $vendorDir . '/composer/autoload_static.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'ControllerMap' => $baseDir . '/core/ControllerMap.php',
+    'Core\\Attributes\\Controller' => $baseDir . '/core/attributes/ControllerAttribute.php',
+    'Core\\Attributes\\Route' => $baseDir . '/core/attributes/RouteAtributte.php',
+    'DashboardController' => $baseDir . '/app/controllers/admin/DashboardController.php',
+    'HomeController' => $baseDir . '/app/controllers/HomeController.php',
+    'PayController' => $baseDir . '/app/controllers/PayController.php',
+    'PaymentType' => $baseDir . '/app/services/payments/index.php',
+    'TestController' => $baseDir . '/app/controllers/TestController.php',
 );
