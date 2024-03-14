@@ -15,4 +15,9 @@ class CheckoutController
     {
         return  view("checkout");
     }
+    #[Route("success", "GET")]
+    public function success()
+    {
+        return  view("checkout-success");
+    }
 }

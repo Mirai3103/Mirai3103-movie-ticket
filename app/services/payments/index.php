@@ -3,10 +3,10 @@
 use App\Services\Payments\MomoPaymentStrategy;
 use App\Services\Payments\PaymentStrategy;
 
-enum PaymentType
+enum PaymentType: string
 {
-    case Momo;
-    case ZaloPay;
+    case Momo = 'momo';
+    case ZaloPay = 'zalopay';
 }
 
 function getPaymentStrategy(PaymentType $type): PaymentStrategy
