@@ -14,6 +14,7 @@ module.exports = {
       },
       backgroundColor: {
         primary: "#14244B",
+        "dark-blue": "#045174",
       },
       borderWidth: {
         3: "3px",

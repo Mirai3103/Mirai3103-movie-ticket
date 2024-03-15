@@ -1,4 +1,7 @@
- <div class='flex gap-x-14 flex-col lg:flex-row  text-xl gap-y-8'>
+ <div class=' gap-x-14 flex-col lg:flex-row  text-xl gap-y-8 hidden' x-init="
+ $el.classList.remove('hidden');
+ $el.classList.add('flex');
+ " x-show="step === 2">
      <style>
          .checkout-button {
              cursor: pointer;
@@ -35,7 +38,7 @@
              cursor: pointer;
          }
      </style>
-     <div class='basis-2/5   flex flex-col  gap-4 lg:text-xl'>
+     <div class='basis-2/5 grow-0  lg:shrink-0  flex flex-col  gap-4 lg:text-xl'>
          <div class='mt-16 flex flex-col gap-4'>
              <div class="block -mb-1 font-bold  text-gray-700">
                  Phương thức thanh toán
