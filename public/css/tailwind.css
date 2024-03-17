@@ -6,3 +6,6 @@
 * {
   font-family: "Inter", sans-serif;
 }
+.error_message {
+  @apply text-red-500 text-sm italic;
+}
