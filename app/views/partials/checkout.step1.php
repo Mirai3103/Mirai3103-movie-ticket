@@ -3,17 +3,25 @@
             <div>
                 <label for="name" class="block  font-bold  text-gray-700">Họ và tên</label>
                 <input x-on:focus="errors.name = ''" x-model="data.name" type="text" name="name" id="name" class="mt-1  px-4 w-full py-2 border-[3px]  hover:border-[#0c131d]  border-[#1B2D44]" placeholder="Họ và tên">
+                <span x-text="errors.name" class="error_message"></span>
             </div>
             <div>
                 <label for="phone" class="block  font-bold  text-gray-700">Số điện thoại</label>
                 <input x-on:focus="errors.phone = ''" x-model="data.phone" type="tel" name="phone" id="phone" class="mt-1 px-4 w-full py-2 border-[3px]  hover:border-[#0c131d]  border-[#1B2D44]" placeholder="Số điện thoại">
+                <span x-text="errors.phone" class="error_message"></span>
             </div>
             <div>
                 <label for="email" class="block  font-bold  text-gray-700">Email</label>
                 <input x-on:focus="errors.email = ''" x-model="data.email" type="text" name="email" id="email" class="mt-1 px-4 w-full py-2 border-[3px]  hover:border-[#0c131d]  border-[#1B2D44]" placeholder="Email">
+                <span x-text="errors.email" class="error_message"></span>
             </div>
             <div class="flex justify-center">
-                <button x-on:click="step = 2" class=' px-12 py-2 flex justify-center items-center bg-[#14244B] text-[#FFC700] rounded-md'>
+                <button x-on:click="
+                if (validate()) {
+                    step = 2
+                };  
+                console.log(errors)
+                " class=' px-12 py-2 flex justify-center items-center bg-[#14244B] text-[#FFC700] rounded-md'>
                     Tiếp tục
                 </button>
             </div>

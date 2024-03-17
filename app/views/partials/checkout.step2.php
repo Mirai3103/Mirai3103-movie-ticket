@@ -79,7 +79,18 @@
              <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount" class="mt-1 px-4 w-full py-2 border-3  hover:border-[#0c131d]  border-[#1B2D44]" placeholder="Nhập mã giảm giá">
          </div>
          <div class="flex justify-center">
-             <button class=' px-12 py-2 flex justify-center items-center bg-primary text-secondary rounded-md'>
+             <button x-on:click="if (validate()) { 
+                fetch('', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                }).then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                })
+              } " class=' px-12 py-2 flex justify-center items-center bg-primary text-secondary rounded-md'>
                  Tiếp tục
              </button>
          </div>

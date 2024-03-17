@@ -71,6 +71,7 @@
         </div>
     </div>
 </footer>
+
 <?php
 global $scripts;
 foreach ($scripts as $script) {

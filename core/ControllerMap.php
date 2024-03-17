@@ -100,7 +100,7 @@ class AcctionMap
         if (!str_contains($this->path, '{')) {
             $tempPath = str_replace('/', '', $this->path);
             $tempUri = str_replace('/', '', $uri);
-            if (strcasecmp($tempPath, $tempUri) === 0) {
+            if (strcasecmp($tempPath, $tempUri) === 0 && $this->method === $_SERVER['REQUEST_METHOD']) {
                 return [
                     $this->actionName,
                     []
