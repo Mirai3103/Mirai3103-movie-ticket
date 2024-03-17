@@ -92,4 +92,11 @@ function json($data, $status = 200)
     http_response_code($status);
     header('Content-Type: application/json');
     echo json_encode($data);
+
+    die($status);
+}
+
+function request_body()
+{
+    return json_decode(file_get_contents('php://input'), true);
 }
