@@ -3,7 +3,6 @@
 require 'vendor/autoload.php';
 require 'core/bootstrap.php';
 
-use Dotenv\Dotenv;
 use App\Core\{Request};
 use Core\Attributes\Controller;
 
