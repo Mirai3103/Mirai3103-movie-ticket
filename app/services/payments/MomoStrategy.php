@@ -69,7 +69,7 @@ class MomoPaymentStrategy implements PaymentStrategy
             "signature" => $signature
         );
         $response = execPostRequest("https://test-payment.momo.vn/v2/gateway/api/create", json_encode($body));
-        print(json_encode($response));
-        return new  CreatePaymentResponse();
+        // todo: parse response
+        return new CreatePaymentResponse();
     }
 }
