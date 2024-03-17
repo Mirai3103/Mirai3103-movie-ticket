@@ -20,4 +20,17 @@ class CheckoutController
     {
         return  view("checkout-success");
     }
+    #[Route("", "POST")]
+    public function store()
+    {
+
+        $data = request_body();
+        $payment_method = PaymentType::tryFrom($data['payment_method']);
+        if (is_null($payment_method)) {
+            return json(["message" => "Phương thức thanh toán không hợp lệ"], 400);
+        }
+        $paymentStrategy = getPaymentStrategy($payment_method);
+        $payment = $paymentStrategy->createPayment(guidv4(), "100000", "Thanh toán vé xem phim");
+        return json($payment);
+    }
 }
