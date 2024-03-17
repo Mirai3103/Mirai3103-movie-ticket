@@ -74,7 +74,7 @@ class Validator {
   }
 }
 
-export class FormValidator extends Validator {
+class FormValidator extends Validator {
   constructor() {
     super();
   }
@@ -94,7 +94,9 @@ export class FormValidator extends Validator {
   }
 }
 
-if (window.Alpine) {
+console.log(window.Alpine);
+
+document.addEventListener("alpine:init", () => {
   Alpine.data("formValidator", (validationRules) => {
     return {
       errors: {},
@@ -110,11 +112,13 @@ if (window.Alpine) {
           });
         });
         this.validate = () => {
-          console.log(this.data);
-          console.log(this.validator.validate(this.data));
           this.errors = this.validator.validate(this.data);
+          if (Object.keys(this.errors).length) {
+            return false;
+          }
+          return true;
         };
       },
     };
   });
-}
+});
