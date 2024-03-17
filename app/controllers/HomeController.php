@@ -20,4 +20,9 @@ class HomeController
         echo 'dynamic route with id: <br>';
         echo "Product id: $id";
     }
+    #[Route("/json", "GET")]
+    public function json()
+    {
+        return json(["message" => "Hello world"]);
+    }
 }
