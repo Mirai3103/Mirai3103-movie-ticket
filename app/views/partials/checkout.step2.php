@@ -46,7 +46,7 @@
              <div class="">
                  <label class="checkout-button  border-secondary border-3" for="<?= PaymentType::Momo->value ?>">
                      <div class="checkout-selector">
-                         <input id="<?= PaymentType::Momo->value ?>" type="radio" class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method" value="<?php echo PaymentType::Momo->value ?>">
+                         <input x-model="data.payment_method" id="<?= PaymentType::Momo->value ?>" type="radio" class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method" value="<?php echo PaymentType::Momo->value ?>">
                      </div>
                      <div class="content" style="  display: flex;
   align-items: center;">
@@ -60,7 +60,7 @@
              <div>
                  <label class="checkout-button  border-secondary border-3" for="<?= PaymentType::ZaloPay->value ?>">
                      <div class="checkout-selector">
-                         <input id="<?= PaymentType::ZaloPay->value ?>" type="radio" class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method" value="<?php echo PaymentType::ZaloPay->value ?>">
+                         <input x-model="data.payment_method" id="<?= PaymentType::ZaloPay->value ?>" type="radio" class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method" value="<?php echo PaymentType::ZaloPay->value ?>">
                      </div>
                      <div class="content" style="  display: flex;
   align-items: center;">
@@ -76,7 +76,7 @@
              <label for="discount" class="block  font-bold  text-gray-700">
                  Mã giảm giá
              </label>
-             <input type="text" name="discount" id="discount" class="mt-1 px-4 w-full py-2 border-3  hover:border-[#0c131d]  border-[#1B2D44]" placeholder="Nhập mã giảm giá">
+             <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount" class="mt-1 px-4 w-full py-2 border-3  hover:border-[#0c131d]  border-[#1B2D44]" placeholder="Nhập mã giảm giá">
          </div>
          <div class="flex justify-center">
              <button class=' px-12 py-2 flex justify-center items-center bg-primary text-secondary rounded-md'>

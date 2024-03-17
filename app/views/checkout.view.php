@@ -24,6 +24,15 @@ script("/public/js/alpine.js")
         payment_method: '',
         general: '',
     },
+    validate_step1() {
+        this.errors.name = this.data.name ? '' : 'Vui lòng nhập họ và tên';
+        this.errors.phone = this.data.phone ? '' : 'Vui lòng nhập số điện thoại';
+        this.errors.email = this.data.email ? '' : 'Vui lòng nhập email';
+        if (this.errors.name || this.errors.phone || this.errors.email) {
+            return false;
+        }
+        return true;
+    },
 }">
     <div class='flex  gap-x-4 mb-8 '>
         <template x-for="i in [1, 2, 3]" :key="i">
