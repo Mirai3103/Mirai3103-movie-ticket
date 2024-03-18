@@ -30,7 +30,7 @@ class CheckoutController
             return json(["message" => "Phương thức thanh toán không hợp lệ"], 400);
         }
         $paymentStrategy = getPaymentStrategy($payment_method);
-        $payment = $paymentStrategy->createPayment(guidv4(), "100000", "Thanh toán vé xem phim");
+        $payment = $paymentStrategy->createPayment(guidv4(), "100000", "thanh toan ve xem phim");
         return json($payment);
     }
 }

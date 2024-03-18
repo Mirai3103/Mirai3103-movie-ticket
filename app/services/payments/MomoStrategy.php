@@ -13,18 +13,9 @@ class MomoPaymentStrategy implements PaymentStrategy
         $partnerCode = $momo_config['partner-code'];
         $accessKey = $momo_config['access-key'];
         $secretKey = $momo_config['secret-key'];
-        $extraData = $description;
+        $extraData = "";
         $orderId = guidv4();
-        //  String sb = "accessKey=" + accessKey +
-        //         "&amount=" + amount +
-        //         "&extraData=" + extraData +
-        //         "&ipnUrl=" + appProperties.getHost() + momoConfig.getIpnUrl() +
-        //         "&orderId=" + orderId +
-        //         "&orderInfo=" + orderInfo +
-        //         "&partnerCode=" + partnerCode +
-        //         "&redirectUrl=" + appProperties.getHost() + momoConfig.getCallbackUrl() +
-        //         "&requestId=" + paymentId +
-        //         "&requestType=" + requestType.toString();
+
         $sb = sprintf(
             "accessKey=%s&amount=%s&extraData=%s&ipnUrl=%s&orderId=%s&orderInfo=%s&partnerCode=%s&redirectUrl=%s&requestId=%s&requestType=%s",
             $accessKey,
@@ -35,24 +26,10 @@ class MomoPaymentStrategy implements PaymentStrategy
             $description,
             $partnerCode,
             $momo_config['callback-url'],
-            $orderId,
-            "captureMoMoWallet"
+            $requestId,
+            "captureWallet"
         );
         $signature = hash_hmac("sha256", $sb, $secretKey);
-        //  JSONObject body = new JSONObject();
-        // body.put("partnerCode", partnerCode);
-        // body.put("partnerName", "Ngô Hữu Hoàng");
-        // body.put("storeId", "CUAHANG_QUANAO");
-        // body.put("requestId", paymentId);
-        // body.put("amount", amount);
-        // body.put("orderId", orderId);
-        // body.put("orderInfo", orderInfo);
-        // body.put("redirectUrl", appProperties.getHost() + momoConfig.getCallbackUrl());
-        // body.put("ipnUrl", appProperties.getHost() + momoConfig.getIpnUrl());
-        // body.put("lang", "vi");
-        // body.put("extraData", extraData);
-        // body.put("requestType", requestType.toString());
-        // body.put("signature", signature);
         $body = array(
             "partnerCode" => $partnerCode,
             "partnerName" => "Pixel Cinema",
@@ -68,8 +45,16 @@ class MomoPaymentStrategy implements PaymentStrategy
             "requestType" => "captureWallet",
             "signature" => $signature
         );
+
         $response = execPostRequest("https://test-payment.momo.vn/v2/gateway/api/create", json_encode($body));
-        // todo: parse response
-        return new CreatePaymentResponse();
+        $response = json_decode($response, true);
+
+        $result = new CreatePaymentResponse();
+        $result->isRedirect = true;
+        $result->redirectUrl = $response['payUrl'];
+        $result->mobileUrl = $response['deeplink'];
+        $result->orderId = $response['orderId'];
+        $result->paymentId = $response['requestId'];
+        return $result;
     }
 }

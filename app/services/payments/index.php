@@ -1,7 +1,11 @@
 <?php
 
+require_once 'MomoStrategy.php';
+require_once 'ZaloPayStrategy.php';
+
 use App\Services\Payments\MomoPaymentStrategy;
 use App\Services\Payments\PaymentStrategy;
+use App\Services\Payments\ZaloPayStrategy;
 
 enum PaymentType: string
 {
@@ -15,7 +19,7 @@ function getPaymentStrategy(PaymentType $type): PaymentStrategy
         case PaymentType::Momo:
             return new MomoPaymentStrategy();
         case PaymentType::ZaloPay:
-            throw new Exception("Not implemented");
+            return new ZaloPayStrategy();
     }
     throw new Exception("Not implemented");
 }

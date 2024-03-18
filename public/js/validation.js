@@ -77,20 +77,32 @@ class Validator {
 class FormValidator extends Validator {
   constructor() {
     super();
+    this.elements = {};
   }
-  register(field, rules, validateOn = "input") {
+  register(
+    field,
+    rules,
+    {
+      validateOn = "input",
+      renderErrorHtml = (errors) => errors.join(", "),
+      errorElementSelector = `#${field}-error`,
+      elementSelector = `#${field}`,
+    }
+  ) {
     super.register(field, rules);
-    document.getElementById(field).addEventListener(validateOn, (e) => {
-      const errors = super.validateField(field, e.target.value);
-      const errorElement = document.getElementById(`${field}-error`);
-      if (errors.length) {
-        errorElement.innerText = errors.join(", ");
-        errorElement.style.display = "block";
-      } else {
-        errorElement.innerText = "";
-        errorElement.setAttribute("hidden", "true");
-      }
-    });
+    document
+      .querySelector(elementSelector)
+      .addEventListener(validateOn, (e) => {
+        const errors = super.validateField(field, e.target.value);
+        const errorElement = document.querySelector(errorElementSelector);
+        if (errors.length) {
+          errorElement.innerText = renderErrorHtml(errors);
+          errorElement.style.display = "block";
+        } else {
+          errorElement.innerHTML = "";
+          errorElement.setAttribute("hidden", "true");
+        }
+      });
   }
 }
 
