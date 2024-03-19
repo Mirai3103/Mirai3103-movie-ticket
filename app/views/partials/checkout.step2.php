@@ -88,6 +88,9 @@
                     body: JSON.stringify(data)
                 }).then(response => response.json())
                 .then(data => {
+                    if(data.isRedirect){
+                        window.location.href = data.redirectUrl;
+                    }
                     console.log('Success:', data);
                 })
               } " class=' px-12 py-2 flex justify-center items-center bg-primary text-secondary rounded-md'>
