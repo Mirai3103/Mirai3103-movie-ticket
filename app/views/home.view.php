@@ -2,34 +2,81 @@
 title("Dday la homr");
 require('partials/head.php'); ?>
 
+<div class="container  -tw-mt-32">
+    <script>
+        const listMovie = <?= json_encode($phims) ?>;
+    </script>
+    <!-- Header -->
 
-
-<h1 Đây là ví dụ </h1>
-    <div class=" grid grid-cols-2  gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-        <?php foreach ($phims as $phim) : ?>
-            <div class=" max-w-sm rounded overflow-hidden shadow-lg">
-                <img class="w-full" src="<?= $phim->HinhAnh ?>" alt="">
-                <div class="px-6 py-4">
-                    <div class="font-bold text-xl mb-2">
-                        <?= $phim->TenPhim ?>
-                    </div>
-                    <p class="text-gray-700 text-base">
-                        <span class="font-semibold">Đạo diễn:</span> <?= $phim->DaoDien ?>
-                    </p>
-                    <p class="text-gray-700 text-base">
-                        <span class="font-semibold">Ngôn ngữ:</span> <?= $phim->NgonNgu ?>
-                    </p>
-                    <p class="text-gray-700 text-base">
-                        <span class="font-semibold">Thời lượng:</span> <?= $phim->ThoiLuong ?> phút
-                    </p>
-                    <p class="text-gray-700 text-base">
-                        <span class="font-semibold">Ngày phát hành:</span> <?= $phim->NgayPhathanh ?>
-                    </p>
-                    <p class="text-gray-700 text-base">
-                        <span class="font-semibold">Mã phim:</span> <?= $phim->MaPhim ?>
-                    </p>
+    <!-- Carousel -->
+    <div id="carouselExampleCaptions" class="carousel carousel-app slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/public/assets/img/mai.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>First slide label</h5>
+                    <p>Some representative placeholder content for the first slide.</p>
                 </div>
             </div>
-        <?php endforeach; ?>
+            <div class="carousel-item">
+                <img src="/public/assets/img/khung_fu_panda.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Second slide label</h5>
+                    <p>Some representative placeholder content for the second slide.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/public/assets/img/tieng_yeu_khong_loi.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>Third slide label</h5>
+                    <p>Some representative placeholder content for the third slide.</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
-    <?php require('partials/footer.php'); ?>
+    <!--End Carousel -->
+
+
+    <!-- Moives -->
+    <h2 class="text-uppercase text-center text-dark mt-4 mb-4 fw-bold">Phim đang chiếu</h2>
+
+    <div class="row movies-wrapper">
+        <!-- <li class="page-item">
+            <span class="page-link page-prev-btn" tabindex="-1">Previous</span>
+          </li>
+
+          <div class="number-page-movies" ></div>
+
+          <li class="page-item">
+            <a class="page-link page-next-btn" href="#">Next</a>
+          </li> -->
+    </div>
+
+    <ul class="pagination pagination-info mt-4 d-flex justify-content-center">
+        <li class="page-item"><a href="javascript:void(0);" class="page-link page-prev-btn">PREV</a></li>
+        <div class="d-flex number-page">
+
+        </div>
+        <li class="page-item"><a href="javascript:void(0);" class="page-link page-next-btn">NEXT</a></li>
+    </ul>
+</div>
+
+
+<?php
+script("/public/assets/javascript/movie.js")
+?>
+
+<?php require('partials/footer.php'); ?>

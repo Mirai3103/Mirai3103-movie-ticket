@@ -8,12 +8,13 @@ script("/public/js/alpine.js")
 
 
 
-<main class="2xl:max-w-7xl xl:max-w-[78rem] lg:max-w-[63rem]  mx-auto mt-10 md:max-w-2xl sm:max-w-[38rem]  px-4 sm:px-1" x-data="{
+
+<main class="2xl:tw-max-w-7xl xl:tw-max-w-[78rem] lg:tw-max-w-[63rem]  tw-mx-auto tw-mt-10 md:tw-max-w-2xl sm:tw-max-w-[38rem]  tw-px-4 sm:tw-px-1" x-data="{
     step: 1,
 }">
-    <div class='flex  gap-x-4 mb-8 '>
+    <div class='tw-flex  tw-gap-x-4 tw-mb-8 '>
         <template x-for="i in [1, 2, 3]" :key="i">
-            <span x-on:click="if (i < step) { step = i }" x-bind:class="step >= i ? 'bg-[#FFE7AA]' : ''" class="w-12 font-bold text-2xl h-12 flex items-center justify-center rounded-full  border border-black" x-text="i">
+            <span x-on:click="if (i < step) { step = i }" x-bind:class="step >= i ? 'tw-bg-[#FFE7AA]' : ''" class="tw-w-12 tw-font-bold tw-text-2xl tw-h-12 tw-flex tw-items-center tw-justify-center tw-rounded-full  tw-border tw-border-black" x-text="i">
             </span>
         </template>
     </div>

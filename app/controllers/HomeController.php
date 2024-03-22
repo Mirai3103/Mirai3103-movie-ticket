@@ -10,7 +10,7 @@ class HomeController
     #[Route("", "GET")]
     public function index()
     {
-        $phims = App::get('database')->selectAll('Phim');
+        $phims = App::get('phimService')->getPhimDangChieu();
         return  view("home", ["phims" => $phims]);
     }
     #[Route("/product/{id}", "GET")]
@@ -24,5 +24,15 @@ class HomeController
     public function json()
     {
         return json(["message" => "Hello world"]);
+    }
+    #[Route("/dang-nhap", "GET")]
+    public function login()
+    {
+        return view("login");
+    }
+    #[Route("/lich-chieu", "GET")]
+    public function lichChieu()
+    {
+        return view("lich-chieu");
     }
 }
