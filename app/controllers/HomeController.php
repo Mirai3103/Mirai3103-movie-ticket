@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\App;
+use App\Services\PhimService;
 use Core\Attributes\Controller;
 use Core\Attributes\Route;
 
@@ -10,8 +11,9 @@ class HomeController
     #[Route("", "GET")]
     public function index()
     {
-        $phims = App::get('phimService')->getPhimDangChieu();
-        return  view("home", ["phims" => $phims]);
+        $phims = PhimService::getPhimDangChieu();
+        $commingMovies = PhimService::getPhimSapChieu();
+        return  view("home", ["phims" => $phims, "commingMovies" => $commingMovies]);
     }
     #[Route("/product/{id}", "GET")]
     public function product($params)

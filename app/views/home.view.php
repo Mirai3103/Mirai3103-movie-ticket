@@ -2,10 +2,12 @@
 title("Dday la homr");
 require('partials/head.php'); ?>
 
-<div class="container  -tw-mt-32">
-    <script>
-        const listMovie = <?= json_encode($phims) ?>;
-    </script>
+<script>
+    var listCommingMovies = <?= json_encode($commingMovies) ?>;
+    var listMovie = <?= json_encode($phims) ?>;
+</script>
+
+<div class="container -tw-mt-32">
     <!-- Header -->
 
     <!-- Carousel -->
@@ -49,21 +51,15 @@ require('partials/head.php'); ?>
     </div>
     <!--End Carousel -->
 
-
     <!-- Moives -->
-    <h2 class="text-uppercase text-center text-dark mt-4 mb-4 fw-bold">Phim đang chiếu</h2>
+    <h2 class="text-uppercase text-center text-dark heading mb-4 fw-bold">Phim đang chiếu</h2>
 
-    <div class="row movies-wrapper">
-        <!-- <li class="page-item">
-            <span class="page-link page-prev-btn" tabindex="-1">Previous</span>
-          </li>
+    <div class="movies-container">
+        <div class="row movies-wrapper">
 
-          <div class="number-page-movies" ></div>
-
-          <li class="page-item">
-            <a class="page-link page-next-btn" href="#">Next</a>
-          </li> -->
+        </div>
     </div>
+
 
     <ul class="pagination pagination-info mt-4 d-flex justify-content-center">
         <li class="page-item"><a href="javascript:void(0);" class="page-link page-prev-btn">PREV</a></li>
@@ -72,11 +68,33 @@ require('partials/head.php'); ?>
         </div>
         <li class="page-item"><a href="javascript:void(0);" class="page-link page-next-btn">NEXT</a></li>
     </ul>
+    <!--End Moives -->
+
+
+    <!--Comming Movies-->
+    <h2 class="text-uppercase text-center text-dark heading mb-4 fw-bold">Phim Sắp Chiếu</h2>
+
+    <div class="movies-container">
+        <div class="row comming-movies-wrapper">
+
+        </div>
+    </div>
+
+
+    <ul class="pagination mt-4 d-flex justify-content-center">
+        <li class="page-item"><a href="javascript:void(0);" class="page-link page-prev-btn-comming">PREV</a></li>
+        <div class="d-flex number-page-comming">
+
+        </div>
+        <li class="page-item"><a href="javascript:void(0);" class="page-link page-next-btn-comming">NEXT</a></li>
+    </ul>
+    <!--End Comming Movies-->
+
 </div>
 
-
 <?php
-script("/public/assets/javascript/movie.js")
+script("/public/assets/javascript/movie.js");
+script("/public/assets/javascript/commingMovies.js")
 ?>
 
 <?php require('partials/footer.php'); ?>

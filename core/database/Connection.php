@@ -2,6 +2,8 @@
 
 namespace App\Core\Database;
 
+use Exception;
+use mysqli;
 use PDO;
 use PDOException;
 
@@ -15,13 +17,15 @@ class Connection
     public static function make($config)
     {
         try {
-            return new PDO(
-                $config['connection'] . ';dbname=' . $config['name'] . ';charset=utf8',
+            $mysqli = new mysqli(
+                $config['host'],
                 $config['username'],
                 $config['password'],
-                $config['options']
+                $config['name']
             );
-        } catch (PDOException $e) {
+            $mysqli->set_charset('utf8');
+            return $mysqli;
+        } catch (Exception $e) {
             die($e->getMessage());
         }
     }

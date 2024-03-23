@@ -1,10 +1,14 @@
 <?php
 
 require 'vendor/autoload.php';
-require 'core/bootstrap.php';
 
 use App\Core\{Request};
+use App\Core\Database\Database;
 use Core\Attributes\Controller;
+
+
+$GLOBALS['config'] = require 'config.php';
+Database::init_db();
 
 if (!Request::uri()) {
     redirect("trang-chu");

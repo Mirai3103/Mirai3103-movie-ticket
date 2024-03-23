@@ -2,18 +2,35 @@
 
 namespace App\Services;
 
-use App\Core\App;
+use App\Core\Database\Database;
+use App\Models\TrangThaiPhim;
 
 class PhimService
 {
-    private $database;
-    function __construct($db)
+    public static function getPhimDangChieu($page = 1, $limit = 20)
     {
-        $this->database = $db;
-    }
-    public function getPhimDangChieu()
-    {
-        $phims = $this->database->selectAll('Phim');
+        $query = "SELECT * FROM Phim WHERE TrangThai = ? LIMIT ? , ?;";
+        $phims = Database::query($query, [TrangThaiPhim::DangChieu->value, ($page - 1) * $limit, $limit]);
         return $phims;
+    }
+    public static function getPhimSapChieu($page = 1, $limit = 20)
+    {
+        $query = "SELECT * FROM Phim WHERE TrangThai = ? LIMIT ? , ?;";
+        $phims = Database::query($query, [TrangThaiPhim::SapChieu->value, ($page - 1) * $limit, $limit]);
+        return $phims;
+    }
+
+    public static function getTatCaPhim($page = 1, $limit = 20)
+    {
+        $query = "SELECT * FROM Phim LIMIT ? , ?;";
+        $phims = Database::query($query, [($page - 1) * $limit, $limit]);
+        return $phims;
+    }
+
+    public static function getPhimById($id)
+    {
+        $query = "SELECT * FROM Phim WHERE MaPhim = ?;";
+        $phim = Database::queryOne($query,  [$id]);
+        return $phim;
     }
 }
