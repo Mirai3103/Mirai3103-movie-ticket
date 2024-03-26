@@ -55,6 +55,16 @@ require('partials/head.php');
         width: 20px;
     }
 </style>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const queryParam = new URLSearchParams(window.location.search);
+        if (queryParam.has('action')) {
+            if (queryParam.get('action') === 'dang-ky') {
+                redirectSignup();
+            }
+        }
+    });
+</script>
 <div class="container">
     <div class="row my-3 justify-content-center">
         <div class="row  justify-content-around">
@@ -75,7 +85,7 @@ require('partials/head.php');
 
         <div class="row  justify-content-around">
             <!-- Form dang ky -->
-            <form action="" class="col col-md-8 col-lg-6 form form-active p-4">
+            <form action="/trangchu/dang-ky" class="col col-md-8 col-lg-6 form form-active p-4">
                 <div class="form-group mb-3 mt-2">
                     <label for="fullname" class="fs-5">Họ và tên</label>
                     <input type="text" name="fullname" id="fullname" placeholder="Nhập họ và tên" class="form-control" required>
@@ -85,21 +95,21 @@ require('partials/head.php');
                     <label for="dateOfBirth" class="fs-5">Ngày sinh</label>
                     <input type="date" name="dateOfBirth" id="dateOfBirth" class="form-control" required>
                 </div>
-
+                <!-- 
                 <div class="form-group my-3">
                     <label for="phoneNum" class="fs-5">Số điện thoại</label>
                     <input type="tel" name="phoneNum" id="phoneNum" pattern="[0-9]{1}[0-9]{9}" placeholder="Số điện thoại của bạn" class="form-control" required>
-                </div>
+                </div> -->
 
-                <div class="form-group my-3">
+                <!-- <div class="form-group my-3">
                     <label for="username.form" class="fs-5">Tên đăng nhập</label>
                     <input type="text" name="username" id="username" placeholder="Tài khoản/Username" class="form-control" required>
-                </div>
-
+                </div> -->
+                <!-- 
                 <div class="form-group my-3">
                     <label for="idNum" class="fs-5">CCCD/CMND</label>
                     <input type="text" name="idNum" id="idNum" pattern="[0-9]{9,12}" placeholder="Số CCCD/CMND" title="Số  CCCD phải có từ 9 đến 12 chữ số" class="form-control" required>
-                </div>
+                </div> -->
 
                 <div class="form-group my-3">
                     <label for="email" class="fs-5">Email</label>
@@ -153,10 +163,17 @@ require('partials/head.php');
             </form>
 
             <!-- Form dang nhap -->
-            <form action="" class="col col-md-8 col-lg-6 form p-4">
+            <form action="" method="post" class="col col-md-8 col-lg-6 form p-4">
+              
+                    <?php 
+                        if(isset($error) ) {
+                            echo '  <div class="alert alert-danger">'.$error.'</div>';
+                        }
+                ?>
+
                 <div class="form-group mb-3 mt-2">
-                    <label for="loginName" class="fs-5">Tài khoản, Email hoặc số điện thoại </label>
-                    <input type="text" name="loginName" id="loginName" class="form-control" required>
+                    <label for="username" class="fs-5">Tên đăng nhập </label>
+                    <input type="text" name="username" id="username" class="form-control" required>
                 </div>
 
                 <div class="form-group my-3">
@@ -176,7 +193,7 @@ require('partials/head.php');
                 </div>
 
                 <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="dropdownCheck">
+                    <input value="remember" name="remember" type="checkbox" class="form-check-input" id="dropdownCheck">
                     <label class="form-check-label" for="dropdownCheck">Lưu mật khẩu đăng nhập</label>
                 </div>
                 <div class="form-group my-3">

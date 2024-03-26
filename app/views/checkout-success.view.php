@@ -1,7 +1,6 @@
 <?php
 title("Tiến hành thanh toán");
 require('partials/head.php');
-script("/public/js/alpine.js")
 ?>
 
 

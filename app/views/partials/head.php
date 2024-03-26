@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.`googleapis`.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
     <?php
     global $title;
     echo " <title>" . ($title ?? "hello") . "</title>";
@@ -29,5 +30,7 @@ https://cdn.jsdelivr.net/npm/socket.io@4.7.4/client-dist/socket.io.min.js
 </head>
 
 <body>
-    <?php require('nav.php'); ?>
+    <?php require('nav.php');
+    require('toast.php');
+    ?>
     <div class='tw-h-36'></div>

@@ -7,11 +7,11 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AcctionMap' => $baseDir . '/core/ControllerMap.php',
-    'App\\Core\\App' => $baseDir . '/core/App.php',
     'App\\Core\\Database\\Connection' => $baseDir . '/core/database/Connection.php',
     'App\\Core\\Database\\Database' => $baseDir . '/core/database/Database.php',
     'App\\Core\\Request' => $baseDir . '/core/Request.php',
-    'App\\Core\\Router' => $baseDir . '/core/Router.php',
+    'App\\Models\\JsonDataErrorRespose' => $baseDir . '/app/models/Response.php',
+    'App\\Models\\JsonResponse' => $baseDir . '/app/models/Response.php',
     'App\\Models\\Permission' => $baseDir . '/app/models/Permision.php',
     'App\\Models\\TrangThaiPhim' => $baseDir . '/app/models/Enum.php',
     'App\\Models\\TrangThaiVe' => $baseDir . '/app/models/Enum.php',
@@ -20,6 +20,7 @@ return array(
     'App\\Services\\Payments\\PaymentStrategy' => $baseDir . '/app/services/payments/PaymentStrategy.php',
     'App\\Services\\Payments\\ZaloPayStrategy' => $baseDir . '/app/services/payments/ZaloPayStrategy.php',
     'App\\Services\\PhimService' => $baseDir . '/app/services/PhimService.php',
+    'App\\Services\\UserService' => $baseDir . '/app/services/UserService.php',
     'CheckoutController' => $baseDir . '/app/controllers/CheckoutController.php',
     'ComposerAutoloaderInit7d8cde7a46b174acd021ce9a6503a48a' => $vendorDir . '/composer/autoload_real.php',
     'Composer\\Autoload\\ClassLoader' => $vendorDir . '/composer/ClassLoader.php',
@@ -33,4 +34,5 @@ return array(
     'PayController' => $baseDir . '/app/controllers/PayController.php',
     'PaymentType' => $baseDir . '/app/services/payments/index.php',
     'TestController' => $baseDir . '/app/controllers/TestController.php',
+    'UserController' => $baseDir . '/app/controllers/UserController.php',
 );

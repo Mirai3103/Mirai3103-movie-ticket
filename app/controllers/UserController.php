@@ -12,7 +12,6 @@ class UserController
     {
         $body = request_body();
         $email = $body['email'];
-
         return json(["message" => "Email hợp lệ"]);
     }
 }

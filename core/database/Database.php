@@ -18,12 +18,11 @@ class Database
             'insert into %s (%s) values (%s)',
             $table,
             implode(', ', array_keys($parameters)),
-            ':' . implode(', :', array_keys($parameters))
+            '?' . str_repeat(', ?', count($parameters) - 1)
         );
         try {
             $statement = static::$mysqli->prepare($sql);
-
-            $statement->execute($parameters);
+            $statement->execute(array_values($parameters));
             $lastId = static::$mysqli->insert_id;
             return $lastId;
         } catch (\Exception $e) {
@@ -64,5 +63,32 @@ class Database
         );
         $statement = static::$mysqli->prepare($sql);
         return $statement->execute();
+    }
+
+    public static function beginTransaction()
+    {
+        static::$mysqli->begin_transaction();
+    }
+    public static function commit()
+    {
+        static::$mysqli->commit();
+    }
+
+    public static function rollback()
+    {
+        static::$mysqli->rollback();
+    }
+
+    public static function close()
+    {
+        static::$mysqli->close();
+    }
+
+    public static function findAll(string $table)
+    {
+        $sql = "SELECT * FROM $table;";
+        $statement = static::$mysqli->prepare($sql);
+        $statement->execute();
+        return $statement->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 }

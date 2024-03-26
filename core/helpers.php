@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\JsonResponse;
+
 global $scripts;
 $scripts = [];
 global $title;
@@ -89,14 +91,21 @@ function execPostRequest($url, $data)
 
 function json($data, $status = 200)
 {
+    // if data is an instance of JsonResponse
+    if ($data instanceof JsonResponse) {
+        $status = $data->status;
+    }
     http_response_code($status);
     header('Content-Type: application/json');
     echo json_encode($data);
-
     die($status);
 }
 
 function request_body()
 {
+    //  check if content type is json
+    if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
+        return json(new JsonResponse(400, "Invalid content type"), 400);
+    }
     return json_decode(file_get_contents('php://input'), true);
 }

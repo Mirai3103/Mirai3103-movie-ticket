@@ -7,6 +7,7 @@ const validations = {
   min: (value, min) => value >= min,
   max: (value, max) => value <= max,
   pattern: (value, pattern) => new RegExp(pattern).test(value),
+  between: (value, [min, max]) => value >= min && value <= max,
 };
 
 class Validator {
