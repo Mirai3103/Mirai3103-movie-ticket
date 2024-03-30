@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const myConfig = {
   content: ["./app/**/*.{html,js,php}", "./public/**/*.{css,js}"],
   theme: {
     extend: {
@@ -21,7 +21,13 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
   mode: "jit",
   prefix: "tw-",
+  darkMode: "class",
+  daisyui: {
+    themes: ["light"],
+  },
 };
+
+module.exports = myConfig;

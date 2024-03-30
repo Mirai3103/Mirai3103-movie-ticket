@@ -1,27 +1,24 @@
-
-
 <?php
 
 use App\Core\App;
 use Core\Attributes\Controller;
 use Core\Attributes\Route;
 
-#[Controller(path: "/thanh-toan")]
 class CheckoutController
 {
 
-    #[Route("", "GET")]
-    public function index()
+    #[Route("/thanh-toan", "GET")]
+    public static function index()
     {
-        return  view("checkout");
+        return view("checkout");
     }
-    #[Route("success", "GET")]
-    public function success()
+    #[Route("/thanh-toan/success", "GET")]
+    public static function success()
     {
-        return  view("checkout-success");
+        return view("checkout-success");
     }
-    #[Route("", "POST")]
-    public function store()
+    #[Route("/thanh-toan", "POST")]
+    public static function store()
     {
 
         $data = request_body();

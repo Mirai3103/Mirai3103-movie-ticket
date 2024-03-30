@@ -30,7 +30,7 @@ class PhimService
     public static function getPhimById($id)
     {
         $query = "SELECT * FROM Phim WHERE MaPhim = ?;";
-        $phim = Database::queryOne($query,  [$id]);
+        $phim = Database::queryOne($query, [$id]);
         return $phim;
     }
 }

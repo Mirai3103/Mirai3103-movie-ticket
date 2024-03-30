@@ -14,3 +14,9 @@ enum TrangThaiVe: int
     case DaDat = 4;
     case ChuaDat = 5;
 }
+
+enum TrangThaiPhong: int
+{
+    case DangBaoTri = 6;
+    case DangHoatDong = 7;
+}

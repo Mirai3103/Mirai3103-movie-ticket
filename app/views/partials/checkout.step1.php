@@ -1,27 +1,35 @@
-    <div class='tw-flex tw-gap-x-14 tw-flex-col lg:tw-flex-row tw-text-base  sm:tw-text-xl tw-gap-y-8' x-show="step === 1">
+    <div class='tw-flex tw-gap-x-14 tw-flex-col lg:tw-flex-row tw-text-base  sm:tw-text-xl tw-gap-y-8'
+        x-show="step === 1">
         <div class='tw-basis-2/5 lg:tw-shrink-0  tw-gap-4 tw-flex tw-flex-col tw-justify-center tw-text-xl'>
             <div>
                 <label for="name" class="tw-block  tw-font-bold  tw-text-gray-700">Họ và tên</label>
-                <input x-on:focus="errors.name = ''" x-model="data.name" type="text" name="name" id="name" class="tw-mt-1  tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]" placeholder="Họ và tên">
+                <input x-on:focus="errors.name = ''" x-model="data.name" type="text" name="name" id="name"
+                    class="tw-mt-1  tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                    placeholder="Họ và tên">
                 <span x-text="errors.name" class="error_message"></span>
             </div>
             <div>
                 <label for="phone" class="tw-block  tw-font-bold  tw-text-gray-700">Số điện thoại</label>
-                <input x-on:focus="errors.phone = ''" x-model="data.phone" type="tel" name="phone" id="phone" class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]" placeholder="Số điện thoại">
+                <input x-on:focus="errors.phone = ''" x-model="data.phone" type="tel" name="phone" id="phone"
+                    class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                    placeholder="Số điện thoại">
                 <span x-text="errors.phone" class="error_message"></span>
             </div>
             <div>
                 <label for="email" class="tw-block  tw-font-bold  tw-text-gray-700">Email</label>
-                <input x-on:focus="errors.email = ''" x-model="data.email" type="text" name="email" id="email" class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]" placeholder="Email">
+                <input x-on:focus="errors.email = ''" x-model="data.email" type="text" name="email" id="email"
+                    class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                    placeholder="Email">
                 <span x-text="errors.email" class="error_message"></span>
             </div>
             <div class="tw-flex tw-justify-center">
-                <button x-on:click="
+                <button data-ripple-light="true" x-on:click="
                 if (validate()) {
                     step = 2
                 };  
                 console.log(errors)
-                " class=' tw-px-12 tw-py-2 tw-flex tw-justify-center tw-items-center tw-bg-[#14244B] tw-text-[#FFC700] tw-rounded-md'>
+                "
+                    class=' tw-px-12 tw-py-2 tw-flex tw-justify-center tw-items-center tw-bg-[#14244B] tw-text-[#FFC700] tw-rounded-md'>
                     Tiếp tục
                 </button>
             </div>

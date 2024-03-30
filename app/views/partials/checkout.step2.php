@@ -3,40 +3,40 @@
  $el.classList.add('tw-flex');
  " x-show="step === 2">
      <style>
-         .checkout-button {
-             cursor: pointer;
-             display: flex;
-             align-items: center;
-             padding: 5px;
-             padding-left: 15px;
-         }
+     .checkout-button {
+         cursor: pointer;
+         display: flex;
+         align-items: center;
+         padding: 5px;
+         padding-left: 15px;
+     }
 
-         .checkout-button img {
-             height: 50px;
-             width: 50px;
-             margin-left: 10px;
-             padding: 5px;
+     .checkout-button img {
+         height: 50px;
+         width: 50px;
+         margin-left: 10px;
+         padding: 5px;
 
 
-         }
+     }
 
-         .content {
-             padding-left: 15px;
-         }
+     .content {
+         padding-left: 15px;
+     }
 
-         .content .checkout-title {
-             color: #000;
-             font-size: 13pt;
-             font-weight: 600;
-         }
+     .content .checkout-title {
+         color: #000;
+         font-size: 13pt;
+         font-weight: 600;
+     }
 
-         .content .description {
-             color: #666
-         }
+     .content .description {
+         color: #666
+     }
 
-         input[type="radio"]:hover {
-             cursor: pointer;
-         }
+     input[type="radio"]:hover {
+         cursor: pointer;
+     }
      </style>
      <div class='tw-basis-2/5 tw-grow-0  lg:tw-shrink-0  tw-flex tw-flex-col  tw-gap-4 lg:tw-text-xl'>
          <div class='tw-mt-16 tw-flex tw-flex-col tw-gap-4'>
@@ -46,7 +46,9 @@
              <div class="">
                  <label class="checkout-button  tw-border-secondary tw-border-3" for="<?= PaymentType::Momo->value ?>">
                      <div class="checkout-selector">
-                         <input x-model="data.payment_method" id="<?= PaymentType::Momo->value ?>" type="radio" class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method" value="<?php echo PaymentType::Momo->value ?>">
+                         <input x-model="data.payment_method" id="<?= PaymentType::Momo->value ?>" type="radio"
+                             class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method"
+                             value="<?php echo PaymentType::Momo->value ?>">
                      </div>
                      <div class="content" style="  display: flex;align-items: center;">
                          <span class="checkout-title">
@@ -57,15 +59,19 @@
                  </label>
              </div>
              <div>
-                 <label class="checkout-button  tw-border-secondary tw-border-3" for="<?= PaymentType::ZaloPay->value ?>">
+                 <label class="checkout-button  tw-border-secondary tw-border-3"
+                     for="<?= PaymentType::ZaloPay->value ?>">
                      <div class="checkout-selector">
-                         <input x-model="data.payment_method" id="<?= PaymentType::ZaloPay->value ?>" type="radio" class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method" value="<?php echo PaymentType::ZaloPay->value ?>">
+                         <input x-model="data.payment_method" id="<?= PaymentType::ZaloPay->value ?>" type="radio"
+                             class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method"
+                             value="<?php echo PaymentType::ZaloPay->value ?>">
                      </div>
                      <div class="content" style="  display: flex;align-items: center;">
                          <span class="checkout-title">
                              Thanh toán bằng
                          </span>
-                         <img src="https://play-lh.googleusercontent.com/MXoXRQvKYcPzk0AITb6nVJUxZMaWYESXar_HwK8KXbGMboZPQjcwVBcVtXlpOkfD7PM" />
+                         <img
+                             src="https://play-lh.googleusercontent.com/MXoXRQvKYcPzk0AITb6nVJUxZMaWYESXar_HwK8KXbGMboZPQjcwVBcVtXlpOkfD7PM" />
                      </div>
                  </label>
              </div>
@@ -74,10 +80,12 @@
              <label for="discount" class="tw-block  tw-font-bold  tw-text-gray-700">
                  Mã giảm giá
              </label>
-             <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount" class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-3  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]" placeholder="Nhập mã giảm giá">
+             <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount"
+                 class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-3  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                 placeholder="Nhập mã giảm giá">
          </div>
          <div class="tw-flex tw-justify-center">
-             <button x-on:click="if (validate()) { 
+             <button data-ripple-light="true" x-on:click="if (validate()) { 
                 fetch('', {
                     method: 'POST',
                     headers: {
@@ -91,7 +99,8 @@
                     }
                     console.log('Success:', data);
                 })
-              } " class=' tw-px-12 tw-py-2 tw-flex tw-justify-center tw-items-center tw-bg-primary tw-text-secondary tw-rounded-md'>
+              } "
+                 class=' tw-px-12 tw-py-2 tw-flex tw-justify-center tw-items-center tw-bg-primary tw-text-secondary tw-rounded-md'>
                  Tiếp tục
              </button>
          </div>

@@ -31,7 +31,7 @@ class ControllerMap
         if (empty($this->actions)) {
             $this->loadActions();
         }
-        $actionUri  = str_replace($this->path, "", $uri);
+        $actionUri = str_replace($this->path, "", $uri);
         $isMatch = false;
         foreach ($this->actions as $action) {
             $match_result = $action->match($actionUri);

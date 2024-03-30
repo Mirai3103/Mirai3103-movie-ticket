@@ -8,6 +8,7 @@ const validations = {
   max: (value, max) => value <= max,
   pattern: (value, pattern) => new RegExp(pattern).test(value),
   between: (value, [min, max]) => value >= min && value <= max,
+  custom: (value, callback) => callback(value),
 };
 
 class Validator {
@@ -107,9 +108,8 @@ class FormValidator extends Validator {
   }
 }
 
-console.log(window.Alpine);
-
 document.addEventListener("alpine:init", () => {
+  console.log("Alpine is initialized");
   Alpine.data("formValidator", (validationRules) => {
     return {
       errors: {},
@@ -131,6 +131,20 @@ document.addEventListener("alpine:init", () => {
           }
           return true;
         };
+      },
+      parseAxiosError(error) {
+        if (error.response?.status === 400) {
+          const tempValidateErrors = error.response.data.errors;
+          for (const field in tempValidateErrors) {
+            if (typeof tempValidateErrors[field] === "string") {
+              this.errors[field] = [tempValidateErrors[field]];
+            } else {
+              this.errors[field] = tempValidateErrors[field];
+            }
+          }
+        } else {
+          this.errors = { global: ["Có lỗi xảy ra, vui lòng thử lại sau"] };
+        }
       },
     };
   });

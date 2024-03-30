@@ -18,6 +18,10 @@ class JsonResponse
     {
         return $this->status >= 200 && $this->status < 300;
     }
+    public static function ok(array $data = []): self
+    {
+        return new JsonResponse(200, "Thành công", $data);
+    }
 }
 
 class JsonDataErrorRespose extends JsonResponse

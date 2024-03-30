@@ -36,6 +36,8 @@ function scripts(array $list)
 function view($name, $data = [])
 {
     extract($data);
+    $name = str_replace('.', '/', $name);
+
 
     return require "app/views/{$name}.view.php";
 }

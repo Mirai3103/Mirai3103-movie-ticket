@@ -4,11 +4,10 @@ use App\Core\App;
 use Core\Attributes\Controller;
 use Core\Attributes\Route;
 
-#[Controller(path: "/nguoi-dung")]
 class UserController
 {
-    #[Route("/is-mail-exist", "POST")]
-    public function isMailExist()
+    #[Route("/nguoi-dung/is-mail-exist", "POST")]
+    public static function isMailExist()
     {
         $body = request_body();
         $email = $body['email'];

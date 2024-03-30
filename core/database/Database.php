@@ -29,6 +29,13 @@ class Database
         }
         return false;
     }
+
+    public static function execute(string $sql, array $params)
+    {
+        $statement = static::$mysqli->prepare($sql);
+        return $statement->execute($params);
+    }
+
     public static function query(string $sql, array $params)
     {
         $statement = static::$mysqli->prepare($sql);
@@ -48,7 +55,7 @@ class Database
         $sql = sprintf(
             'update %s set %s where %s',
             $table,
-            implode(', ', array_map(fn ($key) => "$key = :$key", array_keys($parameters))),
+            implode(', ', array_map(fn($key) => "$key = :$key", array_keys($parameters))),
             $condition
         );
         $statement = static::$mysqli->prepare($sql);
@@ -65,6 +72,13 @@ class Database
         return $statement->execute();
     }
 
+    public static function count(string $query, array $params)
+    {
+        $statement = static::$mysqli->prepare($query);
+        $statement->execute($params);
+        $result = $statement->get_result()->num_rows;
+        return $result;
+    }
     public static function beginTransaction()
     {
         static::$mysqli->begin_transaction();
@@ -84,9 +98,9 @@ class Database
         static::$mysqli->close();
     }
 
-    public static function findAll(string $table)
+    public static function findAll(string $table, array $columns = ['*'])
     {
-        $sql = "SELECT * FROM $table;";
+        $sql = "SELECT " . implode(',', $columns) . " FROM $table";
         $statement = static::$mysqli->prepare($sql);
         $statement->execute();
         return $statement->get_result()->fetch_all(MYSQLI_ASSOC);

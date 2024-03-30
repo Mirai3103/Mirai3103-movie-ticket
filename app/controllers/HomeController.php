@@ -1,23 +1,26 @@
 <?php
 
-use App\Core\App;
 use App\Services\PhimService;
 use App\Services\UserService;
-use Core\Attributes\Controller;
 use Core\Attributes\Route;
 
-#[Controller(path: "/trang-chu")]
+
 class HomeController
 {
-    #[Route("", "GET")]
-    public function index()
+    #[Route("/", "GET")]
+    public static function index()
     {
         $phims = PhimService::getPhimDangChieu();
         $commingMovies = PhimService::getPhimSapChieu();
-        return  view("home", ["phims" => $phims, "commingMovies" => $commingMovies]);
+        return view("home", ["phims" => $phims, "commingMovies" => $commingMovies]);
+    }
+    #[Route("/trang-chu", "GET")]
+    public static function home()
+    {
+        return view("home");
     }
     #[Route("/dang-nhap", "GET")]
-    public function login()
+    public static function login()
     {
         if (isset($_SESSION['user'])) {
             return redirect("trang-chu");
@@ -26,7 +29,7 @@ class HomeController
     }
 
     #[Route("/dang-nhap", "POST")]
-    public function loginPost()
+    public static function loginPost()
     {
         $username = $_POST['username'];
         $password = $_POST['password'];
@@ -43,14 +46,21 @@ class HomeController
 
 
     #[Route("/dang-ky", "POST")]
-    public function register()
+    public static function register()
     {
         $body = request_body();
         return json(UserService::register($body));
     }
-    #[Route("/lich-chieu", "GET")]
-    public function lichChieu()
+    #[Route("/trang-chu/lich-chieu", "GET")]
+    public static function lichChieu()
     {
         return view("lich-chieu");
+    }
+    #[Route("/dang-xuat", "GET")]
+    public static function logout()
+    {
+        unset($_SESSION['user']);
+        setcookie("user", "", time() - 3600);
+        return redirect("trang-chu");
     }
 }
