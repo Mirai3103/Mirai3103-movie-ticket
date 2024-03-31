@@ -30,6 +30,7 @@ class ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a
         'App\\Services\\PermissionService' => __DIR__ . '/../..' . '/app/services/PermissionService.php',
         'App\\Services\\PhimService' => __DIR__ . '/../..' . '/app/services/PhimService.php',
         'App\\Services\\RoomService' => __DIR__ . '/../..' . '/app/services/RoomService.php',
+        'App\\Services\\SeatService' => __DIR__ . '/../..' . '/app/services/SeatService.php',
         'App\\Services\\SeatTypeService' => __DIR__ . '/../..' . '/app/services/SeatTypeService.php',
         'App\\Services\\StatusService' => __DIR__ . '/../..' . '/app/services/StatusService.php',
         'App\\Services\\UserService' => __DIR__ . '/../..' . '/app/services/UserService.php',

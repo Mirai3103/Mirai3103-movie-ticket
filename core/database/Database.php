@@ -105,4 +105,55 @@ class Database
         $statement->execute();
         return $statement->get_result()->fetch_all(MYSQLI_ASSOC);
     }
+    public static function insertMany(string $table, array $data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+
+        $columns = array_keys($data[0]);
+        $placeholders = str_repeat('?,', count($columns) - 1) . '?';
+        $sql = sprintf('INSERT INTO %s (%s) VALUES (%s)', $table, implode(',', $columns), $placeholders);
+
+        try {
+            $stmt = static::$mysqli->prepare($sql);
+
+            $params = array();
+            $paramTypes = '';
+            foreach ($data as $row) {
+                $rowParams = array();
+                $rowParamTypes = '';
+                foreach ($row as $value) {
+                    $rowParams[] = &$value;
+                    $rowParamTypes .= self::getParamType($value);
+                }
+                $params = array_merge($params, $rowParams);
+                $paramTypes .= $rowParamTypes;
+            }
+
+            $stmt->bind_param($paramTypes, ...$params);
+            $stmt->execute();
+
+            return static::$mysqli->affected_rows;
+        } catch (\Exception $e) {
+            error_log('Error executing SQL: ' . $e->getMessage());
+            return false;
+        }
+    }
+    private static function getParamType($value)
+    {
+        $type = gettype($value);
+        switch ($type) {
+            case 'integer':
+                return 'i';
+            case 'double':
+                return 'd';
+            case 'string':
+                return 's';
+            case 'boolean':
+                return 'i';
+            default:
+                return 'b';
+        }
+    }
 }

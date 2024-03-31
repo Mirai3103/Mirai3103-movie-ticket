@@ -22,6 +22,10 @@ class JsonResponse
     {
         return new JsonResponse(200, "Thành công", $data);
     }
+    public static function error(string $message, int $status = 400): self
+    {
+        return new JsonResponse($status, $message);
+    }
 }
 
 class JsonDataErrorRespose extends JsonResponse

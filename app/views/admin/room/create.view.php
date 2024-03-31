@@ -71,8 +71,64 @@ const validatorRule = {
 <main class=' tw-h-full tw-w-full tw-overflow-y-auto tw-pb-40' x-data="
 formValidator(validatorRule);
             ">
-    <div
-        class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-md tw-shadow-md  tw-bg-clip-border'>
+    <div class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-md tw-shadow-md  tw-bg-clip-border'
+        x-data="
+         {
+               listCells: [],
+              
+                getCellName: (value) => {
+                    console.log(this.listCells)
+                    if (value.MaLoaiGhe === 0) {
+                        return ''
+                    }
+                    const index = value.index
+                    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+                    const row = Math.floor(index / data.ChieuRong)
+                    const col = index % data.ChieuRong
+                    let skip = 0
+                    //  duyệt hàng hiện tại, nếu có ghế trống thì tăng biến skip
+                    // nếu có ghế col-span thì tăng biến skip
+                    for (let i = 0; i < col; i++) {
+                        if (this.listCells[row * data.ChieuRong + i].MaLoaiGhe === 0) {
+                            skip++
+                        }
+                        if (this.listCells[row * data.ChieuRong + i].MaLoaiGhe === -1) {
+                            skip++
+                        }
+                    }
+                    return alphabet[row] + (col - skip + 1)
+                },
+                createInputSeats: function(maPhongChieu) {
+                    const inputSeats = []
+                    this.listCells.forEach((cell, index) => {
+                        if (cell.MaLoaiGhe > 0) {
+                            inputSeats.push({
+                                MaLoaiGhe: cell.MaLoaiGhe,
+                                SoGhe: getCellName(cell),
+                                X: index % data.ChieuRong,
+                                Y: Math.floor(index / data.ChieuRong),
+                                MaPhongChieu: maPhongChieu,
+                            })
+                        }
+                    })
+                    return inputSeats
+                },
+                createRequest: async function() {
+                    const createRoomPayload = {
+                        ...data,
+                        MaRapChieu: parseInt(data.MaRapChieu),
+                        TrangThai: parseInt(data.TrangThai),
+                        ChieuDai: parseInt(data.ChieuDai),
+                        ChieuRong: parseInt(data.ChieuRong),
+                    };
+                    // const res = await axios.post('/api/phong-chieu', createRoomPayload)
+                    const MaPhongChieu = 1 //res.data.data.MaPhongChieu
+                    const inputSeats = createInputSeats(MaPhongChieu)
+                    // const res2 = await axios.post('/api/ghe', inputSeats)
+                    console.log(inputSeats)
+                }
+            }
+        ">
         <div class="tw-flex tw-items-center tw-justify-between tw-gap-8 tw-mb-2">
             <div class='tw-flex tw-gap-x-6 tw-items-center'>
                 <h5
@@ -196,7 +252,7 @@ formValidator(validatorRule);
                 rememberSelectedSeats : [],
                 selectedSeats: [],
                 isHoldCtrl: false,
-                listCells: [],
+         
                 getPosition: (event) => {
                    const rect = $el.getBoundingClientRect();
                     const x = event.clientX - rect.left;
@@ -326,7 +382,6 @@ formValidator(validatorRule);
                                         }
                                     }
                                     const start = tem[0];
-                                    console.log(JSON.stringify(tem));
                                     listCells[start] = {
                                         ...listCells[start],
                                         ...item,
@@ -340,9 +395,14 @@ formValidator(validatorRule);
                                     listCells = [...listCells];
                                 }else{
                                     
-
                                 listCells = listCells.map((cell, index) => {
                                     if (selectedSeats.includes(index.toString())) {
+                                        
+                                        if(cell.Rong > 1){
+                                            for(let i = 1; i < cell.Rong; i++){
+                                                selectedSeats.push((index+1).toString())
+                                            }
+                                        }
                                         return {
                                             ...cell,
                                             ...item,
@@ -354,7 +414,6 @@ formValidator(validatorRule);
                                 $nextTick(() => {
                                     selectedSeats = [];
                                     $refs.contextMenu.classList.add('tw-hidden');
-                                    console.log(listCells);
                                 });
                         "><a class='tw-flex tw-items-center'>
                                 <span :style="'background-color: ' + item.Mau" class='tw-w-5 tw-h-5 tw-rounded-md'>
@@ -370,24 +429,8 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class='tw-w-full'>
-                    <div class='tw-grid  tw-mx-auto' x-data="{ getCellName: (value)=>{
-            if(value.MaLoaiGhe === 0){
-              return ''
-            }
-            const index= value.index
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-            const row = Math.floor(index / data.ChieuRong)
-            const col = index % data.ChieuRong
-            let skip = 0
-            //  duyệt hàng hiện tại, nếu có ghế trống thì tăng biến skip
-            // nếu có ghế col-span thì tăng biến skip
-            for(let i = 0; i < col; i++){
-              if(listCells[row * data.ChieuRong + i].MaLoaiGhe === 0){
-                skip++
-              }
-            }
-            return alphabet[row] + (col - skip + 1)
-          }}" x-init="
+                    <div class='tw-grid  tw-mx-auto' x-data="{ 
+        }" @createRequest.window="createRequest()" x-init="
          
           const cal= (value)=>{
 
@@ -431,12 +474,20 @@ formValidator(validatorRule);
                                 class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
                                 x-text="getCellName(cell)"></div>
                         </template>
+
+
                     </div>
                 </div>
             </div>
         </div>
         <div class='tw-flex tw-justify-end tw-mt-4'>
-            <button class='tw-btn tw-btn-primary tw-px-10'>
+            <button @click="
+                if (!validate()) return toast('Vui lòng kiểm tra lại thông tin', {
+                    position: 'bottom-center',
+                    type: 'warning'
+                });
+                $dispatch('createRequest')
+           " class='tw-btn tw-btn-primary tw-px-10'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy">
@@ -455,14 +506,6 @@ formValidator(validatorRule);
 
 </script>
 <script>
-// seattype object
-//     MaLoaiGhe	int
-// TenLoaiGhe	
-// MoTa	
-// GiaVe	
-// Dai	 row span
-// Rong	 col span 
-// Mau ->hex color
 const emptySeat = {
     MaLoaiGhe: 0,
     TenLoaiGhe: 'Trống',

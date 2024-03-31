@@ -25,6 +25,7 @@ return array(
     'App\\Services\\PermissionService' => $baseDir . '/app/services/PermissionService.php',
     'App\\Services\\PhimService' => $baseDir . '/app/services/PhimService.php',
     'App\\Services\\RoomService' => $baseDir . '/app/services/RoomService.php',
+    'App\\Services\\SeatService' => $baseDir . '/app/services/SeatService.php',
     'App\\Services\\SeatTypeService' => $baseDir . '/app/services/SeatTypeService.php',
     'App\\Services\\StatusService' => $baseDir . '/app/services/StatusService.php',
     'App\\Services\\UserService' => $baseDir . '/app/services/UserService.php',

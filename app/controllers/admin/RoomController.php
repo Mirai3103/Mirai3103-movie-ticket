@@ -41,6 +41,12 @@ class RoomController
             'seatTypes' => $seatTypes
         ]);
     }
-
+    #[Route("/api/phong-chieu", "POST")]
+    public static function createRoom()
+    {
+        $data = request_body();
+        $result = RoomService::createRoom($data);
+        return json($result);
+    }
 
 }
