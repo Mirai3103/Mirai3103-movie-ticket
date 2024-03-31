@@ -201,6 +201,7 @@ formValidator(validatorRule);
                 rememberSelectedSeats : [],
                 selectedSeats: [],
                 isHoldCtrl: false,
+                listCells: [],
                 getPosition: (event) => {
                    const rect = $el.getBoundingClientRect();
                     const x = event.clientX - rect.left;
@@ -209,13 +210,14 @@ formValidator(validatorRule);
                 }
             }" x-on:mousedown="
             if(2 === $event.button) return;
+            if($refs.contextMenu.contains($event.target))return;
+            $refs.contextMenu.classList.add('tw-hidden');
             console.log(isHoldCtrl);
                  if (isHoldCtrl) {
                     rememberSelectedSeats = [...selectedSeats];
                  } else {
                      document.querySelectorAll('.seat').forEach((seat) => {
-                        seat.classList.remove(seat.getAttribute('bg-select'));
-                        seat.classList.add(seat.getAttribute('bg-normal'));
+                        seat.style.backgroundColor = seat.getAttribute('bg-normal');
                      });
                     rememberSelectedSeats = [];
                  }
@@ -279,9 +281,8 @@ formValidator(validatorRule);
           ) {
             const row = Math.floor(index / data.ChieuRong);
             const col = index % data.ChieuRong;
-            seat.classList.add(seat.getAttribute('bg-select'));
-            seat.classList.remove(seat.getAttribute('bg-normal'));
-            selectedSeats.push(seat);
+            seat.style.backgroundColor = seat.getAttribute('bg-select');
+            selectedSeats.push(seat.getAttribute('index'));
           }
         });
         document.querySelectorAll('.rect').forEach((rect) => {
@@ -307,16 +308,30 @@ formValidator(validatorRule);
          ">
 
                 <ul x-ref="contextMenu"
-                    class="tw-menu tw-shadow-lg tw-hidden tw-absolute tw-bg-base-200 tw-w-56 tw-rounded-box">
-                    <li><a>
-                            Đặt thành ghế thường
-                        </a></li>
-                    <li><a>
-                            Đặt thành ghế VIP
-                        </a></li>
-                    <li><a>
-                            Đặt thành ghế đôi
-                        </a></li>
+                    class="tw-menu tw-shadow-lg tw-hidden tw-z-50 tw-absolute tw-bg-base-200 tw-min-w-60 tw-rounded-box">
+
+                    <template x-for="item in seatTypes" :key="item.MaLoaiGhe">
+                        <li x-on:click="
+                            listCells =  listCells.map((cell, index) => {
+                            if (selectedSeats.includes(index.toString())) {
+                                return {
+                                    ...cell,
+                                    ...item,
+                                }
+                            }
+                            return cell;
+                        });
+                        $nextTick(() => {
+                            selectedSeats = [];
+                            $refs.contextMenu.classList.add('tw-hidden');
+                            console.log( listCells);
+                        });
+                        "><a class='tw-flex tw-items-center'>
+                                <span :style="'background-color: ' + item.Mau" class='tw-w-5 tw-h-5 tw-rounded-md'>
+
+                                </span> <span class='tw-grow' x-text="`Đặt thành ${item.TenLoaiGhe}`"></span>
+                            </a></li>
+                    </template>
                 </ul>
                 <div class='tw-w-full tw-flex tw-justify-center'>
                     <div
@@ -325,11 +340,11 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class='tw-w-full'>
-                    <div class='tw-grid  tw-mx-auto' x-data="{listCells: [], getRoomName: (value)=>{
-            if(value.type === 4){
+                    <div class='tw-grid  tw-mx-auto' x-data="{ getRoomName: (value)=>{
+            if(value.MaLoaiGhe === 0){
               return ''
             }
-            const index= value.id
+            const index= value.index
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             const row = Math.floor(index / data.ChieuRong)
             const col = index % data.ChieuRong
@@ -340,12 +355,10 @@ formValidator(validatorRule);
 
             value.width = parseInt(value.width)
             value.height = parseInt(value.height)
-            const emptySeat =seatTypes[3]
             const tempCells = Array.from({length: value.width * value.height}, (_, index) => {
               return {
                 ...emptySeat,
-                id: index,
-                type: emptySeat.id,
+                index: index,
               }
             })
             listCells = tempCells   
@@ -373,9 +386,10 @@ formValidator(validatorRule);
           })
         })
       ">
-                        <template x-for="cell in listCells" :key="cell.id">
-                            <div :index="cell.id" :bg-select="cell.bgSelect" :bg-normal="cell.bgNormal"
-                                class="tw-bg-gray-500 seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center hover:tw-bg-gray-800 tw-seat tw-h-10 tw-w-10 tw-rounded"
+                        <template x-for="cell in listCells" :key="cell.index">
+                            <div :index="cell.index" :bg-select="cell.MauSelect" :bg-normal="cell.Mau" :class="cell.Mau"
+                                :style="'background-color: ' + cell.Mau"
+                                class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat tw-h-10 tw-w-10 tw-rounded"
                                 x-text="getRoomName(cell)"></div>
                         </template>
                     </div>
@@ -385,42 +399,42 @@ formValidator(validatorRule);
     </div>
 
 </main>
-<script>
-const seatTypes = [{
-    id: 1,
-    name: 'Thường',
-    colorClass: 'bg-green-500 hover:bg-green-800',
-    colSpan: 1,
-    rowSpan: 1,
-    bgSelect: "bg-green-800",
-    bgNormal: "bg-green-500"
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js">
 
-}, {
-    id: 2,
-    name: 'VIP',
-    colorClass: 'tw-bg-yellow-500 hover:tw-bg-yellow-800',
-    colSpan: 1,
-    rowSpan: 1,
-    bgSelect: "tw-tbg-yellow-800",
-    bgNormal: "tw-bg-yellow-500"
-}, {
-    id: 3,
-    name: 'Đôi',
-    colorClass: 'tw-bg-purple-500 hover:tw-bg-purple-800',
-    colSpan: 2,
-    rowSpan: 1,
-    bgSelect: "tw-bg-purple-800",
-    bgNormal: "tw-bg-purple-500"
-}, {
-    id: 4,
-    name: 'Trống',
-    colorClass: 'tw-bg-gray-500 hover:tw-bg-gray-800',
-    colSpan: 1,
-    rowSpan: 1,
-    bgSelect: "tw-bg-gray-800",
-    bgNormal: "tw-bg-gray-500"
-}]
+</script>
+<script>
+// seattype object
+//     MaLoaiGhe	int
+// TenLoaiGhe	
+// MoTa	
+// GiaVe	
+// Dai	 row span
+// Rong	 col span 
+// Mau ->hex color
+const emptySeat = {
+    MaLoaiGhe: 0,
+    TenLoaiGhe: 'Trống',
+    MoTa: 'Trống',
+    GiaVe: 0,
+    Dai: 1,
+    Rong: 1,
+    Mau: '#525252',
+    MauSelect: darkerColor('#525252')
+}
+var temp = <?= json_encode($seatTypes) ?>;
+
+const seatTypes = [...temp, emptySeat].map((item) => {
+    return {
+        ...item,
+        MauSelect: darkerColor(item.Mau)
+    }
+})
+
+function darkerColor(color) {
+    return tinycolor(color).darken(30).toString();
+}
 </script>
 <?php
+
 require ('app/views/admin/footer.php');
 ?>

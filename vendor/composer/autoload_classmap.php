@@ -25,6 +25,7 @@ return array(
     'App\\Services\\PermissionService' => $baseDir . '/app/services/PermissionService.php',
     'App\\Services\\PhimService' => $baseDir . '/app/services/PhimService.php',
     'App\\Services\\RoomService' => $baseDir . '/app/services/RoomService.php',
+    'App\\Services\\SeatTypeService' => $baseDir . '/app/services/SeatTypeService.php',
     'App\\Services\\StatusService' => $baseDir . '/app/services/StatusService.php',
     'App\\Services\\UserService' => $baseDir . '/app/services/UserService.php',
     'CheckoutController' => $baseDir . '/app/controllers/CheckoutController.php',
@@ -42,6 +43,7 @@ return array(
     'PaymentType' => $baseDir . '/app/services/payments/index.php',
     'RoomController' => $baseDir . '/app/controllers/admin/RoomController.php',
     'Router' => $baseDir . '/core/Router.php',
+    'SeatTypeController' => $baseDir . '/app/controllers/SeatTypeController.php',
     'StatusController' => $baseDir . '/app/controllers/StatusController.php',
     'UserController' => $baseDir . '/app/controllers/UserController.php',
 );

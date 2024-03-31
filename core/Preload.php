@@ -12,6 +12,7 @@ Router::load_from_class(DashboardController::class);
 Router::load_from_class(CheckoutController::class);
 Router::load_from_class(RoomController::class);
 Router::load_from_class(CinemaController::class);
+Router::load_from_class(SeatTypeController::class);
 Router::load_from_class(StatusController::class);
 
 

@@ -3,6 +3,7 @@
 use App\Models\JsonResponse;
 use App\Services\CinemaService;
 use App\Services\RoomService;
+use App\Services\SeatTypeService;
 use App\Services\StatusService;
 use Core\Attributes\Controller;
 use Core\Attributes\Route;
@@ -33,9 +34,11 @@ class RoomController
     {
         $cinemas = CinemaService::getAllCinemas();
         $status = StatusService::getAllStatus('PhongChieu');
+        $seatTypes = SeatTypeService::getAllSeatType();
         return view("admin/room/create", [
             'cinemas' => $cinemas,
-            'statuses' => $status
+            'statuses' => $status,
+            'seatTypes' => $seatTypes
         ]);
     }
 

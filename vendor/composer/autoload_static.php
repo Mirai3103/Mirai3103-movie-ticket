@@ -30,6 +30,7 @@ class ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a
         'App\\Services\\PermissionService' => __DIR__ . '/../..' . '/app/services/PermissionService.php',
         'App\\Services\\PhimService' => __DIR__ . '/../..' . '/app/services/PhimService.php',
         'App\\Services\\RoomService' => __DIR__ . '/../..' . '/app/services/RoomService.php',
+        'App\\Services\\SeatTypeService' => __DIR__ . '/../..' . '/app/services/SeatTypeService.php',
         'App\\Services\\StatusService' => __DIR__ . '/../..' . '/app/services/StatusService.php',
         'App\\Services\\UserService' => __DIR__ . '/../..' . '/app/services/UserService.php',
         'CheckoutController' => __DIR__ . '/../..' . '/app/controllers/CheckoutController.php',
@@ -47,6 +48,7 @@ class ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a
         'PaymentType' => __DIR__ . '/../..' . '/app/services/payments/index.php',
         'RoomController' => __DIR__ . '/../..' . '/app/controllers/admin/RoomController.php',
         'Router' => __DIR__ . '/../..' . '/core/Router.php',
+        'SeatTypeController' => __DIR__ . '/../..' . '/app/controllers/SeatTypeController.php',
         'StatusController' => __DIR__ . '/../..' . '/app/controllers/StatusController.php',
         'UserController' => __DIR__ . '/../..' . '/app/controllers/UserController.php',
     );
