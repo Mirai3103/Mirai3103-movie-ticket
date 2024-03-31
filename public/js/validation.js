@@ -119,7 +119,7 @@ document.addEventListener("alpine:init", () => {
         this.validator = new Validator();
         Object.keys(validationRules).forEach((field) => {
           this.validator.register(field, validationRules[field]);
-          this.data[field] = "";
+          this.data[field] = validationRules[field].default || "";
           document.getElementById(field)?.addEventListener("focus", (e) => {
             this.errors[field] = [];
           });

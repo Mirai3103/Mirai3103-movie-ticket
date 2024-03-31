@@ -60,5 +60,10 @@ class RoomService
         }
         return JsonResponse::error('Tạo phòng chiếu thất bại', 500);
     }
-
+    public static function getRoomById($id)
+    {
+        $sql = "SELECT * FROM PhongChieu WHERE MaPhongChieu = ?";
+        $room = Database::queryOne($sql, [$id]);
+        return $room;
+    }
 }

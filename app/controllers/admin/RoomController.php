@@ -3,6 +3,7 @@
 use App\Models\JsonResponse;
 use App\Services\CinemaService;
 use App\Services\RoomService;
+use App\Services\SeatService;
 use App\Services\SeatTypeService;
 use App\Services\StatusService;
 use Core\Attributes\Controller;
@@ -48,5 +49,20 @@ class RoomController
         $result = RoomService::createRoom($data);
         return json($result);
     }
-
+    #[Route("/admin/phong-chieu/{id}/sua", "GET")]
+    public static function update($id)
+    {
+        $cinemas = CinemaService::getAllCinemas();
+        $status = StatusService::getAllStatus('PhongChieu');
+        $seatTypes = SeatTypeService::getAllSeatType();
+        $seats = SeatService::getSeatsByRoomId(intval($id));
+        $room = RoomService::getRoomById(intval($id));
+        return view("admin/room/update", [
+            'cinemas' => $cinemas,
+            'statuses' => $status,
+            'seatTypes' => $seatTypes,
+            'seats' => $seats,
+            'room' => $room
+        ]);
+    }
 }

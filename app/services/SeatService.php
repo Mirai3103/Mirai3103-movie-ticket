@@ -42,4 +42,10 @@ class SeatService
         }
         return JsonResponse::error('Tạo ghế thất bại', 500);
     }
+    public static function getSeatsByRoomId($roomId)
+    {
+        $sql = "SELECT * FROM Ghe WHERE MaPhongChieu = ?";
+        $seats = Database::query($sql, [$roomId]);
+        return $seats;
+    }
 }

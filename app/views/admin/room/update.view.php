@@ -8,8 +8,11 @@ require ('app/views/admin/header.php');
 <script>
 const statuses = <?= json_encode($statuses) ?>;
 const cinemas = <?= json_encode($cinemas) ?>;
+const seats = <?= json_encode($seats) ?>;
+const room = <?= json_encode($room) ?>;
 const validatorRule = {
     TenPhongChieu: {
+        default: room.TenPhongChieu,
         minLength: {
             value: 3,
             message: 'Tên phòng chiếu phải có ít nhất 3 ký tự'
@@ -20,24 +23,28 @@ const validatorRule = {
         },
     },
     ManHinh: {
+        default: room.ManHinh,
         required: {
             value: true,
             message: 'Vui lòng chọn màn hình'
         },
     },
     MaRapChieu: {
+        default: room.MaRapChieu,
         required: {
             value: true,
             message: 'Vui lòng chọn rạp chiếu'
         },
     },
     TrangThai: {
+        default: room.TrangThai,
         required: {
             value: true,
             message: 'Vui lòng chọn trạng thái'
         },
     },
     ChieuDai: {
+        default: room.ChieuDai,
         required: {
             value: true,
             message: 'Vui lòng nhập chiều dài'
@@ -52,6 +59,7 @@ const validatorRule = {
         },
     },
     ChieuRong: {
+        default: room.ChieuRong,
         required: {
             value: true,
             message: 'Vui lòng nhập chiều rộng'
@@ -141,8 +149,31 @@ formValidator(validatorRule);
                 }
             }
             
+        " x-init="
+            // parse initial seats
+            ChieuDai = parseInt(room.ChieuDai)
+            ChieuRong = parseInt(room.ChieuRong)
+            $nextTick(() => {
+              const tempCells = Array.from({length: ChieuDai *ChieuRong}, (_, index) => {
+                return {
+                    ...emptySeat,
+                    index: index,
+                }
+            })
+            seats.forEach((seat) => {
+                console.log(seat.MaLoaiGhe)
+                const seatType = seatTypes.find((item) => item.MaLoaiGhe === seat.MaLoaiGhe)
+                const index = seat.Y * ChieuRong + seat.X
+                tempCells[index] = {
+                    ...seat,
+                    ...seatType,
+                    index: index,
+                }
+            })
+            listCells = tempCells
+            })
         ">
-        <div class="tw-flex tw-items-center tw-justify-between tw-gap-8 tw-mb-2">
+        <div class=" tw-flex tw-items-center tw-justify-between tw-gap-8 tw-mb-2">
             <div class='tw-flex tw-gap-x-6 tw-items-center'>
                 <h5
                     class="tw-block tw-font-sans tw-text-2xl tw-antialiased tw-font-semibold tw-leading-snug tw-tracking-normal text-blue-gray-900">
@@ -230,8 +261,8 @@ formValidator(validatorRule);
                         <label for="ChieuDai" class="tw-text-lg tw-p-1">
                             Chiều dài
                         </label>
-                        <input x-model="data.ChieuDai" name="ChieuDai" id="ChieuDai" placeholder="Nhập chiều dài"
-                            class="form-control"
+                        <input disabled x-model="data.ChieuDai" name="ChieuDai" id="ChieuDai"
+                            placeholder="Nhập chiều dài" class="form-control"
                             :class="{'is-invalid': errors?.ChieuDai && errors?.ChieuDai.length > 0}" required>
                         <div class="invalid-feedback" x-show="errors?.ChieuDai">
                             <span x-text="errors?.ChieuDai?.join(', ')"></span>
@@ -242,8 +273,8 @@ formValidator(validatorRule);
                         <label for="ChieuRong" class="tw-text-lg tw-p-1">
                             Chiều rộng
                         </label>
-                        <input x-model="data.ChieuRong" value='10' type="number" name="ChieuRong" id="ChieuRong"
-                            placeholder="Nhập chiều rộng" class="form-control"
+                        <input disabled x-model="data.ChieuRong" value='10' type="number" name="ChieuRong"
+                            id="ChieuRong" placeholder="Nhập chiều rộng" class="form-control"
                             :class="{'is-invalid': errors?.ChieuRong && errors?.ChieuRong.length > 0}" required>
                         <div class="invalid-feedback" x-show="errors?.ChieuRong">
                             <span x-text="errors?.ChieuRong?.join(', ')"></span>
@@ -468,24 +499,10 @@ formValidator(validatorRule);
           $el.style.gap = SEAT_GAP + 'px';
           $el.style.padding = SEAT_GAP + 'px';
           }
-        $watch('data.ChieuDai', (value)=>{
-            if(parseInt(value) > 30){
-                data.ChieuDai = 30
-            }
           cal({
             width: data.ChieuRong,
             height: data.ChieuDai
           })
-        })
-        $watch('data.ChieuRong', (value)=>{
-            if(parseInt(value) > 30){
-                data.ChieuRong = 30
-            }
-          cal({
-            width: data.ChieuRong,
-            height: data.ChieuDai
-          })
-        })
       ">
                         <template x-for="cell in listCells" :key="cell.index">
                             <div :hidden="cell.MaLoaiGhe === -1" :index="cell.index" :bg-select="cell.MauSelect"
