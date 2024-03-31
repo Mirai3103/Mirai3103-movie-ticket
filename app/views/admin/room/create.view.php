@@ -83,12 +83,7 @@ formValidator(validatorRule);
             </div>
             <div class="tw-flex tw-flex-col tw-gap-2 shrink-0 sm:tw-flex-row tw-my-2">
 
-                <a href="/admin/phong-chieu" data-ripple-light="true" class=" tw-flex tw-select-none tw-items-center tw-gap-3 tw-rounded-lg tw-bg-blue-700 tw-py-3
-                            tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold tw-uppercase
-                            tw-text-white tw-shadow-md shadow-gray-900/10 tw-transition-all hover:tw-shadow-lg
-                            hover:shadow-gray-900/20 focus:tw-opacity-[0.85] focus:tw-shadow-none
-                            active:tw-opacity-[0.85] active:tw-shadow-none disabled:tw-pointer-events-none
-                            disabled:tw-opacity-50 disabled:tw-shadow-none" type="button">
+                <a href="/admin/phong-chieu" data-ripple-light="true" class="  tw-btn tw-btn-ghost" type="button">
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -312,20 +307,55 @@ formValidator(validatorRule);
 
                     <template x-for="item in seatTypes" :key="item.MaLoaiGhe">
                         <li x-on:click="
-                            listCells =  listCells.map((cell, index) => {
-                            if (selectedSeats.includes(index.toString())) {
-                                return {
-                                    ...cell,
-                                    ...item,
+                              if (selectedSeats.length === 0) return toast('Vui lòng chọn ô', {
+                                    position: 'bottom-center',
+                                    type: 'warning'
+                                });
+                                if (item.Rong > 1 && selectedSeats.length !== item.Rong) return toast(`Vui lòng chọn ${item.Rong} ô cho loại ghế này`, {
+                                    position: 'bottom-center',
+                                    type: 'warning'
+                                });
+                                if (item.Rong > 1) {
+                                    const tem = [...selectedSeats].map((item) => parseInt(item)).sort((a, b) => a - b);
+                                    for (let i = 0; i < tem.length - 1; i++) {
+                                        if (tem[i + 1] - tem[i] !== 1) {
+                                            return toast('Vui lòng chọn ô liên tiếp', {
+                                                position: 'bottom-center',
+                                                type: 'warning'
+                                            });
+                                        }
+                                    }
+                                    const start = tem[0];
+                                    console.log(JSON.stringify(tem));
+                                    listCells[start] = {
+                                        ...listCells[start],
+                                        ...item,
+                                    }
+                                    for (let i = 1; i < item.Rong; i++) {
+                                        listCells[start + i] = {
+                                            ...listCells[start + i],
+                                            ...hiddenSeat,
+                                        }
+                                    }
+                                    listCells = [...listCells];
+                                }else{
+                                    
+
+                                listCells = listCells.map((cell, index) => {
+                                    if (selectedSeats.includes(index.toString())) {
+                                        return {
+                                            ...cell,
+                                            ...item,
+                                        }
+                                    }
+                                    return cell;
+                                });
                                 }
-                            }
-                            return cell;
-                        });
-                        $nextTick(() => {
-                            selectedSeats = [];
-                            $refs.contextMenu.classList.add('tw-hidden');
-                            console.log( listCells);
-                        });
+                                $nextTick(() => {
+                                    selectedSeats = [];
+                                    $refs.contextMenu.classList.add('tw-hidden');
+                                    console.log(listCells);
+                                });
                         "><a class='tw-flex tw-items-center'>
                                 <span :style="'background-color: ' + item.Mau" class='tw-w-5 tw-h-5 tw-rounded-md'>
 
@@ -340,7 +370,7 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class='tw-w-full'>
-                    <div class='tw-grid  tw-mx-auto' x-data="{ getRoomName: (value)=>{
+                    <div class='tw-grid  tw-mx-auto' x-data="{ getCellName: (value)=>{
             if(value.MaLoaiGhe === 0){
               return ''
             }
@@ -348,7 +378,15 @@ formValidator(validatorRule);
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             const row = Math.floor(index / data.ChieuRong)
             const col = index % data.ChieuRong
-            return alphabet[row] + (col + 1)
+            let skip = 0
+            //  duyệt hàng hiện tại, nếu có ghế trống thì tăng biến skip
+            // nếu có ghế col-span thì tăng biến skip
+            for(let i = 0; i < col; i++){
+              if(listCells[row * data.ChieuRong + i].MaLoaiGhe === 0){
+                skip++
+              }
+            }
+            return alphabet[row] + (col - skip + 1)
           }}" x-init="
          
           const cal= (value)=>{
@@ -387,14 +425,28 @@ formValidator(validatorRule);
         })
       ">
                         <template x-for="cell in listCells" :key="cell.index">
-                            <div :index="cell.index" :bg-select="cell.MauSelect" :bg-normal="cell.Mau" :class="cell.Mau"
-                                :style="'background-color: ' + cell.Mau"
-                                class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat tw-h-10 tw-w-10 tw-rounded"
-                                x-text="getRoomName(cell)"></div>
+                            <div :hidden="cell.MaLoaiGhe === -1" :index="cell.index" :bg-select="cell.MauSelect"
+                                :bg-normal="cell.Mau" :class="cell.Mau"
+                                :style="`background-color: ${cell.Mau}; grid-column: span ${cell.Rong}; aspect-ratio: ${cell.Rong} / ${cell.Dai}`"
+                                class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
+                                x-text="getCellName(cell)"></div>
                         </template>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class='tw-flex tw-justify-end tw-mt-4'>
+            <button class='tw-btn tw-btn-primary tw-px-10'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+                    <path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                    <path d="M14 4l0 4l-6 0l0 -4" />
+                </svg>
+                Lưu
+            </button>
         </div>
     </div>
 
@@ -420,6 +472,17 @@ const emptySeat = {
     Rong: 1,
     Mau: '#525252',
     MauSelect: darkerColor('#525252')
+}
+const hiddenSeat = {
+    MaLoaiGhe: -1,
+    TenLoaiGhe: 'Ẩn',
+    MoTa: 'Trống',
+    GiaVe: 0,
+    Dai: 1,
+    Rong: 1,
+    Mau: '#525252',
+    MauSelect: darkerColor('#525252')
+
 }
 var temp = <?= json_encode($seatTypes) ?>;
 
