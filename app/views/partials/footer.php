@@ -64,7 +64,13 @@
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-
+<script>
+dayjs.locale('vi');
+const dayOfWeek = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+dayjs.prototype.getDayOfWeek = function() {
+    return dayOfWeek[this.day()];
+}
+</script>
 <?php
 
 

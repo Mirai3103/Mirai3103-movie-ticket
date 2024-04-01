@@ -111,3 +111,52 @@ function request_body()
     }
     return json_decode(file_get_contents('php://input'), true);
 }
+
+function isAjaxRequest()
+{
+    return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
+}
+
+
+function onUnauthorized()
+{
+    if (isAjaxRequest()) {
+        return json(new JsonResponse(401, "Unauthorized"), 401);
+    }
+
+    return redirect('login' + '?returnUrl=' + $_SERVER['REQUEST_URI']);
+}
+
+function needLogin()
+{
+    if (!isset($_SESSION['user'])) {
+        return onUnauthorized();
+    }
+}
+
+function needEmployee()
+{
+    needLogin();
+    if ($_SESSION['user']['is_employee'] === false) {
+        return onUnauthorized();
+    }
+}
+
+function needAnyPermission($permissions)
+{
+    needEmployee();
+    $userPermissions = $_SESSION['user']['permissions'];
+    //[{ TenQuyen, MaQuyen, MoTa}]
+    $isHasPermission = false;
+    foreach ($permissions as $permission) {
+        foreach ($userPermissions as $userPermission) {
+            if ($userPermission['TenQuyen'] === $permission) {
+                $isHasPermission = true;
+                break;
+            }
+        }
+    }
+    if (!$isHasPermission) {
+        return onUnauthorized();
+    }
+}

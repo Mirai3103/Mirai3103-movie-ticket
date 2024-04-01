@@ -252,125 +252,71 @@ $watch('query',async (value) => {
                                 </div>
                             </td>
                             <td class="tw-p-2 tw-border-b tw-border-gray-50">
-                                <div class="tw-dropdown-left tw-dropdown tw-dropdown-end">
-                                    <button tabindex="0" role="button"
-                                        class="tw-btn tw-btn-sm tw-aspect-square  tw-btn-ghost" type="button">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="icon icon-tabler icons-tabler-outline icon-tabler-dots-vertical">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                            <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                            <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        </svg>
-                                    </button>
-                                    <ul tabindex="0"
-                                        class="tw-dropdown-content tw-z-[1] tw-menu tw-p-2 tw-shadow tw-bg-base-100 tw-rounded-box tw-w-52">
-                                        <li class="tw-text-gray-700"><a
-                                                :href="`/admin/phong-chieu/${item.MaPhongChieu}/sua`">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path
-                                                        d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                                    <path
-                                                        d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                                    <path d="M16 5l3 3" />
-                                                </svg>
-                                                Sửa</a></li>
-                                        <li class="tw-text-danger"><button x-bind:data-id="item.MaPhongChieu"
-                                                onclick="const id = event.target.getAttribute('data-id');document.getElementById(`modal-delete-${id}`).showModal();">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
-                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                                    <path d="M4 7l16 0" />
-                                                    <path d="M10 11l0 6" />
-                                                    <path d="M14 11l0 6" />
-                                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
-                                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
-                                                </svg>
-                                                Xoá</button></li>
 
-
-                                        <dialog :id="`modal-delete-${item.MaPhongChieu}`" class="tw-modal">
-                                            <div class="tw-modal-box">
-                                                <h3 class="tw-text-lg tw-font-bold tw-text-center">Xác nhận xoá</h3>
-                                                <p class="tw-py-4"
-                                                    x-text="`Bạn có chắc chắn muốn xoá phòng ${item.TenPhongChieu} không?`">
-
-                                                </p>
-                                                <div class="tw-modal-action">
-                                                    <form method="dialog">
-                                                        <!-- if there is a button in form, it will close the modal -->
-                                                        <button
-                                                            x-on:click="document.getElementById(`modal-delete-${item.MaPhongChieu}`).close();"
-                                                            class="tw-btn">Hủy</button>
-                                                        <button x-on:click="onConfirmDelete(item.MaPhongChieu)"
-                                                            class="tw-btn tw-btn-error">Xoá</button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                            <form method="dialog" class="tw-modal-backdrop">
-                                                <button>close</button>
-                                            </form>
-                                        </dialog>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </template>
-
-
-                </tbody>
-            </table>
+                                <a tabindex="0" role="button"
+                                    class="tw-btn tw-btn-sm tw-btn-warning tw-text-warning tw-aspect-square  tw-btn-ghost"
+                                    type="button" :href="`/admin/phong-chieu/${item.MaPhongChieu}/sua`">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                        <path
+                                            d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                        <path d="M16 5l3 3" />
+                                    </svg>
+                                </a>
         </div>
-        <div class="tw-flex tw-items-center tw-p-4 tw-border-t tw-border-gray-50">
-            <div
-                class="tw-flex tw-grow tw-gap-x-2 tw-items-center tw-font-sans tw-text-sm tw-antialiased tw-font-normal tw-leading-normal text-blue-gray-900">
-                <span>
-                    Hiển thị:
-                </span>
-                <script>
-                const pageLimits = [10, 20, 30, 40, 50];
-                </script>
-                <select class="tw-select  tw-select-sm tw-select-bordered tw-w-full tw-max-w-20" x-model="query.limit">
-                    <template x-for="limit in pageLimits">
-                        <option x-text="limit" :value="limit" :selected="limit == query.limit"></option>
-                    </template>
-                </select>
-                <span x-text="` trên ${totalItems} kết quả`">
+        </td>
+        </tr>
+        </template>
 
-                </span>
-            </div>
 
-            <div class="tw-flex tw-gap-2">
+        </tbody>
+        </table>
+    </div>
+    <div class="tw-flex tw-items-center tw-p-4 tw-border-t tw-border-gray-50">
+        <div
+            class="tw-flex tw-grow tw-gap-x-2 tw-items-center tw-font-sans tw-text-sm tw-antialiased tw-font-normal tw-leading-normal text-blue-gray-900">
+            <span>
+                Hiển thị:
+            </span>
+            <script>
+            const pageLimits = [10, 20, 30, 40, 50];
+            </script>
+            <select class="tw-select  tw-select-sm tw-select-bordered tw-w-full tw-max-w-20" x-model="query.limit">
+                <template x-for="limit in pageLimits">
+                    <option x-text="limit" :value="limit" :selected="limit == query.limit"></option>
+                </template>
+            </select>
+            <span x-text="` trên ${totalItems} kết quả`">
 
-                <button x-bind:disabled="query.page == 1" x-on:click="query.page = query.page - 1"
-                    class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
-                    type="button">
-                    Trang trước
-                </button>
-                <div>
-                    <div
-                        class="tw-relative tw-h-10 tw-max-h-[40px] tw-w-10 tw-max-w-[40px] tw-select-none tw-rounded-lg tw-bg-gray-900 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-medium tw-uppercase tw-text-white tw-shadow-md tw-shadow-gray-900/10 tw-transition-all hover:tw-shadow-lg hover:tw-shadow-gray-900/20 focus:tw-opacity-[0.85] focus:tw-shadow-none active:tw-opacity-[0.85] active:tw-shadow-none disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none">
-                        <span
-                            class="tw-absolute tw-transform tw--translate-x-1/2 tw--translate-y-1/2 tw-top-1/2 tw-left-1/2"
-                            x-text="query.page">1</span>
-                    </div>
+            </span>
+        </div>
+
+        <div class="tw-flex tw-gap-2">
+
+            <button x-bind:disabled="query.page == 1" x-on:click="query.page = query.page - 1"
+                class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
+                type="button">
+                Trang trước
+            </button>
+            <div>
+                <div
+                    class="tw-relative tw-h-10 tw-max-h-[40px] tw-w-10 tw-max-w-[40px] tw-select-none tw-rounded-lg tw-bg-gray-900 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-medium tw-uppercase tw-text-white tw-shadow-md tw-shadow-gray-900/10 tw-transition-all hover:tw-shadow-lg hover:tw-shadow-gray-900/20 focus:tw-opacity-[0.85] focus:tw-shadow-none active:tw-opacity-[0.85] active:tw-shadow-none disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none">
+                    <span
+                        class="tw-absolute tw-transform tw--translate-x-1/2 tw--translate-y-1/2 tw-top-1/2 tw-left-1/2"
+                        x-text="query.page">1</span>
                 </div>
-                <button x-bind:disabled="query.page * query.limit >= totalItems"
-                    x-on:click="query.page = query.page + 1"
-                    class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
-                    type="button">
-                    Trang sau
-                </button>
             </div>
+            <button x-bind:disabled="query.page * query.limit >= totalItems" x-on:click="query.page = query.page + 1"
+                class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
+                type="button">
+                Trang sau
+            </button>
         </div>
+    </div>
     </div>
 </main>
 

@@ -100,6 +100,7 @@ formValidator(validatorRule);
                     const inputSeats = []
                     this.listCells.forEach((cell, index) => {
                         if (cell.MaLoaiGhe > 0) {
+                            //   const index = seat.X * ChieuRong + seat.Y
                             inputSeats.push({
                                 MaLoaiGhe: cell.MaLoaiGhe,
                                 SoGhe: this.getCellName(cell),

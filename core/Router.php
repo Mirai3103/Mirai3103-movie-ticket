@@ -69,7 +69,6 @@ class Router
             if ($requestMethod !== $method) {
                 continue;
             }
-            // check if pattern has '{'  if no just compare the pattern with requestUri
             if (strpos($pattern, '{') === false) {
                 if ($pattern === $requestUri) {
                     $callback = $route['function'];

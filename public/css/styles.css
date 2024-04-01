@@ -2956,10 +2956,6 @@ html {
   z-index: 100;
 }
 
-.tw-z-\[1\] {
-  z-index: 1;
-}
-
 .tw-m-10 {
   margin: 2.5rem;
 }
@@ -3104,6 +3100,22 @@ html {
   margin-top: 2rem;
 }
 
+.-tw-mt-20 {
+  margin-top: -5rem;
+}
+
+.-tw-mt-16 {
+  margin-top: -4rem;
+}
+
+.-tw-mt-10 {
+  margin-top: -2.5rem;
+}
+
+.-tw-mt-4 {
+  margin-top: -1rem;
+}
+
 .tw-block {
   display: block;
 }
@@ -3199,6 +3211,10 @@ html {
 
 .tw-h-full {
   height: 100%;
+}
+
+.tw-h-screen {
+  height: 100vh;
 }
 
 .tw-max-h-\[40px\] {
@@ -3546,6 +3562,10 @@ html {
 
 .tw-overflow-scroll {
   overflow: scroll;
+}
+
+.tw-overflow-x-auto {
+  overflow-x: auto;
 }
 
 .tw-overflow-y-auto {
@@ -4174,6 +4194,11 @@ html {
 
 .tw-text-transparent {
   color: transparent;
+}
+
+.tw-text-warning {
+  --tw-text-opacity: 1;
+  color: var(--fallback-wa,oklch(var(--wa)/var(--tw-text-opacity)));
 }
 
 .tw-text-white {

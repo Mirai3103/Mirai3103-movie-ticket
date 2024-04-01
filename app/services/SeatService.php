@@ -48,4 +48,10 @@ class SeatService
         $seats = Database::query($sql, [$roomId]);
         return $seats;
     }
+    public static function getSeatByIds($ids)
+    {
+        $sql = "SELECT * FROM Ghe WHERE id IN  (" . implode(",", $ids) . ")";
+        $seats = Database::query($sql, []);
+        return $seats;
+    }
 }

@@ -107,7 +107,7 @@ function renderElement() {
                         <i class="fa-solid fa-star"></i>
                         <span>Xem Trailer<span/>
                     </a>
-                    <a style="margin-right: 4px;" class="login-item btn-login btn" href="#" >
+                    <a style="margin-right: 4px;" class="login-item btn-login btn" href="/phim/${movie.MaPhim}" >
                          <i class="fa-solid fa-star"></i>
                         <span class="ms-2">Đặt vé</span>
                     </a>

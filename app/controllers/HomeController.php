@@ -1,6 +1,8 @@
 <?php
 
+use App\Services\CategoryService;
 use App\Services\PhimService;
+use App\Services\ShowService;
 use App\Services\UserService;
 use Core\Attributes\Route;
 
@@ -17,7 +19,9 @@ class HomeController
     #[Route("/trang-chu", "GET")]
     public static function home()
     {
-        return view("home");
+        $phims = PhimService::getPhimDangChieu();
+        $commingMovies = PhimService::getPhimSapChieu();
+        return view("home", ["phims" => $phims, "commingMovies" => $commingMovies]);
     }
     #[Route("/dang-nhap", "GET")]
     public static function login()
@@ -43,7 +47,15 @@ class HomeController
         }
         return view("login", ["error" => $loginResult->message]);
     }
-
+    #[Route("/phim/{id}", "GET")]
+    public static function chiTietPhim($id)
+    {
+        $id = intval($id);
+        $phim = PhimService::getPhimById($id);
+        $categories = CategoryService::getCategoriesByMovieId($id);
+        $upcomingShows = ShowService::getUpcomingShowsOfMovie($id);
+        return view("chi-tiet", ["phim" => $phim, "categories" => $categories, "upcomingShows" => $upcomingShows]);
+    }
 
     #[Route("/dang-ky", "POST")]
     public static function register()
@@ -55,6 +67,11 @@ class HomeController
     public static function lichChieu()
     {
         return view("lich-chieu");
+    }
+    #[Route("/trang-chu/tim-kiem", "GET")]
+    public static function search()
+    {
+        return view("tim-kiem");
     }
     #[Route("/dang-xuat", "GET")]
     public static function logout()

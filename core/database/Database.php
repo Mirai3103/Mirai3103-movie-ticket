@@ -8,6 +8,8 @@ use mysqli;
 class Database
 {
     private static mysqli $mysqli;
+
+
     public static function init_db()
     {
         static::$mysqli = Connection::make($GLOBALS['config']['database']);

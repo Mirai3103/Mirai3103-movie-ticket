@@ -65,4 +65,13 @@ class RoomController
             'room' => $room
         ]);
     }
+
+    #[Route("/api/phong-chieu/ids", "POST")]
+    public static function getRoomsByIds()
+    {
+        $data = request_body();
+        $ids = $data['ids'];
+        $rooms = RoomService::getRoomByIds($ids);
+        return json(JsonResponse::ok($rooms));
+    }
 }

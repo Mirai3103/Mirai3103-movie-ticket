@@ -64,6 +64,15 @@ class RoomService
     {
         $sql = "SELECT * FROM PhongChieu WHERE MaPhongChieu = ?";
         $room = Database::queryOne($sql, [$id]);
+        $cinema = CinemaService::getCinemaById($room['MaRapChieu']);
+        $room['RapChieu'] = $cinema;
         return $room;
     }
+    public static function getRoomByIds($ids)
+    {
+        $sql = "SELECT * FROM PhongChieu WHERE MaPhongChieu IN (" . implode(',', $ids) . ")";
+        $rooms = Database::query($sql, []);
+        return $rooms;
+    }
+
 }

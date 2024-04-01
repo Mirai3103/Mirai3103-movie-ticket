@@ -158,19 +158,20 @@ formValidator(validatorRule);
                 return {
                     ...emptySeat,
                     index: index,
-                }
-            })
+                    }
+                })
+            console.log(tempCells.length)
             seats.forEach((seat) => {
-                console.log(seat.MaLoaiGhe)
                 const seatType = seatTypes.find((item) => item.MaLoaiGhe === seat.MaLoaiGhe)
-                const index = seat.Y * ChieuRong + seat.X
+                const index = seat.X * ChieuRong + seat.Y
                 tempCells[index] = {
                     ...seat,
                     ...seatType,
                     index: index,
                 }
             })
-            listCells = tempCells
+            console.log(tempCells.length)   
+            listCells = [...tempCells]
             })
         ">
         <div class=" tw-flex tw-items-center tw-justify-between tw-gap-8 tw-mb-2">
@@ -283,12 +284,13 @@ formValidator(validatorRule);
                 </div>
             </form>
         </div>
-        <div class='tw-mt-8'>
+        <div class='tw-mt-8 '>
             <h5
                 class="tw-block tw-font-sans tw-text-2xl tw-antialiased tw-font-semibold tw-leading-snug tw-tracking-normal text-blue-gray-900">
                 Bố trí ghế
             </h5>
-            <div class='tw-flex tw-gap-y-4 tw-pb-10 tw-flex-col tw-items-center tw-relative tw-select-none' x-data="{
+            <div class='tw-flex tw-gap-y-4 tw-pb-10 tw-flex-col tw-items-center tw-relative tw-select-none tw-overflow-x-auto'
+                x-data="{
                 isMouseDown: false,
                 currentRect: null,
                 startX: 0,
@@ -466,9 +468,9 @@ formValidator(validatorRule);
                             </a></li>
                     </template>
                 </ul>
-                <div class='tw-w-full tw-flex tw-justify-center'>
+                <div class='tw-w-full tw-flex tw-justify-center tw-mx-auto'>
                     <div
-                        class='tw-w-[300px] tw-h-20 tw-bg-gray-200 tw-rounded-md tw-flex tw-justify-center tw-items-center'>
+                        class='tw-w-[300px] tw-h-20 tw-bg-gray-200 tw-mx-auto tw-rounded-md tw-flex tw-justify-center tw-items-center'>
                         <p class='tw-text-lg tw-font-semibold'>Màn hình</p>
                     </div>
                 </div>
@@ -506,10 +508,10 @@ formValidator(validatorRule);
       ">
                         <template x-for="cell in listCells" :key="cell.index">
                             <div :hidden="cell.MaLoaiGhe === -1" :index="cell.index" :bg-select="cell.MauSelect"
-                                :bg-normal="cell.Mau" :class="cell.Mau"
+                                :bg-normal="cell.Mau"
                                 :style="`background-color: ${cell.Mau}; grid-column: span ${cell.Rong}; aspect-ratio: ${cell.Rong} / ${cell.Dai}`"
                                 class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
-                                x-text="getCellName(cell)"></div>
+                                x-text="cell.TenGhe||getCellName(cell)"></div>
                         </template>
 
 
