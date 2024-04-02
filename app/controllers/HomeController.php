@@ -1,8 +1,10 @@
 <?php
 
+use App\Core\Database\QueryBuilder;
 use App\Services\CategoryService;
 use App\Services\PhimService;
 use App\Services\ShowService;
+use App\Services\TicketService;
 use App\Services\UserService;
 use Core\Attributes\Route;
 
@@ -54,7 +56,8 @@ class HomeController
         $phim = PhimService::getPhimById($id);
         $categories = CategoryService::getCategoriesByMovieId($id);
         $upcomingShows = ShowService::getUpcomingShowsOfMovie($id);
-        return view("chi-tiet", ["phim" => $phim, "categories" => $categories, "upcomingShows" => $upcomingShows]);
+        $ticketTypes = TicketService::getTicketTypes();
+        return view("chi-tiet", ["phim" => $phim, "categories" => $categories, "upcomingShows" => $upcomingShows, "ticketTypes" => $ticketTypes]);
     }
 
     #[Route("/dang-ky", "POST")]
@@ -80,4 +83,31 @@ class HomeController
         setcookie("user", "", time() - 3600);
         return redirect("trang-chu");
     }
+    #[Route("/test", "GET")]
+    public static function test()
+    {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->select(
+            [
+                'PhongChieu.MaPhongChieu' => 'PhongChieu.MaPhongChieu',
+                'PhongChieu.TenPhongChieu' => 'PhongChieu.TenPhongChieu',
+                'PhongChieu.ManHinh' => 'PhongChieu.ManHinh',
+                'PhongChieu.ChieuDai' => 'PhongChieu.ChieuDai',
+                'PhongChieu.ChieuRong' => 'PhongChieu.ChieuRong',
+                'RapChieu.MaRapChieu' => 'RapChieu.MaRapChieu',
+                'RapChieu.TenRapChieu' => 'RapChieu.TenRapChieu',
+                'RapChieu.DiaChi' => 'RapChieu.DiaChi',
+                'RapChieu.TrangThai' => 'RapChieu.TrangThai'
+            ]
+        )->from('PhongChieu')
+            ->join('RapChieu', 'PhongChieu.MaRapChieu = RapChieu.MaRapChieu');
+        $data = $queryBuilder->get();
+        return json($queryBuilder->parseMany($data, [
+            'root' => 'RapChieu',
+            'embed' => ['PhongChieu'],
+            "groupBy" => "MaRapChieu"
+        ]));
+
+    }
+
 }

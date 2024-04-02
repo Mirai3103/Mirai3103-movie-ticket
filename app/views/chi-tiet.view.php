@@ -7,16 +7,74 @@ require ('partials/head.php'); ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
     integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+var upcomingShows = <?= json_encode($upcomingShows) ?>;
+// / use loaddash to group by date
+var groupedShows = _.groupBy(upcomingShows, function(show) {
+    return show.NgayGioChieu.split(" ")[0];
+});
+
+const ageTags = {
+    "P": {
+        name: "P - Thích hợp cho mọi độ tuổi",
+        minAge: 0,
+    },
+    "K": {
+        name: "K - Được phổ biến người xem dưới 13 tuổi với điều kiện xem cùng cha mẹ hoặc người giám hộ",
+        minAge: 0,
+    },
+    "T13": {
+        name: "T13 - cấm người dưới 13 tuổi",
+        minAge: 13,
+    },
+    "T16": {
+        name: "T16 - cấm người dưới 16 tuổi",
+        minAge: 16,
+    },
+    "T18": {
+        name: "T18 - cấm người dưới 18 tuổi",
+        minAge: 18,
+    },
+    "C": {
+        name: "C - Phim không được phép phổ biến.",
+        minAge: 0,
+    }
+}
+</script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
 <div class="container-lg -tw-mt-4" x-data="{
     selectedSchedule: null,
-}">
-    <script>
-    var upcomingShows = <?= json_encode($upcomingShows) ?>;
-    // / use loaddash to group by date
-    var groupedShows = _.groupBy(upcomingShows, function(show) {
-        return show.NgayGioChieu.split(" ")[0];
-    });
-    </script>
+    fetchedCinemas: [],
+    isFetchingCinemas: false,
+    getShowsOfRoom: function(roomId) {
+        const currentShow = groupedShows[this.selectedSchedule];
+        return currentShow.filter(show => show.MaPhongChieu == roomId);
+    },
+    selectedShow: null,
+    selectedSeatTypes: [], // ... seatype,count
+}" x-init="
+$watch('selectedShow', (value) => {
+   console.log(value);
+})
+$watch('selectedSchedule',async (value) => {
+    isFetchingCinemas = true;
+    const selectedShowsDate = groupedShows[value];
+    const roomIds = selectedShowsDate.map(show => show.MaPhongChieu);
+    const res = await axios.post('/api/phong-chieu/ids/rap', { roomIds })
+    let cinemas = res.data.data;
+    cinemas = _.groupBy(cinemas, 'MaRapChieu');
+    cinemas = Object.values(cinemas);
+    cinemas = cinemas.map(cinema => {
+        return {
+            ...cinema[0],
+            PhongChieus: cinema.map(c => c.PhongChieu)
+        }
+    })
+    fetchedCinemas = cinemas;
+    isFetchingCinemas = false;
+})
+">
+
     <section class="sec-detail pt-sm-5">
         <div class="container-fluid detail__wr">
             <div class="row">
@@ -81,8 +139,9 @@ require ('partials/head.php'); ?>
                                 <div class="info__detail-icon">
                                     <i class="icon-age fa-solid fa-user-check"></i>
                                 </div>
-                                <span class="info__detail-title">
-                                    <?= $phim['HanCheDoTuoi'] ?>
+                                <span class="info__detail-title" x-text="ageTags['<?= $phim['HanCheDoTuoi'] ?>'].name">
+                                    >
+
                                 </span>
                             </div>
                         </div>
@@ -92,12 +151,6 @@ require ('partials/head.php'); ?>
                         <span class="detail-director text-white">
                             Đạo diễn: <?= $phim['DaoDien'] ?>
                         </span>
-                        <!-- <span class="detail-actor text-white" id="actor_id">
-                            Diễn viên: Phương Anh Đào, Tuấn Trần, Trấn Thành, Hồng Đào,
-                            Uyển Ân, Ngọc Giàu, Việt Anh, Quốc Khánh, Quỳnh Lý, Khả Như,
-                            Anh Đức, Thanh Hằng, Ngọc Nga, Lộ Lộ, Kiều Linh, Ngọc Nguyễn,
-                            Quỳnh Anh, Anh Thư.
-                        </span> -->
                         <span class="detail-actor__show text-decoration-underline show__actor" id="btnShowActor">
                             Xem thêm
                         </span>
@@ -197,234 +250,118 @@ require ('partials/head.php'); ?>
                 </div>
             </div>
         </div>
-        <div class="container-fluid movie__schedule-details mt-4 pt-5 pb-1 position-relative">
-            <div class="movie__schedule-item container bg-white rounded-2 pt-5 pt-lg-3 ps-5 my-xl-5">
-                <div class="row movie__schedule-detail my-xxl-5 mt-lg-5">
-                    <span class="theater-name"> PixelCinema Quốc Thanh </span>
-                    <span class="theater-address">
-                        271 Nguyễn Trãi, Phường Nguyễn Cư Trinh, Quận 1, Thành Phố Hồ
-                        Chí Minh
-                    </span>
-                    <div class="list__info-ctype" data-name="PixelCinema Quốc Thanh"
-                        data-address="271 Nguyễn Trãi, Phường Nguyễn Cư Trinh, Quận 1, Thành Phố Hồ Chí Minh">
-                        <div class="ctype-title">Standard</div>
-                        <ul class="row ctype-items justify-content-sm-start ms-sm-0 ps-0">
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                17:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                18:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                19:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                20:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                21:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                22:00
-                            </li>
-                        </ul>
-                        <div class="ctype-title">Deluxe</div>
-                        <ul class="row ctype-items justify-content-sm-start ms-sm-0 ps-0">
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                17:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                18:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                19:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                20:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                21:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                22:00
-                            </li>
-                        </ul>
+        <div class="container-fluid movie__schedule-details   mt-4 pt-5 pb-1 position-relative">
+            <div class="movie__schedule-item container !tw-pb-2 bg-white rounded-2 pt-5 pt-lg-3 ps-5 my-xl-5">
+                <template x-if="selectedSchedule === null">
+                    <div role="alert" class="tw-alert tw-my-3 tw-alert-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            class="stroke-current shrink-0 w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>
+                            Vui lòng chọn ngày để xem rạp chiếu
+                        </span>
                     </div>
-                </div>
-                <div class="row movie__schedule-detail my-xxl-5 my-lg-3">
-                    <span class="theater-name"> PixelCinema Hai Bà Trưng </span>
-                    <span class="theater-address">
-                        135 Hai Bà Trưng, Phường Bến Nghé ,Quận 1,Thành Phố Hồ Chí Minh
-                    </span>
-                    <div class="list__info-ctype" data-name="PixelCinema Hai Bà Trưng"
-                        data-address="135 Hai Bà Trưng, Phường Bến Nghé ,Quận 1,Thành Phố Hồ Chí Minh">
-                        <div class="ctype-title">Standard</div>
-                        <ul class="row ctype-items justify-content-sm-start ms-sm-0 ps-0">
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                17:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                18:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                19:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                20:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                21:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                22:00
-                            </li>
-                        </ul>
-                        <div class="ctype-title">Deluxe</div>
-                        <ul class="row ctype-items justify-content-sm-start ms-sm-0 ps-0">
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                17:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                18:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                19:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                20:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                21:00
-                            </li>
-                            <li class="ctype__item col-2 text-warning fs-6 text-center">
-                                22:00
-                            </li>
-                        </ul>
+                </template>
+                <template x-if="isFetchingCinemas">
+                    <div class="tw-flex tw-w-full tw-py-16 tw-justify-center">
+                        <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
                     </div>
-                </div>
+                </template>
+                <template x-if="!isFetchingCinemas">
+                    <template x-for="cinema in fetchedCinemas" :key="cinema.MaRapChieu">
+                        <div class="row movie__schedule-detail my-xxl-3 mt-lg-5">
+                            <span class="theater-name" x-text="cinema.TenRapChieu"></span>
+                            <span class="theater-address" x-text="cinema.DiaChi"></span>
+
+                            <div class="list__info-ctype" data-name="PixelCinema Quốc Thanh"
+                                data-address="271 Nguyễn Trãi, Phường Nguyễn Cư Trinh, Quận 1, Thành Phố Hồ Chí Minh">
+                                <template x-for="room in cinema.PhongChieus" :key="room.MaPhongChieu">
+                                    <div>
+                                        <div class="ctype-title tw-font-semibold " x-text="room.TenPhongChieu">
+
+                                        </div>
+                                        <ul class="row ctype-items justify-content-sm-start ms-sm-0 ps-0">
+                                            <template x-for="show in getShowsOfRoom(room.MaPhongChieu)"
+                                                :key="show.MaXuatChieu">
+                                                <li :id-show="show.MaXuatChieu" role="button" x-on:click="
+                                                    selectedShow = show.MaXuatChieu;
+                                                    " class="ctype__item col-2 text-warning fs-6 text-center"
+                                                    x-text="dayjs(show.NgayGioChieu).format('HH:mm')">
+
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </div>
+                                </template>
+
+                            </div>
+                        </div>
+                    </template>
+                </template>
+
             </div>
+
+
+
             <div class="moive_schedule-list position-absolute text-white">
                 <span> DANH SÁCH RẠP </span>
             </div>
 
             <!-- Ticket types -->
-            <div class="container px-0">
-                <div class="mv__schedule_ticket justify-content-center text-center mt-5">
-                    <span class="text-center text-warning"> LOẠI VÉ </span>
+            <template x-if="selectedShow !== null">
+                <div class="container px-0">
+                    <div class="mv__schedule_ticket justify-content-center text-center mt-5">
+                        <span class="text-center text-warning"> LOẠI VÉ </span>
+                    </div>
+                    <div class="row d-flex tw-gap-y-3 justify-content-start list-tickets px-2 justify-content-center fw-bold"
+                        id="row-ticket">
+                        <?php foreach ($ticketTypes as $loaiVe): ?>
+
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-12 mt-xl-0 mt-lg-0 mt-md-0 mt-2">
+                                <div class="ticket__item px-2">
+                                    <div class="ticket-detail">
+                                        <span class="ticket-type d-block">
+                                            <?= $loaiVe['TenLoaiVe'] ?>
+                                        </span>
+                                        <span class="ticket-des d-block fs-6">
+                                            <?php
+                                            $rong = $loaiVe['Rong'];
+                                            if ($rong == 1) {
+                                                echo "Ghế đơn";
+                                            } elseif ($rong == 2) {
+                                                echo "Ghế đôi";
+                                            } else {
+                                                echo "Ghế $rong người";
+                                            }
+                                            ?>
+                                        </span>
+                                        <span class="ticket-price fs-6">
+                                            <?= number_format($loaiVe['GiaVe']) ?>đ
+                                        </span>
+                                    </div>
+
+                                    <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
+                                        <div class="count-btn count-minus">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </div>
+                                        <div class="count-number mx-2">0</div>
+                                        <div class="count-btn count-plus">
+                                            <i class="fa-solid fa-plus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-                <div class="row d-flex justify-content-start list-tickets px-2 justify-content-center fw-bold"
-                    id="row-ticket">
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-12 mt-xl-0 mt-lg-0 mt-md-0 mt-2">
-                        <div class="ticket__item px-2">
-                            <div class="ticket-detail">
-                                <span class="ticket-type d-block"> NGƯỜI LỚN </span>
-                                <span class="ticket-des d-block fs-6"> Đơn </span>
-                                <span class="ticket-price fs-6"> 65.000 </span>
-                            </div>
 
-                            <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                </div>
-                                <div class="count-number mx-2">0</div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-12 mt-xl-0 mt-lg-0 mt-md-0 mt-2">
-                        <div class="ticket__item px-2">
-                            <div class="ticket-detail">
-                                <span class="ticket-type d-block">
-                                    HSSV - NGƯỜI CAO TUỔI
-                                </span>
-                                <span class="ticket-des d-block fs-6"> Đơn </span>
-                                <span class="ticket-price fs-6"> 45.000 </span>
-                            </div>
-
-                            <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                </div>
-                                <div class="count-number mx-2">0</div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-12 mt-xl-0 mt-lg-0 mt-md-0 mt-2">
-                        <div class="ticket__item px-2">
-                            <div class="ticket-detail">
-                                <span class="ticket-type d-block"> NGƯỜI LỚN </span>
-                                <span class="ticket-des d-block fs-6"> Đôi </span>
-                                <span class="ticket-price fs-6"> 135.000 </span>
-                            </div>
-
-                            <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                </div>
-                                <div class="count-number mx-2">0</div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- <div class="ticket__item col-5">
-                            <span class="ticket-type d-block fs-5">
-                                NGƯỜI LỚN
-                            </span>
-                            <span class="ticket-des d-block fs-6">
-                                Đơn
-                            </span>
-                            <span class="ticket-price fs-6">
-                                65.000
-                            </span>
-                            <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                </div>
-                                <div class="count-number mx-2">
-                                    0
-                                </div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="ticket__item col-5">
-                            <span class="ticket-type d-block fs-5">
-                                NGƯỜI LỚN
-                            </span>
-                            <span class="ticket-des d-block fs-6">
-                                Đơn
-                            </span>
-                            <span class="ticket-price fs-6">
-                                65.000
-                            </span>
-                            <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                </div>
-                                <div class="count-number mx-2">
-                                    0
-                                </div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                            </div>
-                        </div> -->
-                </div>
-            </div>
+            </template>
 
             <!-- Chair choice -->
-            <div class="container-xxl container-fluid px-0 mt-5">
+            <div class="container-xxl container-fluid px-0 mt-5" x-show="selectedSeatTypes.length > 0">
                 <div class="chair_title justify-content-center text-center">
                     <span class="text-center text-warning"> CHỌN GHẾ </span>
                 </div>
@@ -2457,7 +2394,7 @@ require ('partials/head.php'); ?>
     </section>
 
     <!-- Combo -->
-    <div class="combo pt-sm-5 mb-5 mt-3">
+    <div class="combo pt-sm-5 mb-5 mt-3" x-show="selectedSeatTypes.length > 0">
         <div class="container-fluid combo__heading">
             <div class="row">
                 <div class="combo__title justify-content-center text-center">

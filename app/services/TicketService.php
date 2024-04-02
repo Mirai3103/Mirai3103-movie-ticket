@@ -27,4 +27,9 @@ class TicketService
         return Database::query("SELECT * FROM tickets WHERE MaSuatChieu = ?", [$showId]);
     }
 
+
+    public static function getTicketTypes()
+    {
+        return Database::query("SELECT * FROM LoaiVe", []);
+    }
 }

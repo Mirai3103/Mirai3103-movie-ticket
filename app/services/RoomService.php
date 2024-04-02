@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Database\QueryBuilder;
 use App\Models\JsonResponse;
 use App\Models\TrangThaiPhong;
+use App\Models\TrangThaiVe;
 
 class RoomService
 {
@@ -37,13 +39,6 @@ class RoomService
     }
     public static function createRoom($data)
     {
-        // MaPhongChieu
-        // TenPhongChieu
-        // ManHinh
-        // ChieuDai
-        // ChieuRong
-        // MaRapChieu
-        // TrangThai
         $params = [
             'TenPhongChieu' => $data['TenPhongChieu'],
             'ManHinh' => $data['ManHinh'],
@@ -72,6 +67,25 @@ class RoomService
     {
         $sql = "SELECT * FROM PhongChieu WHERE MaPhongChieu IN (" . implode(',', $ids) . ")";
         $rooms = Database::query($sql, []);
+        return $rooms;
+    }
+    public static function getAllOfShow($showId)
+    {
+        $sql = "SELECT MaPhongChieu FROM SuatChieu WHERE MaXuatChieu = ?";
+        $rooms = Database::queryOne($sql, [$showId]);
+        $roomId = $rooms['MaPhongChieu'];
+
+        $sql = "
+        SELECT Ghe.*, Ve.MaVe from Ghe left join (
+                        select * from Ve where Ve.MaSuatChieu = ? and Ve.KhoaDen < ? and Ve.TrangThai = ?
+                    ) as Ve on Ghe.MaGhe = Ve.MaGhe 
+            where Ghe.MaPhongChieu = ?
+        ";
+        $seats = Database::query($sql, [$showId, date('Y-m-d H:i:s'), TrangThaiVe::DaDat->value, $roomId]);
+
+
+
+
         return $rooms;
     }
 

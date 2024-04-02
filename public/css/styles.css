@@ -639,6 +639,36 @@ html {
   --tw-backdrop-sepia:  ;
 }
 
+.tw-alert {
+  display: grid;
+  width: 100%;
+  grid-auto-flow: row;
+  align-content: flex-start;
+  align-items: center;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+  border-radius: var(--rounded-box, 1rem);
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: var(--fallback-b2,oklch(var(--b2)/var(--tw-border-opacity)));
+  padding: 1rem;
+  --tw-text-opacity: 1;
+  color: var(--fallback-bc,oklch(var(--bc)/var(--tw-text-opacity)));
+  --alert-bg: var(--fallback-b2,oklch(var(--b2)/1));
+  --alert-bg-mix: var(--fallback-b1,oklch(var(--b1)/1));
+  background-color: var(--alert-bg);
+}
+
+@media (min-width: 640px) {
+  .tw-alert {
+    grid-auto-flow: column;
+    grid-template-columns: auto minmax(auto,1fr);
+    justify-items: start;
+    text-align: start;
+  }
+}
+
 .tw-badge {
   display: inline-flex;
   align-items: center;
@@ -1726,6 +1756,14 @@ html {
 .tw-table-zebra tbody tr:nth-child(even) :where(.tw-table-pin-cols tr th) {
   --tw-bg-opacity: 1;
   background-color: var(--fallback-b2,oklch(var(--b2)/var(--tw-bg-opacity)));
+}
+
+.tw-alert-info {
+  border-color: var(--fallback-in,oklch(var(--in)/0.2));
+  --tw-text-opacity: 1;
+  color: var(--fallback-inc,oklch(var(--inc)/var(--tw-text-opacity)));
+  --alert-bg: var(--fallback-in,oklch(var(--in)/1));
+  --alert-bg-mix: var(--fallback-b1,oklch(var(--b1)/1));
 }
 
 .tw-btm-nav > *:not(.tw-active) {
@@ -2980,8 +3018,29 @@ html {
   margin-bottom: 1rem;
 }
 
+.tw-my-3 {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.-tw-mt-10 {
+  margin-top: -2.5rem;
+}
+
+.-tw-mt-16 {
+  margin-top: -4rem;
+}
+
+.-tw-mt-20 {
+  margin-top: -5rem;
+}
+
 .-tw-mt-32 {
   margin-top: -8rem;
+}
+
+.-tw-mt-4 {
+  margin-top: -1rem;
 }
 
 .tw--mb-1 {
@@ -3100,20 +3159,8 @@ html {
   margin-top: 2rem;
 }
 
-.-tw-mt-20 {
-  margin-top: -5rem;
-}
-
-.-tw-mt-16 {
-  margin-top: -4rem;
-}
-
-.-tw-mt-10 {
-  margin-top: -2.5rem;
-}
-
-.-tw-mt-4 {
-  margin-top: -1rem;
+.-tw-ml-2 {
+  margin-left: -0.5rem;
 }
 
 .tw-block {
@@ -3962,6 +4009,11 @@ html {
   padding-bottom: 1.75rem;
 }
 
+.tw-py-16 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
 .tw-pb-10 {
   padding-bottom: 2.5rem;
 }
@@ -3980,6 +4032,14 @@ html {
 
 .tw-pl-5 {
   padding-left: 1.25rem;
+}
+
+.tw-pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.\!tw-pb-2 {
+  padding-bottom: 0.5rem !important;
 }
 
 .tw-text-left {

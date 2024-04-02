@@ -2,8 +2,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Models\JsonDataErrorRespose;
-use App\Models\JsonResponse;
+use App\Core\Database\QueryBuilder;
 
 class CinemaService
 {
@@ -23,6 +22,38 @@ class CinemaService
         $sql = "SELECT * FROM RapChieu WHERE MaRapChieu = ?";
         $cinema = Database::queryOne($sql, [$id]);
         return $cinema;
+    }
+    public static function getCinemasByRoomIds($roomIds)
+    {
+        // $sql = "SELECT DISTINCT RapChieu.* 
+        // FROM RapChieu JOIN PhongChieu 
+        // ON RapChieu.MaRapChieu = PhongChieu.MaRapChieu 
+        // WHERE PhongChieu.MaPhongChieu 
+        // IN (" . implode(",", $roomIds) . ")";
+        // $cinemas = Database::query($sql, []);
+        // return $cinemas;
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->select(
+            [
+                'PhongChieu.MaPhongChieu' => 'PhongChieu.MaPhongChieu',
+                'PhongChieu.TenPhongChieu' => 'PhongChieu.TenPhongChieu',
+                'PhongChieu.ManHinh' => 'PhongChieu.ManHinh',
+                'PhongChieu.ChieuDai' => 'PhongChieu.ChieuDai',
+                'PhongChieu.ChieuRong' => 'PhongChieu.ChieuRong',
+                'RapChieu.MaRapChieu' => 'RapChieu.MaRapChieu',
+                'RapChieu.TenRapChieu' => 'RapChieu.TenRapChieu',
+                'RapChieu.DiaChi' => 'RapChieu.DiaChi',
+                'RapChieu.TrangThai' => 'RapChieu.TrangThai'
+            ]
+        )->from('RapChieu')
+            ->join('PhongChieu', 'RapChieu.MaRapChieu = PhongChieu.MaRapChieu')
+            ->where('PhongChieu.MaPhongChieu', 'IN', "(" . implode(",", $roomIds) . ")");
+        $data = $queryBuilder->get();
+        return $queryBuilder->parseMany($data, [
+            'root' => 'RapChieu',
+            'embed' => ['PhongChieu']
+        ]);
+
     }
 
 

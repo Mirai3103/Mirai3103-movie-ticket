@@ -25,5 +25,14 @@ class CinemaController
         $results = CinemaService::getCinemasInIds(request_body()["ids"]);
         return json(JsonResponse::ok($results));
     }
+    #[Route("/api/phong-chieu/ids/rap", "POST")]
+    public static function getCinemasByRoomIds()
+    {
+        if (!isset(request_body()["roomIds"])) {
+            return json(new JsonResponse(400, "Missing roomIds"));
+        }
+        $results = CinemaService::getCinemasByRoomIds(request_body()["roomIds"]);
+        return json(JsonResponse::ok($results));
+    }
 
 }

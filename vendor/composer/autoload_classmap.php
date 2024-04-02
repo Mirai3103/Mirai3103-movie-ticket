@@ -9,6 +9,7 @@ return array(
     'AcctionMap' => $baseDir . '/core/ControllerMap.php',
     'App\\Core\\Database\\Connection' => $baseDir . '/core/database/Connection.php',
     'App\\Core\\Database\\Database' => $baseDir . '/core/database/Database.php',
+    'App\\Core\\Database\\QueryBuilder' => $baseDir . '/core/database/QueryBuilder.php',
     'App\\Core\\Request' => $baseDir . '/core/Request.php',
     'App\\Models\\JsonDataErrorRespose' => $baseDir . '/app/models/Response.php',
     'App\\Models\\JsonResponse' => $baseDir . '/app/models/Response.php',
@@ -49,6 +50,7 @@ return array(
     'RoomController' => $baseDir . '/app/controllers/admin/RoomController.php',
     'Router' => $baseDir . '/core/Router.php',
     'SeatTypeController' => $baseDir . '/app/controllers/SeatTypeController.php',
+    'ShowController' => $baseDir . '/app/controllers/admin/ShowController.php',
     'StatusController' => $baseDir . '/app/controllers/StatusController.php',
     'UserController' => $baseDir . '/app/controllers/UserController.php',
 );
