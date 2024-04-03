@@ -1,11 +1,12 @@
 <?php
 
 use App\Models\JsonResponse;
+use App\Services\SeatService;
 use App\Services\SeatTypeService;
 use Core\Attributes\Route;
 
 
-class SeatTypeController
+class SeatController
 {
     #[Route("/api/loai-ghe", "GET")]
     public static function index()
@@ -20,5 +21,10 @@ class SeatTypeController
             return json(new JsonResponse(400, "Missing ids parameter"));
         }
         return json(JsonResponse::ok(SeatTypeService::getSeatTypeByIds(request_body()['ids'])));
+    }
+    #[Route("/api/suat-chieu/{id}/ghe", "GET")]
+    public static function getSeatsByShowId($id)
+    {
+        return json(JsonResponse::ok(SeatService::getAllOfShow($id)));
     }
 }

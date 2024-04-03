@@ -3,6 +3,7 @@
 use App\Core\Database\QueryBuilder;
 use App\Services\CategoryService;
 use App\Services\PhimService;
+use App\Services\SeatTypeService;
 use App\Services\ShowService;
 use App\Services\TicketService;
 use App\Services\UserService;
@@ -57,7 +58,14 @@ class HomeController
         $categories = CategoryService::getCategoriesByMovieId($id);
         $upcomingShows = ShowService::getUpcomingShowsOfMovie($id);
         $ticketTypes = TicketService::getTicketTypes();
-        return view("chi-tiet", ["phim" => $phim, "categories" => $categories, "upcomingShows" => $upcomingShows, "ticketTypes" => $ticketTypes]);
+        $seatTypes = SeatTypeService::getAllSeatType();
+        return view("chi-tiet", [
+            "phim" => $phim,
+            "categories" => $categories,
+            "upcomingShows" => $upcomingShows,
+            "ticketTypes" => $ticketTypes,
+            "seatTypes" => $seatTypes
+        ]);
     }
 
     #[Route("/dang-ky", "POST")]

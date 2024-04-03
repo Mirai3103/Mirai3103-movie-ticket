@@ -1,6 +1,15 @@
 <?php
 title("Dday la homr");
-
+function getSoNguoiDisplay($rong)
+{
+    if ($rong == 1) {
+        return "Ghế đơn";
+    } elseif ($rong == 2) {
+        return "Ghế đôi";
+    } else {
+        return "Ghế $rong người";
+    }
+}
 require ('partials/head.php'); ?>
 <link rel="stylesheet" href="/public/chi_tiet_phim/test.css">
 <link rel="stylesheet" href="/public/chi_tiet_phim/responsive.css">
@@ -14,6 +23,10 @@ var groupedShows = _.groupBy(upcomingShows, function(show) {
     return show.NgayGioChieu.split(" ")[0];
 });
 
+
+function indexToAlphabet(index) {
+    return String.fromCharCode(65 + index);
+}
 const ageTags = {
     "P": {
         name: "P - Thích hợp cho mọi độ tuổi",
@@ -42,7 +55,8 @@ const ageTags = {
 }
 </script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-<div class="container-lg -tw-mt-4" x-data="{
+<div class="container-lg -tw-mt-4" x-data="
+    {
     selectedSchedule: null,
     fetchedCinemas: [],
     isFetchingCinemas: false,
@@ -51,13 +65,149 @@ const ageTags = {
         return currentShow.filter(show => show.MaPhongChieu == roomId);
     },
     selectedShow: null,
-    selectedSeatTypes: [], // ... seatype,count
-}" x-init="
-$watch('selectedShow', (value) => {
-   console.log(value);
+    selectedTicketTypes: [], // ... seaticket,count
+    finalPrice: 0,
+    seats: [],
+    ChieuDai: 0,
+    ChieuRong: 0,
+    roomSize: {
+        width: 0,
+        height: 0
+    },
+    isDoneSelecting: false,
+    getCurrentShowInfo: function() {
+        return groupedShows[this.selectedSchedule].find(show => show.MaXuatChieu == this.selectedShow.MaXuatChieu);
+    },
+    getCurrentSelectSeatsInfo: function() {
+        let listSelectedSeats = this.selectedTicketTypes.map(type => type.seats).flat();
+        return this.seats.filter(seat => listSelectedSeats.includes(seat.MaGhe));
+    },
+    async calFinalPrice() {
+        let price = 0;
+        for (let i = 0; i < this.selectedTicketTypes.length; i++) {
+            const type = this.selectedTicketTypes[i];
+            price += type.count * type.GiaVe;
+        }
+        let listSelectedSeats = this.selectedTicketTypes.map(type => type.seats).flat();
+        for (let i = 0; i < this.seats.length; i++) {
+            const seat = this.seats[i];
+            if (listSelectedSeats.includes(seat.MaGhe)) {
+                price += seat.GiaVe;
+            }
+        }
+        let currentShow = groupedShows[this.selectedSchedule];
+         let showPrice = currentShow.find(show => show.MaXuatChieu == this.MaXuatChieu)?.GiaVe||0;
+        price += showPrice;
+        console .log(price,` ${showPrice} `);
+        this.finalPrice = price;
+        return await Promise.resolve(price);
+    },
+    onSeatClick: function(seat) {
+         if (seat.MaVe !== null) {
+            toast('Ghế đã có người đặt', {
+                position: 'bottom-center',
+                type: 'danger'
+            });
+            return;
+        }
+        if(seat.selected) {
+            for (let i = 0; i < this.selectedTicketTypes.length; i++) {
+                const type = this.selectedTicketTypes[i];
+                const index = type.seats.indexOf(seat.MaGhe);
+                if (index !== -1) {
+                    type.seats.splice(index, 1);
+                    this.seats[seat.index].selected = false;
+                    break;
+                }
+            }
+            return;
+        }
+        const listValidSelectedTicketTypes = this.selectedTicketTypes.filter(type => type.Rong == seat.Rong);
+        let isHasValid = false;
+ 
+        for (let i = 0; i < listValidSelectedTicketTypes.length; i++) {
+            const type = listValidSelectedTicketTypes[i];
+            if (type.count > type.seats.length) {
+                type.seats.push(seat.MaGhe);
+                this.seats[seat.index].selected = true;
+                isHasValid = true;
+                break;
+            }
+        }
+        if (!isHasValid) {
+            toast('Ghế không hợp lệ với loại vé đã chọn', {
+                position: 'bottom-center',
+                type: 'danger'
+            });
+            return;
+        }
+         this.isDoneSelecting = this.selectedTicketTypes.every(type => type.count === type.seats.length);
+         if(this.isDoneSelecting)   toast('Chọn ghế xong', {
+            position: 'bottom-center',
+            type: 'success'
+        });
+        $nextTick(() => {
+            this.calFinalPrice();
+        })
+    },
+}
+" x-init="
+$watch('isDoneSelecting', (value) => {
+    if(value) {
+        const selectedTicketTypeIds = selectedTicketTypes.map(type => type.MaLoaiVe);
+
+        let ves = [];
+        selectedTicketTypes.forEach(type => {
+            type.seats.forEach(seat => {
+                ves.push({
+                    MaXuatChieu: selectedShow.MaXuatChieu,
+                    MaLoaiVe: type.MaLoaiVe,
+                    MaGhe: seat,
+                })
+            })
+        });
+        
+        console.log(ves);
+    }
+})
+$watch('selectedShow',async (value) => {
+   if(value !== null) {
+      await axios.get(`/api/suat-chieu/${value.MaXuatChieu}/ghe`).then(res => {
+       const ChieuDaiInt = parseInt(ChieuDai);
+       const ChieuRongInt = parseInt(ChieuRong);
+       roomSize =calculateRoomSize(ChieuDaiInt,ChieuRongInt);
+       let cells = Array.from({length:ChieuDaiInt*ChieuRongInt},(v,i) => {
+            return {
+                ...emptySeat,
+                X: i % ChieuDaiInt,
+                Y: Math.floor(i / ChieuDaiInt),
+                TrangThai: 0,
+                MaLoaiGhe: 1,
+                MaGhe: null,
+                index: i
+            }
+        });
+        const temp= res.data.data;
+        temp.forEach(seat => {
+            const seatType = seatTypes.find(type => type.MaLoaiGhe === seat.MaLoaiGhe);
+            const index = parseInt(seat.X) * ChieuRongInt +  parseInt(seat.Y)
+            cells[index] = {
+                ...cells[index],
+                ...seat,
+                ...seatType,
+                index: index
+            }
+        });
+        seats = cells;
+      })
+   }
 })
 $watch('selectedSchedule',async (value) => {
     isFetchingCinemas = true;
+    selectedShow = null;
+    fetchedCinemas = [];
+    selectedTicketTypes = [];
+    seats = [];
     const selectedShowsDate = groupedShows[value];
     const roomIds = selectedShowsDate.map(show => show.MaPhongChieu);
     const res = await axios.post('/api/phong-chieu/ids/rap', { roomIds })
@@ -286,7 +436,14 @@ $watch('selectedSchedule',async (value) => {
                                             <template x-for="show in getShowsOfRoom(room.MaPhongChieu)"
                                                 :key="show.MaXuatChieu">
                                                 <li :id-show="show.MaXuatChieu" role="button" x-on:click="
-                                                    selectedShow = show.MaXuatChieu;
+                                                    selectedShow = {
+                                                        ...show,
+                                                        PhongChieu: {
+                                                            ...room
+                                                        }
+                                                    };
+                                                    ChieuDai=room.ChieuDai;
+                                                    ChieuRong=room.ChieuRong;
                                                     " class="ctype__item col-2 text-warning fs-6 text-center"
                                                     x-text="dayjs(show.NgayGioChieu).format('HH:mm')">
 
@@ -327,15 +484,11 @@ $watch('selectedSchedule',async (value) => {
                                         </span>
                                         <span class="ticket-des d-block fs-6">
                                             <?php
+
+
                                             $rong = $loaiVe['Rong'];
-                                            if ($rong == 1) {
-                                                echo "Ghế đơn";
-                                            } elseif ($rong == 2) {
-                                                echo "Ghế đôi";
-                                            } else {
-                                                echo "Ghế $rong người";
-                                            }
-                                            ?>
+                                            echo getSoNguoiDisplay($rong)
+                                                ?>
                                         </span>
                                         <span class="ticket-price fs-6">
                                             <?= number_format($loaiVe['GiaVe']) ?>đ
@@ -343,11 +496,47 @@ $watch('selectedSchedule',async (value) => {
                                     </div>
 
                                     <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                        <div class="count-btn count-minus">
+                                        <div class="count-btn count-minus" x-on:click="
+                                        const index = selectedTicketTypes.findIndex(type => type.MaLoaiVe == <?= $loaiVe['MaLoaiVe'] ?>);
+                                        if(index !== -1) {
+                                            selectedTicketTypes[index].count = Math.max(selectedTicketTypes[index].count - 1, 0);
+                                            if(selectedTicketTypes[index].count === 0) {
+                                                selectedTicketTypes.splice(index, 1);
+                                            }
+                                        } else {
+                                            selectedTicketTypes.push({
+                                                MaLoaiVe: <?= $loaiVe['MaLoaiVe'] ?>,
+                                                count: 1,
+                                                seats: [],
+                                                Rong: <?= $loaiVe['Rong'] ?>,
+                                                GiaVe: <?= $loaiVe['GiaVe'] ?>,
+                                                SoNguoiDisplay: '<?= getSoNguoiDisplay($loaiVe['Rong']) ?>',
+                                                TenLoaiVe:'<?= $loaiVe['TenLoaiVe'] ?>'
+                                            })
+                                        }
+                                        ">
                                             <i class="fa-solid fa-minus"></i>
                                         </div>
-                                        <div class="count-number mx-2">0</div>
-                                        <div class="count-btn count-plus">
+                                        <div class="count-number mx-2">
+                                            <span
+                                                x-text="selectedTicketTypes.find(type => type.MaLoaiVe == <?= $loaiVe['MaLoaiVe'] ?>)?.count ?? 0"></span>
+                                        </div>
+                                        <div class="count-btn count-plus" x-on:click="
+                                        const index = selectedTicketTypes.findIndex(type => type.MaLoaiVe == <?= $loaiVe['MaLoaiVe'] ?>);
+                                        if(index !== -1) {
+                                            selectedTicketTypes[index].count += 1;
+                                        } else {
+                                            selectedTicketTypes.push({
+                                                MaLoaiVe: <?= $loaiVe['MaLoaiVe'] ?>,
+                                                count: 1,
+                                                seats: [],
+                                                Rong: <?= $loaiVe['Rong'] ?>,
+                                                GiaVe: <?= $loaiVe['GiaVe'] ?>,
+                                                SoNguoiDisplay: '<?= getSoNguoiDisplay($loaiVe['Rong']) ?>',
+                                                TenLoaiVe:'<?= $loaiVe['TenLoaiVe'] ?>'
+                                            })
+                                        }
+                                        ">
                                             <i class="fa-solid fa-plus"></i>
                                         </div>
                                     </div>
@@ -361,2040 +550,57 @@ $watch('selectedSchedule',async (value) => {
             </template>
 
             <!-- Chair choice -->
-            <div class="container-xxl container-fluid px-0 mt-5" x-show="selectedSeatTypes.length > 0">
-                <div class="chair_title justify-content-center text-center">
-                    <span class="text-center text-warning"> CHỌN GHẾ </span>
-                </div>
-                <div class="row seat-screen mt-5 text-center position-relative">
-                    <img src="../assets/img/img-screen.png" alt="" />
-                    <span class="seat-screen-title position-absolute fs-3 text-white">Màn hình</span>
-                </div>
-                <div class="minimap-container">
-                    <div class="seat-table mt-4">
-                        <table class="seat-table-inner text-white">
-                            <!-- row A -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">A</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            A15
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
+            <template x-if="seats&&seats.length>0">
+                <div class="container-xxl container-fluid px-0 mt-5">
+                    <div class="chair_title justify-content-center text-center">
+                        <span class="text-center text-warning"> CHỌN GHẾ </span>
+                    </div>
+                    <div class="row seat-screen mt-5 text-center position-relative">
+                        <img src="/public/images/img-screen.png" alt="" />
+                        <span class="seat-screen-title position-absolute fs-3 text-white">Màn hình</span>
+                    </div>
 
-                            <!-- row B -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">B</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            B15
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
+                    <div class="minimap-container tw-mt-12">
+                        <div class="seat-table mt-4">
+                            <div class='tw-grid  tw-mx-auto' :style="{
+                            width: roomSize.width + 'px',
+                            gridTemplateColumns: `repeat(${parseInt(ChieuRong)}, ${SEAT_SIZE}px)`,
+                            gap: SEAT_GAP + 'px',
+                            padding: SEAT_GAP + 'px'
+                        }">
+                                <template x-for="cell in seats" :key="cell.index">
+                                    <div :hidden="cell.MaLoaiGhe === -1" :index="cell.index" :style="{
+                                            backgroundColor: cell.selected? cell.MauSelect : cell.Mau,
+                                            gridColumn: `span ${cell.Rong}`,
+                                            aspectRatio: `${cell.Rong} / ${cell.Dai}`
+                                        }" :class="{
+                                            'cursor-pointer': cell.MaVe ==null,
+                                            'tw-cursor-not-allowed': cell.MaVe != null,
+                                        }" x-on:click="onSeatClick(cell)"
+                                        class="hover-change-bg seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
+                                        x-text="cell.SoGhe"></div>
+                                </template>
 
-                            <!-- row C -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">C</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            C15
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row seat-note mt-4 justify-content-between my-3 text-white">
 
-                            <!-- row D -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">D</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-booked">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-booked">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-booked">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-booked">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-booked">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            D15
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row E -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">E</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            E15
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row F -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">F</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            F15
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row G -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">G</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            G17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row H -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">H</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            H17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row J -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">J</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            J17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row K -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">K</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            K17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row L -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">L</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            L17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row M -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">M</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            M17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row N -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">N</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            N17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row O -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">O</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            O09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            010
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            011
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            012
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            013
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            014
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            015
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            016
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            017
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row P -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">P</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            P17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row Q -->
-                            <tr class="seat-table-row d-flex">
-                                <td class="seat-name-row fs-5">Q</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q06
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q07
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q08
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q09
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q10
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q11
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q12
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q13
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q14
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q15
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q16
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            Q17
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <!-- row R -->
-                            <tr class="seat-table-row d-flex me-3">
-                                <td class="seat-name-row seat-name-row-double fs-5">R</td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-couple">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            R01
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-couple">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            R02
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td seat-couple">
-                                    <div class="seat-detail seat-couple-booked">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            R03
-                                        </span>
-                                    </div>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-couple">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            R04
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-couple">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            R05
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="seat-td">
-                                    <div class="seat-detail seat-couple">
-                                        <span class="seat-detail-name d-flex justify-content-center">
-                                            R06
-                                        </span>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
+                        <template x-for="seatType in realSeats" :key="seatType.MaLoaiGhe">
+                            <div :style="`background-color: ${seatType.Mau}`"
+                                class="seat__note-item col-xl-2 col-lg-2 col-md-2 col-6 d-flex align-items-center text-center">
+                                <span x-text="seatType.TenLoaiGhe"></span>
+                            </div>
+                        </template>
                     </div>
                 </div>
-                <div class="row seat-note mt-4 justify-content-between my-3 text-white">
-                    <div class="seat__note-item col-xl-2 col-lg-2 col-md-2 col-6 d-flex align-items-center text-center">
-                        Ghế Thường
-                    </div>
-                    <div class="seat__note-item col-xl-2 col-lg-2 col-md-2 col-6 d-flex align-items-center text-center">
-                        Ghế Đôi
-                    </div>
-                    <div class="seat__note-item col-xl-2 col-lg-2 col-md-2 col-6 d-flex align-items-center text-center">
-                        Ghế Vip
-                    </div>
-                    <div class="seat__note-item col-xl-2 col-lg-2 col-md-2 col-6 d-flex align-items-center text-center">
-                        Ghế Chọn
-                    </div>
-                    <div class="seat__note-item col-xl-2 col-lg-2 col-md-2 col-6 d-flex align-items-center text-center">
-                        Ghế Đã Đặt
-                    </div>
-                </div>
-            </div>
+            </template>
         </div>
     </section>
 
     <!-- Combo -->
-    <div class="combo pt-sm-5 mb-5 mt-3" x-show="selectedSeatTypes.length > 0">
+    <!-- selectedTicketTypes.length > 0 -->
+    <div class="combo pt-sm-5 mb-5 mt-3" x-show="false">
         <div class="container-fluid combo__heading">
             <div class="row">
                 <div class="combo__title justify-content-center text-center">
@@ -2496,32 +702,30 @@ $watch('selectedSchedule',async (value) => {
 
             <div class="row ticket-detail">
                 <div class="col-6 ps-3" id="ticket-rs-wrapper">
-                    <div class="ticket-type">
-                        <span class="ticket-type__number">2</span>
-                        <span class="ticket-type__title">Người Lớn(Đơn)</span>
-                    </div>
-                    <div class="ticket-type">
-                        <span class="ticket-type__number">2</span>
-                        <span class="ticket-type__title">HSSV - Người Cao Tuổi</span>
-                    </div>
-                    <div class="ticket-type">
-                        <span class="ticket-type__number">1</span>
-                        <span class="ticket-type__title">Người Lớn(Đôi)</span>
-                    </div>
+                    <template x-for="type in selectedTicketTypes" :key="type.MaLoaiVe">
+                        <div class="ticket-type">
+                            <span class="ticket-type__number" x-text="type.count"></span>
+                            <span class="ticket-type__title" x-text="type.TenLoaiVe"></span>
+                            <span class="ticket-type__title" x-text="` (${type.SoNguoiDisplay})`"></span>
+
+                        </div>
+                    </template>
+
                 </div>
                 <div class="col-6">
                     <div class="room">
                         <span class="txt">Phòng chiếu:</span>
-                        <span class="room-tilte me-1">01</span>
-                        <span class="time-tilte">17:00</span>
+                        <span class="room-tilte me-1" x-text="selectedShow?.PhongChieu.TenPhongChieu"></span>
+
+                        <span class="time-tilte" x-text="dayjs(selectedShow?.NgayGioChieu).format('HH:mm')"></span>
+
+                        </span>
                     </div>
                     <div class="chair">
                         <span class="txt">Ghế: </span>
-                        <span class="chair-tilte">K01</span>
-                        <span class="chair-tilte">K02</span>
-                        <span class="chair-tilte">K03</span>
-                        <span class="chair-tilte">K04</span>
-                        <span class="chair-tilte">K05</span>
+                        <span class="chair-tilte"
+                            x-text="getCurrentSelectSeatsInfo()?.map(seat => seat.SoGhe).join(', ')"></span>
+
                     </div>
                     <div class="combo">
                         <span class="txt">Combo: </span>
@@ -2541,7 +745,7 @@ $watch('selectedSchedule',async (value) => {
                 <div class="bill-detail col-6">
                     <div class="ticket-price fs-5">
                         <span class="ticket-price__title"> Tạm tính: </span>
-                        <span class="ticket-price__number"> 1.121.000đ </span>
+                        <span class="ticket-price__number" x-text="toMoneyFormat(finalPrice)"></span>
                     </div>
                     <button class="btn-to-pay mt-3 align-items-center text-center justify-content-center">
                         THANH TOÁN
@@ -2552,8 +756,68 @@ $watch('selectedSchedule',async (value) => {
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"></script>
+<script>
+const emptySeat = {
+    MaLoaiGhe: 0,
+    TenLoaiGhe: 'Trống',
+    MoTa: 'Trống',
+    GiaVe: 0,
+    Dai: 1,
+    Rong: 1,
+    Mau: 'rgba(0,0,0,0)',
+    MauSelect: 'rgba(0,0,0,0)'
+}
+const hiddenSeat = {
+    MaLoaiGhe: -1,
+    TenLoaiGhe: 'Ẩn',
+    MoTa: 'Trống',
+    GiaVe: 0,
+    Dai: 1,
+    Rong: 1,
+    Mau: '#525252',
+    MauSelect: darkerColor('#525252')
 
+}
+const bookedSeat = {
+    MaLoaiGhe: -2,
+    TenLoaiGhe: 'Đã Đặt',
+    MoTa: 'Đã Đặt',
+    GiaVe: 0,
+    Dai: 1,
+    Rong: 1,
+    Mau: '#020617',
+    MauSelect: darkerColor('#525252')
+}
 
+const realSeats = <?= json_encode($seatTypes) ?>;
+const seatTypes = [...realSeats, emptySeat, bookedSeat].map((item) => {
+    return {
+        ...item,
+        MauSelect: darkerColor(item.Mau)
+    }
+})
+
+function darkerColor(color) {
+    return tinycolor(color).darken(30).toString();
+}
+const SEAT_SIZE = 40;
+const SEAT_GAP = 5;
+
+function calculateRoomSize(ChieuDai, ChieuRong) {
+    return {
+        width: ChieuRong * SEAT_SIZE + (ChieuRong + 1) * SEAT_GAP,
+        height: ChieuDai * SEAT_SIZE + (ChieuDai + 1) * SEAT_GAP
+    }
+}
+
+function toMoneyFormat(value) {
+    return Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(value);
+}
+</script>
 
 <?php
 script("https://code.jquery.com/jquery-3.7.1.min.js");

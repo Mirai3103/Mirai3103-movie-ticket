@@ -511,7 +511,7 @@ formValidator(validatorRule);
                                 :bg-normal="cell.Mau"
                                 :style="`background-color: ${cell.Mau}; grid-column: span ${cell.Rong}; aspect-ratio: ${cell.Rong} / ${cell.Dai}`"
                                 class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
-                                x-text="cell.TenGhe||getCellName(cell)"></div>
+                                x-text="cell.SoGhe||getCellName(cell)"></div>
                         </template>
 
 

@@ -49,7 +49,7 @@ return array(
     'PaymentType' => $baseDir . '/app/services/payments/index.php',
     'RoomController' => $baseDir . '/app/controllers/admin/RoomController.php',
     'Router' => $baseDir . '/core/Router.php',
-    'SeatTypeController' => $baseDir . '/app/controllers/SeatTypeController.php',
+    'SeatController' => $baseDir . '/app/controllers/SeatTypeController.php',
     'ShowController' => $baseDir . '/app/controllers/admin/ShowController.php',
     'StatusController' => $baseDir . '/app/controllers/StatusController.php',
     'UserController' => $baseDir . '/app/controllers/UserController.php',

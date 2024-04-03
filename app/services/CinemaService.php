@@ -25,13 +25,6 @@ class CinemaService
     }
     public static function getCinemasByRoomIds($roomIds)
     {
-        // $sql = "SELECT DISTINCT RapChieu.* 
-        // FROM RapChieu JOIN PhongChieu 
-        // ON RapChieu.MaRapChieu = PhongChieu.MaRapChieu 
-        // WHERE PhongChieu.MaPhongChieu 
-        // IN (" . implode(",", $roomIds) . ")";
-        // $cinemas = Database::query($sql, []);
-        // return $cinemas;
         $queryBuilder = new QueryBuilder();
         $queryBuilder->select(
             [

@@ -10,7 +10,7 @@ class ZaloPayStrategy implements PaymentStrategy
     public function createPayment(string $orderId, string $amount, string $description): CreatePaymentResponse
     {
         $amount = intval($amount);
-        $config = App::get('config')['zalopay'];
+        $config = $GLOBALS['config']['zalopay'];
         $app_id = $config['app_id'];
         $key1 = $config['key1'];
         $return_url = $config['return_url'];

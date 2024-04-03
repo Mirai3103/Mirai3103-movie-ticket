@@ -7,6 +7,7 @@ use App\Core\Database\Database;
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
 use App\Models\TrangThaiPhong;
+use App\Models\TrangThaiVe;
 
 class SeatService
 {
@@ -52,6 +53,21 @@ class SeatService
     {
         $sql = "SELECT * FROM Ghe WHERE id IN  (" . implode(",", $ids) . ")";
         $seats = Database::query($sql, []);
+        return $seats;
+    }
+    public static function getAllOfShow($showId)
+    {
+        $sql = "SELECT MaPhongChieu FROM SuatChieu WHERE MaXuatChieu = ?";
+        $rooms = Database::queryOne($sql, [$showId]);
+        $roomId = $rooms['MaPhongChieu'];
+
+        $sql = "
+        SELECT Ghe.*, Ve.MaVe from Ghe left join (
+                        select * from Ve where Ve.MaSuatChieu = ? and Ve.KhoaDen < ? and Ve.TrangThai = ?
+                    ) as Ve on Ghe.MaGhe = Ve.MaGhe 
+            where Ghe.MaPhongChieu = ?
+        ";
+        $seats = Database::query($sql, [$showId, date('Y-m-d H:i:s'), TrangThaiVe::DaDat->value, $roomId]);
         return $seats;
     }
 }

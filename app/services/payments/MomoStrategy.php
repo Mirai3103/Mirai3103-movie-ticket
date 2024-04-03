@@ -2,14 +2,13 @@
 
 namespace App\Services\Payments;
 
-use App\Core\App;
 use App\Services\Payments\Models\CreatePaymentResponse;
 
 class MomoPaymentStrategy implements PaymentStrategy
 {
     public function createPayment(string $requestId, string $amount, string $description): CreatePaymentResponse
     {
-        $momo_config = App::get('config')['momo'];
+        $momo_config = $GLOBALS['config']['momo'];
         $partnerCode = $momo_config['partner-code'];
         $accessKey = $momo_config['access-key'];
         $secretKey = $momo_config['secret-key'];

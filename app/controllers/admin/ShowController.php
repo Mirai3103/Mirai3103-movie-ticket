@@ -12,6 +12,7 @@ use Core\Attributes\Route;
 
 class ShowController
 {
-
+    // 
+// 
 
 }
