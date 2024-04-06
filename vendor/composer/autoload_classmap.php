@@ -20,6 +20,7 @@ return array(
     'App\\Services\\AccountType' => $baseDir . '/app/services/UserService.php',
     'App\\Services\\CategoryService' => $baseDir . '/app/services/CategoryService.php',
     'App\\Services\\CinemaService' => $baseDir . '/app/services/CinemaService.php',
+    'App\\Services\\ComboService' => $baseDir . '/app/services/ComboService.php',
     'App\\Services\\OrderService' => $baseDir . '/app/services/OrderService.php',
     'App\\Services\\Payments\\Models\\CreatePaymentResponse' => $baseDir . '/app/services/payments/models/CreatePaymentResponse.php',
     'App\\Services\\Payments\\MomoPaymentStrategy' => $baseDir . '/app/services/payments/MomoStrategy.php',

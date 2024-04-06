@@ -25,6 +25,7 @@ class ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a
         'App\\Services\\AccountType' => __DIR__ . '/../..' . '/app/services/UserService.php',
         'App\\Services\\CategoryService' => __DIR__ . '/../..' . '/app/services/CategoryService.php',
         'App\\Services\\CinemaService' => __DIR__ . '/../..' . '/app/services/CinemaService.php',
+        'App\\Services\\ComboService' => __DIR__ . '/../..' . '/app/services/ComboService.php',
         'App\\Services\\OrderService' => __DIR__ . '/../..' . '/app/services/OrderService.php',
         'App\\Services\\Payments\\Models\\CreatePaymentResponse' => __DIR__ . '/../..' . '/app/services/payments/models/CreatePaymentResponse.php',
         'App\\Services\\Payments\\MomoPaymentStrategy' => __DIR__ . '/../..' . '/app/services/payments/MomoStrategy.php',
