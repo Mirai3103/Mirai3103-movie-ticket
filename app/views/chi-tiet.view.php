@@ -82,8 +82,11 @@ const ageTags = {
         let listSelectedSeats = this.selectedTicketTypes.map(type => type.seats).flat();
         return this.seats.filter(seat => listSelectedSeats.includes(seat.MaGhe));
     },
+    selectedFood: [],
+    selectedCombo: [],
     async calFinalPrice() {
         let price = 0;
+        let veCount = 0;
         for (let i = 0; i < this.selectedTicketTypes.length; i++) {
             const type = this.selectedTicketTypes[i];
             price += type.count * type.GiaVe;
@@ -93,12 +96,22 @@ const ageTags = {
             const seat = this.seats[i];
             if (listSelectedSeats.includes(seat.MaGhe)) {
                 price += seat.GiaVe;
+                veCount++;
             }
         }
         let currentShow = groupedShows[this.selectedSchedule];
-         let showPrice = currentShow.find(show => show.MaXuatChieu == this.MaXuatChieu)?.GiaVe||0;
-        price += showPrice;
-        console .log(price,` ${showPrice} `);
+         let showPrice = currentShow.find(show => show.MaXuatChieu == this.selectedShow.MaXuatChieu)?.GiaVe||0;
+        console.log(currentShow,this.MaXuatChieu);
+        price += showPrice * veCount;
+
+        this.selectedFood.forEach(food => {
+            price += food.GiaThucPham * food.count;
+        })
+        this.selectedCombo.forEach(combo => {
+            price += combo.GiaCombo * combo.count;
+        })
+
+
         this.finalPrice = price;
         return await Promise.resolve(price);
     },
@@ -150,6 +163,56 @@ const ageTags = {
             this.calFinalPrice();
         })
     },
+    onStartCheckout:async function(){
+        if(!this.isDoneSelecting) {
+            toast('Vui lòng chọn đủ ghế', {
+                position: 'bottom-center',
+                type: 'danger'
+            });
+            return;
+        }
+        //  list ticket is list of
+        // MaLoaiVe + MaGhe
+        let ves = [];
+        this.selectedTicketTypes.forEach(type => {
+            type.seats.forEach(seat => {
+                ves.push({
+                    MaXuatChieu: this.selectedShow.MaXuatChieu,
+                    MaLoaiVe: type.MaLoaiVe,
+                    MaGhe: seat,
+                    MaVe: this.seats.find(s => s.MaGhe == seat)?.MaVe
+                })
+            })
+        });
+        const payload = {
+            MaXuatChieu: this.selectedShow.MaXuatChieu,
+            DanhSachVe: ves,
+            Combos: this.selectedCombo.map(combo => {
+                return {
+                    MaCombo: combo.MaCombo,
+                    SoLuong: combo.count
+                }
+            }),
+            ThucPhams: this.selectedFood.map(food => {
+                return {
+                    MaThucPham: food.MaThucPham,
+                    SoLuong: food.count
+                }
+            }),
+        }
+        await axios.post('/api/start-checkout', payload).then(res => {
+            // window.location.href = '/thanh-toan';
+            console.log(res.data);
+            window.location.href = `/thanh-toan`;
+        }).catch(err => {
+            toast('Đã có lỗi xảy ra', {
+                position: 'bottom-center',
+                type: 'danger'
+            });
+        })
+        
+    
+    }
 }
 " x-init="
 $watch('isDoneSelecting', (value) => {
@@ -570,14 +633,14 @@ $watch('selectedSchedule',async (value) => {
                         }">
                                 <template x-for="cell in seats" :key="cell.index">
                                     <div :hidden="cell.MaLoaiGhe === -1" :index="cell.index" :style="{
-                                            backgroundColor: cell.selected? cell.MauSelect : cell.Mau,
+                                            backgroundColor:cell.MaVe != null?'black': cell.selected? cell.MauSelect : cell.Mau,
                                             gridColumn: `span ${cell.Rong}`,
-                                            aspectRatio: `${cell.Rong} / ${cell.Dai}`
+                                            aspectRatio: `${cell.Rong} / ${cell.Dai}`,
                                         }" :class="{
-                                            'cursor-pointer': cell.MaVe ==null,
+                                            'tw-cursor-pointer': cell.MaVe ==null,
                                             'tw-cursor-not-allowed': cell.MaVe != null,
                                         }" x-on:click="onSeatClick(cell)"
-                                        class="hover-change-bg seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
+                                        class="hover-change-bg seat tw-flex tw-text-white  tw-justify-center tw-items-center  tw-seat  tw-rounded"
                                         x-text="cell.SoGhe"></div>
                                 </template>
 
@@ -589,7 +652,7 @@ $watch('selectedSchedule',async (value) => {
                         <template x-for="seatType in realSeats" :key="seatType.MaLoaiGhe">
                             <div :style="`background-color: ${seatType.Mau}`"
                                 class="seat__note-item col-xl-2 col-lg-2 col-md-2 col-6 d-flex align-items-center text-center">
-                                <span x-text="seatType.TenLoaiGhe"></span>
+                                <span x-text="seatType.TenLoaiGhe + ' - ' + toMoneyFormat(seatType.GiaVe)"></span>
                             </div>
                         </template>
                     </div>
@@ -598,162 +661,245 @@ $watch('selectedSchedule',async (value) => {
         </div>
     </section>
 
+
     <!-- Combo -->
-    <!-- selectedTicketTypes.length > 0 -->
-    <div class="combo pt-sm-5 mb-5 mt-3" x-show="false">
+    <div class="combo pt-sm-5 mb-5 mt-3" x-show="selectedShow !== null">
         <div class="container-fluid combo__heading">
             <div class="row">
                 <div class="combo__title justify-content-center text-center">
-                    <span class="text-center text-warning"> CHỌN BẮP NƯỚC </span>
+                    <span class="text-center text-warning">
+                        CHỌN BẮP NƯỚC
+                    </span>
                 </div>
             </div>
-            <div class="row combo-list mt-5 pt-4 justify-content-center d-flex">
-                <div class="combo-item col-xl-4 col-lg-4 col-md-4 col-4">
-                    <div class="food-item">
-                        <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
-                            <img src="../assets/img/COMBO-SOLO.png" alt="" class="food-item__img" />
-                        </div>
 
-                        <div class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12">
-                            <span class="food-item__name d-block justify-content-center align-items-center text-center">
-                                COMBO SOLO 2 NGĂN - VOL
-                            </span>
-                            <span class="food-item__des d-block">
-                                1 Coke 32oz - V + 1 POPCORN 64OZ PM + CARAMEN
-                            </span>
-                            <span class="food-item__price d-block"> 119.000đ </span>
-                            <div class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
+            <div id="carouselFood" class="carousel mt-5">
+                <div class="carousel-inner">
+
+                    <?php foreach ($combos as $combo): ?>
+                        <div class="carousel-item ">
+                            <div class="food-item">
+                                <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                                    <img src="<?= $combo['HinhAnh'] ?>" alt="" class="food-item__img">
                                 </div>
-                                <div class="count-number mx-2">0</div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
+
+                                <div
+                                    class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12 tw-justify-between tw-flex tw-flex-col">
+                                    <div>
+                                        <span
+                                            class="food-item__name d-block justify-content-center align-items-center text-center">
+                                            <?= $combo['TenCombo'] ?>
+                                        </span>
+                                        <span class="food-item__des d-block tw-line-clamp-2">
+                                            <?= $combo['MoTa'] ?>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="food-item__price d-block  tw-text-xl">
+                                            <?= number_format($combo['GiaCombo']) ?>đ
+                                        </span>
+                                        <div
+                                            class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
+                                            <div class="count-btn count-minus" x-on:click="
+                                            const index = selectedCombo.findIndex(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>);
+                                            if(index !== -1) {
+                                                selectedCombo[index].count = Math.max(selectedCombo[index].count - 1, 0);
+                                                if(selectedCombo[index].count === 0) {
+                                                    selectedCombo.splice(index, 1);
+                                                }
+                                            }
+                                            calFinalPrice()
+                                            ">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </div>
+                                            <div class="count-number mx-2"
+                                                x-text="selectedCombo.find(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>)?.count ?? 0">
+                                                0
+                                            </div>
+                                            <div class="count-btn count-plus" x-on:click="
+                                            const index = selectedCombo.findIndex(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>);
+                                            if(index !== -1) {
+                                                selectedCombo[index].count += 1;
+                                            } else {
+                                                selectedCombo.push({
+                                                    MaCombo: <?= $combo['MaCombo'] ?>,
+                                                    count: 1,
+                                                    GiaCombo: <?= $combo['GiaCombo'] ?>,
+                                                    TenCombo:'<?= $combo['TenCombo'] ?>'
+                                                })
+                                            }
+                                            calFinalPrice()
+                                            ">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="combo-item col-xl-4 col-lg-4 col-md-4 col-4">
-                    <div class="food-item">
-                        <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
-                            <img src="../assets/img/COMBO-PARTY.png" alt="" class="food-item__img" />
-                        </div>
+                    <?php endforeach; ?>
 
-                        <div class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12">
-                            <span class="food-item__name d-block justify-content-center align-items-center text-center">
-                                COMBO PARTY 2 NGĂN - VOL
-                            </span>
-                            <span class="food-item__des d-block">
-                                4 Coke 22oz - V + 2 POPCORN 64OZ PM + CARAMEN
-                            </span>
-                            <span class="food-item__price d-block"> 259.000đ </span>
-                            <div class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
+                    <?php foreach ($foods as $food): ?>
+                        <div class="carousel-item ">
+                            <div class="food-item">
+                                <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                                    <img src="<?= $food['HinhAnh'] ?>" alt="" class="food-item__img">
                                 </div>
-                                <div class="count-number mx-2">0</div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
+
+                                <div
+                                    class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12 tw-justify-between tw-flex tw-flex-col">
+                                    <div>
+                                        <span
+                                            class="food-item__name d-block justify-content-center align-items-center text-center">
+                                            <?= $food['TenThucPham'] ?>
+                                        </span>
+                                        <span class="food-item__des d-block tw-line-clamp-2">
+                                            <?= $food['MoTa'] ?>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="food-item__price d-block tw-font-semibold tw-text-xl tw-mt-auto">
+                                            <?= number_format($food['GiaThucPham']) ?>đ
+                                        </span>
+                                        <div
+                                            class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
+                                            <div class="count-btn count-minus" x-on:click="
+                                    const index = selectedFood.findIndex(food => food.MaThucPham == <?= $food['MaThucPham'] ?>);
+                                    if(index !== -1) {
+                                        selectedFood[index].count = Math.max(selectedFood[index].count - 1, 0);
+                                        if(selectedFood[index].count === 0) {
+                                            selectedFood.splice(index, 1);
+                                        }
+                                    } else {
+                                        selectedFood.push({
+                                            MaThucPham: <?= $food['MaThucPham'] ?>,
+                                            count: 1,
+                                            GiaThucPham: <?= $food['GiaThucPham'] ?>,
+                                            TenThucPham:'<?= $food['TenThucPham'] ?>'
+                                        })
+                                    }
+                                    calFinalPrice()
+                                    ">
+                                                <i class="fa-solid fa-minus"></i>
+                                            </div>
+                                            <div class="count-number mx-2"
+                                                x-text="selectedFood.find(food => food.MaThucPham == <?= $food['MaThucPham'] ?>)?.count ?? 0">
+                                                0
+                                            </div>
+                                            <div class="count-btn count-plus" x-on:click="
+                                        const index = selectedFood.findIndex(food => food.MaThucPham == <?= $food['MaThucPham'] ?>);
+                                        if(index !== -1) {
+                                            selectedFood[index].count += 1;
+                                           
+                                        } else {
+                                            selectedFood.push({
+                                                MaThucPham: <?= $food['MaThucPham'] ?>,
+                                                count: 1,
+                                                GiaThucPham: <?= $food['GiaThucPham'] ?>,
+                                                TenThucPham:'<?= $food['TenThucPham'] ?>'
+                                            })
+                                        }
+                                        calFinalPrice()
+                                        ">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
-                <div class="combo-item col-xl-4 col-lg-4 col-md-4 col-4">
-                    <div class="food-item">
-                        <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
-                            <img src="../assets/img/COMBO-COUPLE_1_.png" alt="" class="food-item__img" />
-                        </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselFood" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselFood" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
 
-                        <div class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12">
-                            <span class="food-item__name d-block justify-content-center align-items-center text-center">
-                                COMBO PARTY 2 NGĂN - VOL
-                            </span>
-                            <span class="food-item__des d-block">
-                                4 Coke 22oz - V + 2 POPCORN 64OZ PM + CARAMEN
-                            </span>
-                            <span class="food-item__price d-block"> 259.000đ </span>
-                            <div class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                <div class="count-btn count-minus">
-                                    <i class="fa-solid fa-minus"></i>
-                                </div>
-                                <div class="count-number mx-2">0</div>
-                                <div class="count-btn count-plus">
-                                    <i class="fa-solid fa-plus"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
     <!-- Ticket -->
-    <div class="ticket container-fluid pt-3 pb-3 mt-5">
-        <div class="row ticket-details">
-            <span class="ticket-title fs-4"> MAI (T18) </span>
-            <div class="row ticket-theater__detail d-inline-block">
-                <span class="ticket-theater__name position-relative" id="id1">
+    <template x-if="selectedShow != null">
+        <div class="ticket container-fluid pt-3 pb-3 mt-5">
+            <div class="row ticket-details">
+                <span class="ticket-title fs-4">
+                    <?= $phim['TenPhim'] ?>
                 </span>
-                <span class="ticket-theater__address" id="id2"> </span>
-            </div>
+                <div class="row ticket-theater__detail d-inline-block">
+                    <span class="ticket-theater__name position-relative" id="id1">
+                    </span>
+                    <span class="ticket-theater__address" id="id2"> </span>
+                </div>
 
-            <div class="row ticket-detail">
-                <div class="col-6 ps-3" id="ticket-rs-wrapper">
-                    <template x-for="type in selectedTicketTypes" :key="type.MaLoaiVe">
-                        <div class="ticket-type">
-                            <span class="ticket-type__number" x-text="type.count"></span>
-                            <span class="ticket-type__title" x-text="type.TenLoaiVe"></span>
-                            <span class="ticket-type__title" x-text="` (${type.SoNguoiDisplay})`"></span>
+                <div class="row ticket-detail">
+                    <div class="col-6 ps-3" id="ticket-rs-wrapper">
+                        <template x-for="type in selectedTicketTypes" :key="type.MaLoaiVe">
+                            <div class="ticket-type">
+                                <span class="ticket-type__number" x-text="type.count"></span>
+                                <span class="ticket-type__title" x-text="type.TenLoaiVe"></span>
+                                <span class="ticket-type__title" x-text="` (${type.SoNguoiDisplay})`"></span>
+
+                            </div>
+                        </template>
+
+                    </div>
+                    <div class="col-6">
+                        <div class="room">
+                            <span class="txt">Phòng chiếu: </span>
+                            <span class="room-tilte me-1" x-text="selectedShow?.PhongChieu.TenPhongChieu"></span>
+
+                            <span class="time-tilte" x-text="dayjs(selectedShow?.NgayGioChieu).format('HH:mm')"></span>
+
+                            </span>
+                        </div>
+                        <div class="chair">
+                            <span class="txt">Ghế: </span>
+                            <span class="chair-tilte"
+                                x-text="getCurrentSelectSeatsInfo()?.map(seat => seat.SoGhe).join(', ')"></span>
 
                         </div>
-                    </template>
-
+                        <div class="combo">
+                            <span class="txt">Combo: </span>
+                            <template x-for="combo in selectedCombo" :key="combo.MaCombo">
+                                <span class="combo-title" x-text="`${combo.TenCombo} x${combo.count}`"></span>
+                            </template>
+                            <template x-for="food in selectedFood" :key="food.MaThucPham">
+                                <span class="combo-title" x-text="`${food.TenThucPham} x${food.count}`"></span>
+                            </template>
+                            <template x-if="selectedCombo.length === 0 && selectedFood.length === 0">
+                                <span class="combo-title">Không có</span>
+                            </template>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-6">
-                    <div class="room">
-                        <span class="txt">Phòng chiếu:</span>
-                        <span class="room-tilte me-1" x-text="selectedShow?.PhongChieu.TenPhongChieu"></span>
-
-                        <span class="time-tilte" x-text="dayjs(selectedShow?.NgayGioChieu).format('HH:mm')"></span>
-
+                <div class="row text-warning d-flex mt-2">
+                    <div class="col-1"></div>
+                    <div class="bill-time col-2 justify-content-center align-items-center">
+                        <span class="d-block">Thời gian giữ vé: </span>
+                        <span class="bill-time-countdown fs-4" id="countdown">
+                            05:00
                         </span>
                     </div>
-                    <div class="chair">
-                        <span class="txt">Ghế: </span>
-                        <span class="chair-tilte"
-                            x-text="getCurrentSelectSeatsInfo()?.map(seat => seat.SoGhe).join(', ')"></span>
-
+                    <div class="col-3"></div>
+                    <div class="bill-detail col-6">
+                        <div class="ticket-price fs-5">
+                            <span class="ticket-price__title"> Tạm tính: </span>
+                            <span class="ticket-price__number" x-text="toMoneyFormat(finalPrice)"></span>
+                        </div>
+                        <button x-on:click="onStartCheckout()"
+                            class="btn-to-pay mt-3 align-items-center text-center justify-content-center">
+                            Thanh toán
+                        </button>
                     </div>
-                    <div class="combo">
-                        <span class="txt">Combo: </span>
-                        <span class="combo-title">1 Combo Solo 2 Ngăn, </span>
-                        <span class="combo-title">2 Combo Party 2 Ngăn, </span>
-                        <span class="combo-title">1 Combo Couple 2 Ngăn</span>
-                    </div>
-                </div>
-            </div>
-            <div class="row text-warning d-flex mt-2">
-                <div class="col-1"></div>
-                <div class="bill-time col-2 justify-content-center align-items-center">
-                    <span class="d-block">Thời gian giữ vé: </span>
-                    <span class="bill-time-countdown fs-4" id="countdown"> </span>
-                </div>
-                <div class="col-3"></div>
-                <div class="bill-detail col-6">
-                    <div class="ticket-price fs-5">
-                        <span class="ticket-price__title"> Tạm tính: </span>
-                        <span class="ticket-price__number" x-text="toMoneyFormat(finalPrice)"></span>
-                    </div>
-                    <button class="btn-to-pay mt-3 align-items-center text-center justify-content-center">
-                        THANH TOÁN
-                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </template>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"></script>
@@ -822,4 +968,7 @@ function toMoneyFormat(value) {
 <?php
 script("https://code.jquery.com/jquery-3.7.1.min.js");
 script("/public/chi_tiet_phim/test.js");
+script("/public/chi_tiet_phim/carousel.js");
+
+
 require ('partials/footer.php'); ?>
