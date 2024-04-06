@@ -21,7 +21,7 @@ class QueryBuilder
         }
         $sql = " ";
         foreach ($columns as $key => $value) {
-            if (is_string($value)) {
+            if (!is_numeric($key)) {
                 $sql .= "$key AS `$value`, ";
             } else {
                 $sql .= "$value , ";

@@ -8,26 +8,6 @@ use mysqli;
 class Database
 {
     private static mysqli $mysqli;
-
-
-    /*
-    [
-        "Root" => "Table1",
-        "Embed" => [
-            "Table2" => [
-                "Root" => "Table2",
-                "Embed" => [
-                    "Table3" => [
-                        "Root" => "Table3",
-                        "Embed" => []
-                    ]
-                ]
-            ]
-        ]
-    ]
-
-    */
-
     public static function init_db()
     {
         static::$mysqli = Connection::make($GLOBALS['config']['database']);
