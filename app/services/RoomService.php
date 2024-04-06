@@ -70,5 +70,13 @@ class RoomService
         return $rooms;
     }
 
+    public static function updateRoomSeatCount($roomId)
+    {
+        $sql = "SELECT COUNT(*) as count FROM Ghe WHERE MaPhongChieu = ?";
+        $count = Database::queryOne($sql, [$roomId]);
+        $sql = "UPDATE PhongChieu SET SoGhe = ? WHERE MaPhongChieu = ?";
+        $result = Database::execute($sql, [$count['count'], $roomId]);
+        return $result;
+    }
 
 }
