@@ -8,6 +8,13 @@ use Core\Attributes\Route;
 
 class SeatController
 {
+    #[Route("/api/ghe/tao-nhieu", "POST")]
+    public static function createManySeats()
+    {
+        $data = request_body();
+        $result = SeatService::createSeats($data);
+        return json($result);
+    }
     #[Route("/api/loai-ghe", "GET")]
     public static function index()
     {
