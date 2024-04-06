@@ -75,6 +75,7 @@ formValidator(validatorRule);
         x-data="
          {
                listCells: [],
+               isProcessing: false,
                 getCellName:function (value) {
                     if (value.MaLoaiGhe === 0) {
                         return ''
@@ -113,6 +114,7 @@ formValidator(validatorRule);
                     return inputSeats
                 },
                 createRequest: async function() {
+
                     const createRoomPayload = {
                         ...data,
                         MaRapChieu: parseInt(data.MaRapChieu),
@@ -120,6 +122,7 @@ formValidator(validatorRule);
                         ChieuDai: parseInt(data.ChieuDai),
                         ChieuRong: parseInt(data.ChieuRong),
                     };
+                    this.isProcessing = true
                     const res = await axios.post('/api/phong-chieu', createRoomPayload,{validateStatus: () => true})
                     if (res.status !=200) {
                         toast('Tạo phòng chiếu thất bại', {
@@ -128,17 +131,20 @@ formValidator(validatorRule);
                         });
                         return;
                     };
-                    const MaPhongChieu = 1 //res.data.data.MaPhongChieu
+                    const MaPhongChieu =res.data.data.MaPhongChieu;
                     const inputSeats = this.createInputSeats(MaPhongChieu)
-                    const res2 = await axios.post('/api/ghe', inputSeats,{validateStatus: () => true})
+                    const res2 = await axios.post('/api/ghe/tao-nhieu', inputSeats,{validateStatus: () => true})
                     if (res2.status !=200) {
                         toast('Tạo ghế thất bại', {
                             position: 'bottom-center',
                             type: 'error'
                         });
-                        window.location.href = '/admin/phong-chieu/' + MaPhongChieu+'/sua'
+                        this.isProcessing = false
+                        // window.location.href = '/admin/phong-chieu/' + MaPhongChieu+'/sua'
                         return;
                     };
+                    this.isProcessing = false
+
                 }
             }
             
@@ -502,7 +508,7 @@ formValidator(validatorRule);
             </div>
         </div>
         <div class='tw-flex tw-justify-end tw-mt-4'>
-            <button @click="
+            <button :disabled="isProcessing" @click="
                 if (!validate()) return toast('Vui lòng kiểm tra lại thông tin', {
                     position: 'bottom-center',
                     type: 'warning'
