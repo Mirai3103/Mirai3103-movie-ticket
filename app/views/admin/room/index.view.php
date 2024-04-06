@@ -72,17 +72,20 @@ const cinemas = <?= json_encode($cinemas) ?>;
 fetchRelatedData();
 $watch('query',async (value) => {
     refetch();
+        const queryStr = queryString.stringify(value);
+        // set window history
+        window.history.pushState({}, '', window.location.pathname + '?' + queryStr);
 }, {
     deep: true
 });
 
 ">
     <div
-        class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-md tw-shadow-md  tw-bg-clip-border'>
+        class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-2xl tw-shadow-md  tw-bg-clip-border'>
 
         <div
             class="tw-relative tw-mx-4 tw-mt-4 tw-overflow-hidden tw-text-gray-800 tw-bg-white tw-rounded-none tw-bg-clip-border">
-            <div class="tw-flex tw-items-center tw-justify-between tw-gap-8 tw-mb-8">
+            <div class="tw-flex tw-items-center tw-justify-between tw-gap-8 tw-mb-4">
                 <div class='tw-flex tw-gap-x-6 tw-items-center'>
                     <h5
                         class="tw-block tw-font-sans tw-text-2xl tw-antialiased tw-font-semibold tw-leading-snug tw-tracking-normal text-blue-gray-900">
@@ -126,7 +129,8 @@ $watch('query',async (value) => {
                 <div class="tw-w-full md:tw-w-72">
                     <div class="tw-relative tw-h-10 tw-w-full tw-min-w-[200px]">
                         <label class="tw-input tw-input-bordered tw-flex tw-items-center tw-gap-2">
-                            <input type="text" class="tw-grow" placeholder="Từ khóa tìm kiếm" x-model="query.keyword">
+                            <input type="text" class="tw-grow" placeholder="Từ khóa tìm kiếm"
+                                x-model.debounce.500ms="query.keyword">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                                 class="tw-w-4 tw-h-4 tw-opacity-70">
                                 <path fill-rule="evenodd"
