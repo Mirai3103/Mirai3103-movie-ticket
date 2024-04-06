@@ -23,6 +23,7 @@ class CinemaController
             return json(new JsonResponse(400, "Missing ids"));
         }
         $results = CinemaService::getCinemasInIds(request_body()["ids"]);
+
         return json(JsonResponse::ok($results));
     }
     #[Route("/api/phong-chieu/ids/rap", "POST")]
