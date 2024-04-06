@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Database\Database;
+use App\Services\SeatService;
 
 $GLOBALS['config'] = require 'config.php';
 
