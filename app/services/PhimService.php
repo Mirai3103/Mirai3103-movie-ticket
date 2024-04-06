@@ -33,4 +33,10 @@ class PhimService
         $phim = Database::queryOne($query, [$id]);
         return $phim;
     }
+    public static function getPhimByIds($ids)
+    {
+        $query = "SELECT * FROM Phim WHERE MaPhim IN (" . implode(",", $ids) . ");";
+        $phims = Database::query($query, []);
+        return $phims;
+    }
 }
