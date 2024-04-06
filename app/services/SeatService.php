@@ -27,18 +27,29 @@ class SeatService
     }
     public static function createSeats($data)
     {
+        Database::beginTransaction();
         $cleanData = array_map(function ($seat) {
             return [
-                'MaPhongChieu' => $seat['MaPhongChieu'],
-                'MaLoaiGhe' => $seat['MaLoaiGhe'],
+                'MaPhongChieu' => intval($seat['MaPhongChieu']),
+                'MaLoaiGhe' => intval($seat['MaLoaiGhe']),
                 'SoGhe' => $seat['SoGhe'],
                 'TrangThai' => $seat['TrangThai'] ?? TrangThaiPhong::DangHoatDong->value,
-                "X" => $seat["X"],
-                "Y" => $seat["Y"]
+                "X" => intval($seat["X"]),
+                "Y" => intval($seat["Y"])
             ];
         }, $data);
-        $result = Database::insertMany('Ghe', $cleanData);
-        if ($result) {
+        $isSuccess = true;
+        for ($i = 0; $i < count($cleanData); $i++) {
+            $result = Database::insert('Ghe', $cleanData[$i]);
+            if (!$result) {
+                $isSuccess = false;
+                Database::rollBack();
+                break;
+            }
+        }
+        if ($isSuccess) {
+            Database::commit();
+            RoomService::updateRoomSeatCount($cleanData[0]['MaPhongChieu']);
             return JsonResponse::ok();
         }
         return JsonResponse::error('Tạo ghế thất bại', 500);
@@ -51,7 +62,7 @@ class SeatService
     }
     public static function getSeatByIds($ids)
     {
-        $sql = "SELECT * FROM Ghe WHERE id IN  (" . implode(",", $ids) . ")";
+        $sql = "SELECT * FROM Ghe WHERE MaGhe IN  (" . implode(",", $ids) . ")";
         $seats = Database::query($sql, []);
         return $seats;
     }
@@ -63,11 +74,11 @@ class SeatService
 
         $sql = "
         SELECT Ghe.*, Ve.MaVe from Ghe left join (
-                        select * from Ve where Ve.MaSuatChieu = ? and Ve.KhoaDen < ? and Ve.TrangThai = ?
+                        select * from Ve where Ve.MaSuatChieu = ?  and Ve.KhoaDen is not null and Ve.KhoaDen >= ? and Ve.TrangThai = ?
                     ) as Ve on Ghe.MaGhe = Ve.MaGhe 
             where Ghe.MaPhongChieu = ?
         ";
-        $seats = Database::query($sql, [$showId, date('Y-m-d H:i:s'), TrangThaiVe::DaDat->value, $roomId]);
+        $seats = Database::query($sql, [$showId, date('Y-m-d H:i:s', time()), TrangThaiVe::DaDat->value, $roomId]);
         return $seats;
     }
 }
