@@ -63,6 +63,7 @@
         </div>
     </div>
 </footer>
+
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 <script>
 dayjs.locale('vi');
@@ -71,23 +72,27 @@ dayjs.prototype.getDayOfWeek = function() {
     return dayOfWeek[this.day()];
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+</script>
 <?php
 
 
 global $scripts;
 foreach ($scripts as $script) {
-    echo "<script src='{$script}'></script>";
+    echo "<script src='{$script}'>
+</script>";
 }
 ?>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js">
+</script>
 
 <script src="/public/js/alpine.js"></script>
 
 <!-- from cdn -->
 <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/ripple.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-</script>
+
+
 
 
 </body>
