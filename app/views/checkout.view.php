@@ -16,7 +16,24 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
 </script>
 
 
-
+<dialog id="timeout_modal" class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">
+            Thời gian giữ vé đã hết
+        </h3>
+        <p class="py-4">
+            Thời gian giữ vé đã hết, vui lòng chọn lại ghế
+        </p>
+        <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button in form, it will close the modal -->
+                <button onclick="window.location.href = '/phim/<?= $show['MaPhim'] ?>'" class="btn">
+                    Quay lại
+                </button>
+            </form>
+        </div>
+    </div>
+</dialog>
 <main
     class="2xl:tw-max-w-7xl xl:tw-max-w-[78rem] lg:tw-max-w-[63rem]  tw-mx-auto tw-mt-10 md:tw-max-w-2xl sm:tw-max-w-[38rem]  tw-px-4 sm:tw-px-1"
     x-data="{
@@ -37,28 +54,11 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
         remainingTime--;
         if (remainingTime <= 0) {
             clearInterval(interval);
-            window.timeout_modal.showModal();
+            window['timeout_modal'].showModal();
         }
     }, 1000);
 ">
-    <dialog id="timeout_modal" class="modal">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg">
-                Thời gian giữ vé đã hết
-            </h3>
-            <p class="py-4">
-                Thời gian giữ vé đã hết, vui lòng chọn lại ghế
-            </p>
-            <div class="modal-action">
-                <form method="dialog">
-                    <!-- if there is a button in form, it will close the modal -->
-                    <button onclick="window.location.href = '/phim/<?= $show['MaPhim'] ?>'" class="btn">
-                        Quay lại
-                    </button>
-                </form>
-            </div>
-        </div>
-    </dialog>
+
     <div class='tw-flex  tw-gap-x-4 tw-mb-8 '>
         <template x-for="i in [1, 2, 3]" :key="i">
             <span x-on:click="if (i < step) { step = i }" x-bind:class="step >= i ? 'tw-bg-[#FFE7AA]' : ''"
