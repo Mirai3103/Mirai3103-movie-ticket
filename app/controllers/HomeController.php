@@ -2,6 +2,7 @@
 
 use App\Core\Database\QueryBuilder;
 use App\Services\CategoryService;
+use App\Services\ComboService;
 use App\Services\PhimService;
 use App\Services\SeatTypeService;
 use App\Services\ShowService;
@@ -59,12 +60,16 @@ class HomeController
         $upcomingShows = ShowService::getUpcomingShowsOfMovie($id);
         $ticketTypes = TicketService::getTicketTypes();
         $seatTypes = SeatTypeService::getAllSeatType();
+        $foods = ComboService::getAllFoods();
+        $combos = ComboService::getAllCombo();
         return view("chi-tiet", [
             "phim" => $phim,
             "categories" => $categories,
             "upcomingShows" => $upcomingShows,
             "ticketTypes" => $ticketTypes,
-            "seatTypes" => $seatTypes
+            "seatTypes" => $seatTypes,
+            "foods" => $foods,
+            "combos" => $combos
         ]);
     }
 
@@ -115,7 +120,6 @@ class HomeController
             'embed' => ['PhongChieu'],
             "groupBy" => "MaRapChieu"
         ]));
-
     }
 
 }
