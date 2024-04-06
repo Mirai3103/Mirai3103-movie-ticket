@@ -137,7 +137,7 @@ formValidator(validatorRule);
                     };
                     const MaPhongChieu = 1 //res.data.data.MaPhongChieu
                     const inputSeats = this.createInputSeats(MaPhongChieu)
-                    const res2 = await axios.post('/api/ghe', inputSeats,{validateStatus: () => true})
+                    const res2 = await axios.post('/api/ghe/tao-nhieu', inputSeats,{validateStatus: () => true})
                     if (res2.status !=200) {
                         toast('Tạo ghế thất bại', {
                             position: 'bottom-center',
