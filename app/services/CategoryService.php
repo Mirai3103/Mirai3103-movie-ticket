@@ -7,7 +7,7 @@ class CategoryService
 {
     public static function getAllCategories()
     {
-        $sql = "SELECT * FROM theloai";
+        $sql = "SELECT * FROM TheLoai";
         $categories = Database::query($sql, []);
         return $categories;
     }

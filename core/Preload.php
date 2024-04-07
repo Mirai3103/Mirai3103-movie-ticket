@@ -15,4 +15,5 @@ Router::load_from_class(RoomController::class);
 Router::load_from_class(CinemaController::class);
 Router::load_from_class(SeatController::class);
 Router::load_from_class(StatusController::class);
+Router::load_from_class(MovieController::class);
 Router::build();
