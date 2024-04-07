@@ -2,6 +2,7 @@
 
 use App\Core\Database\QueryBuilder;
 use App\Services\CategoryService;
+use App\Services\CinemaService;
 use App\Services\ComboService;
 use App\Services\PhimService;
 use App\Services\SeatTypeService;
@@ -87,7 +88,9 @@ class HomeController
     #[Route("/trang-chu/tim-kiem", "GET")]
     public static function search()
     {
-        return view("tim-kiem");
+        $cinemas = CinemaService::getAllCinemas();
+        $categories = CategoryService::getAllCategories();
+        return view("tim-kiem", ["cinemas" => $cinemas, "categories" => $categories]);
     }
     #[Route("/dang-xuat", "GET")]
     public static function logout()
