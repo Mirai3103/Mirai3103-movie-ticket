@@ -46,6 +46,7 @@ return array(
     'Core\\Attributes\\Route' => $baseDir . '/core/attributes/RouteAtributte.php',
     'DashboardController' => $baseDir . '/app/controllers/admin/DashboardController.php',
     'HomeController' => $baseDir . '/app/controllers/HomeController.php',
+    'MovieController' => $baseDir . '/app/controllers/admin/MovieController.php',
     'PayController' => $baseDir . '/app/controllers/PayController.php',
     'PaymentType' => $baseDir . '/app/services/payments/index.php',
     'RoomController' => $baseDir . '/app/controllers/admin/RoomController.php',

@@ -51,6 +51,7 @@ class ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a
         'Core\\Attributes\\Route' => __DIR__ . '/../..' . '/core/attributes/RouteAtributte.php',
         'DashboardController' => __DIR__ . '/../..' . '/app/controllers/admin/DashboardController.php',
         'HomeController' => __DIR__ . '/../..' . '/app/controllers/HomeController.php',
+        'MovieController' => __DIR__ . '/../..' . '/app/controllers/admin/MovieController.php',
         'PayController' => __DIR__ . '/../..' . '/app/controllers/PayController.php',
         'PaymentType' => __DIR__ . '/../..' . '/app/services/payments/index.php',
         'RoomController' => __DIR__ . '/../..' . '/app/controllers/admin/RoomController.php',
