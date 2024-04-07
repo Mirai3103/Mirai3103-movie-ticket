@@ -87,8 +87,14 @@ foreach ($scripts as $script) {
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js">
 </script>
 
-<script src="/public/js/alpine.js"></script>
+<script type="module">
+import alpinejs from 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.8/+esm'
 
+window.Alpine = alpinejs
+window.addEventListener('load', () => {
+    alpinejs.start()
+})
+</script>
 <!-- from cdn -->
 <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/ripple.js"></script>
 

@@ -28,4 +28,12 @@ class Request
     {
         return isset($_SESSION['user']);
     }
+    public static function setHeader($key, $value)
+    {
+        header("$key: $value");
+    }
+    public static function setQueryCount($count)
+    {
+        self::setHeader("X-Total-Count", $count);
+    }
 }

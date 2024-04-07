@@ -65,8 +65,23 @@ function guidv4($data = null)
     // Output the 36 character UUID.
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
+function isNullOrEmptyString($str)
+{
+    return (!isset($str) || trim($str) === '');
+}
+function ifNullOrEmptyString($str, $default)
+{
+    return isNullOrEmptyString($str) ? $default : $str;
+}
 
-
+function isNullOrEmptyArray($arr)
+{
+    return (!isset($arr) || count($arr) === 0);
+}
+    function getArrayValueSafe($arr, $key, $default = null)
+    {
+        return isset($arr[$key]) ? $arr[$key] : $default;
+    }
 function execPostRequest($url, $data)
 {
     $ch = curl_init($url);

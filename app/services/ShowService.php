@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
+use App\Core\Request;
 
 class ShowService
 {
@@ -37,39 +38,40 @@ class ShowService
     //         }
     public static function advanceSearch($queryInput)
     {
-        $keyword = $queryInput['tu-khoa'] ?? '';
-        $genre = $queryInput['the-loais'] ?? [];
-        $timeRangeFrom = $queryInput['thoi-gian-tu'] ?? '';
-        $timeRangeTo = $queryInput['thoi-gian-den'] ?? '';
-        $durationFrom = $queryInput['thoi-luong-tu'] ?? '0';
-        $durationTo = $queryInput['thoi-luong-den'] ?? '0';
-        $cinema = $queryInput['rapchieus'] ?? [];
-        $sortDir = $queryInput['thu-tu'] ?? 'ASC';
-        $sortBy = $queryInput['sap-xep'] ?? 'Phim.TenPhim';
-        $page = $queryInput['trang'] ?? 1;
-        $limit = $queryInput['limit'] ?? 10;
+        $keyword = getArrayValueSafe($queryInput, 'tu-khoa');
+        $genre = getArrayValueSafe($queryInput, 'the-loais', []);
+        $timeRangeFrom = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'thoi-gian-tu'), date('Y-m-d'));
+        $timeRangeTo = getArrayValueSafe($queryInput, 'thoi-gian-den');
+        $durationFrom = getArrayValueSafe($queryInput, 'thoi-luong-tu');
+        $durationTo = getArrayValueSafe($queryInput, 'thoi-luong-den');
+        $cinema = getArrayValueSafe($queryInput, 'rapchieus', []);
+        $sortDir = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'thu-tu'), 'ASC');
+        $sortBy = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'sap-xep'), 'Phim.TenPhim');
+        $page = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'trang'), 1);
+        $limit = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'limit'), 10);
+
         $sql = "Select Phim.MaPhim from Phim ";
-        $sql .= "LEFT JOIN ct_phim_theloai ON ct_phim_theloai.MaPhim = phim.MaPhim ";
+        $sql .= "LEFT JOIN CT_Phim_TheLoai ON CT_Phim_TheLoai.MaPhim = Phim.MaPhim ";
         $sql .= "WHERE 1=1 ";
-        if (!empty($keyword)) {
+        if (!isNullOrEmptyString($keyword)) {
             $sql .= "AND (Phim.TenPhim LIKE '%$keyword%' OR Phim.DaoDien LIKE '%$keyword%') ";
         }
-        if (!empty($genre)) {
-            $sql .= "AND ct_phim_theloai.MaTheLoai = $genre ";
+        if (!isNullOrEmptyArray($genre)) {
+            $sql .= "AND CT_Phim_TheLoai.MaTheLoai IN (" . implode(",", $genre) . ") ";
         }
-        if ($durationFrom != '0')
+        if (!empty($durationFrom))
             $sql .= "AND Phim.ThoiLuong >= $durationFrom ";
-        if ($durationTo != '0') {
+        if (!empty($durationTo)) {
             $sql .= "AND Phim.ThoiLuong <= $durationTo ";
         }
 
-        if (!empty($cinema)) {
+        if (!isNullOrEmptyArray($cinema)) {
             $sql .= "AND EXISTS (SELECT * FROM SuatChieu JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in ($cinema)) ";
         }
-        if (!empty($timeRangeFrom)) {
+        if (!isNullOrEmptyString($timeRangeFrom)) {
             $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) >= DATE('$timeRangeFrom')) ";
         }
-        if (!empty($timeRangeTo)) {
+        if (!isNullOrEmptyString($timeRangeTo)) {
             $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) <= DATE('$timeRangeTo')) ";
         }
         $sql .= "GROUP BY Phim.MaPhim ";
@@ -81,17 +83,18 @@ class ShowService
         // AND EXISTS (SELECT * FROM SuatChieu Join PhongChieu on SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in (1))
         // GROUP BY Phim.MaPhim
         // HAVING COUNT(DISTINCT CT_Phim_TheLoai.MaTheLoai) = 2;
-        if (!empty($genre)) {
+        if (!isNullOrEmptyArray($genre)) {
             $count = count($genre);
             $sql .= "HAVING COUNT(DISTINCT CT_Phim_TheLoai.MaTheLoai) = $count ";
         }
-        echo $sql;
         $movies = Database::query($sql, []);
         $ids = array_map(function ($movie) {
             return $movie['MaPhim'];
         }, $movies);
-        $sql = "SELECT * FROM Phim WHERE MaPhim IN (" . implode(",", $ids) . ") ";
-        if (!empty($sort)) {
+        $sql = "SELECT MaPhim,TenPhim,NgayPhatHanh,HanCheDoTuoi,HinhAnh,ThoiLuong,NgonNgu,DaoDien   ,DinhDang,Trailer FROM Phim WHERE MaPhim IN (" . implode(",", $ids) . ") ";
+        $count = Database::count($sql, []);
+        Request::setQueryCount($count);
+        if (!isNullOrEmptyString($sortBy)) {
             $sql .= "ORDER BY $sortBy $sortDir ";
         }
         $sql .= "LIMIT " . ($page - 1) * $limit . ", $limit";
