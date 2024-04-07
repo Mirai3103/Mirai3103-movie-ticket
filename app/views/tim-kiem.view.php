@@ -2,6 +2,7 @@
 title("Kết quả tìm kiếm");
 require ('partials/head.php');
 ?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/css/datepicker-bs5.min.css">
 <style>
 :root {}
 
@@ -40,8 +41,9 @@ img {
     </div>
 
 </div>
-<div class='container   '>
-    <div class="tw-collapse tw-collapse-arrow  tw-bg-white tw-rounded-md tw-shadow-sm">
+<div class='container'>
+    <div x-data="{
+    }" class="tw-collapse tw-collapse-arrow !tw-overflow-visible  tw-bg-white tw-rounded-md tw-shadow-sm">
         <input type="checkbox" />
         <div class="tw-collapse-title tw-text-xl tw-font-medium">
             Bộ lọc
@@ -68,55 +70,130 @@ img {
                     Từ khóa
                 </div>
                 <div class="tw-collapse-content">
-                    <input type="text" class="tw-w-full tw-p-2 tw-rounded-md tw-border tw-border-gray-300"
+                    <input x-ref="keywordInput" type="text" class="tw-input tw-input-bordered tw-w-full"
                         placeholder="Nhập từ khóa">
                 </div>
             </div>
-            <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
+            <div
+                class="tw-collapse !tw-overflow-visible  tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
                 <input type="checkbox" />
                 <div class="tw-collapse-title tw-text-xl tw-font-medium">
                     Được chiếu ở rạp
                 </div>
-                <div class="tw-collapse-content">
-                    <input type="text" class="tw-w-full tw-p-2 tw-rounded-md tw-border tw-border-gray-300"
-                        placeholder="Nhập từ khóa">
+                <div class="tw-collapse-content tw-relative">
+                    <div class='tw-relative'>
+                        <ul
+                            class="tw-menu tw-max-h-60 !tw-flex-nowrap tw-overflow-x-scroll tw-bg-base-200   tw-w-full tw-rounded-box">
+                            <?php foreach ($cinemas as $cinema): ?>
+                            <li>
+                                <label role="button" class='flex tw-items-center tw-gap-x-2'>
+                                    <input type="checkbox" value="<?= $cinema['MaRapChieu'] ?>"
+                                        class="tw-checkbox tw-checkbox-sm rapchieu" />
+                                    <span class='tw-truncate'>
+                                        <?= $cinema['TenRapChieu'] ?>
+                                    </span>
+                                </label>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
-            <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
-                <input type="checkbox" />
-                <div class="tw-collapse-title tw-text-xl tw-font-medium">
-                    Được chiếu ở rạp
-                </div>
-                <div class="tw-collapse-content">
-                    <input type="text" class="tw-w-full tw-p-2 tw-rounded-md tw-border tw-border-gray-300"
-                        placeholder="Nhập từ khóa">
-                </div>
-            </div>
-            <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
+            <div
+                class="tw-collapse !tw-overflow-visible   tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
                 <input type="checkbox" />
                 <div class="tw-collapse-title tw-text-xl tw-font-medium">
                     Có các thể loại
                 </div>
-                <div class="tw-collapse-content">
-                    <p>hello</p>
+                <div class="tw-collapse-content tw-relative">
+                    <div class='tw-relative'>
+                        <ul
+                            class="tw-menu tw-max-h-60 !tw-flex-nowrap tw-overflow-x-scroll tw-bg-base-200   tw-w-full tw-rounded-box">
+                            <?php
+                            uasort($categories, function ($a, $b) {
+                                return $a['TenTheLoai'] <=> $b['TenTheLoai'];
+                            });
+                            ?>
+                            <?php foreach ($categories as $category): ?>
+                            <li>
+                                <label role="button" class='flex tw-items-center tw-gap-x-2'>
+                                    <input type="checkbox" value="<?= $category['MaTheLoai'] ?>"
+                                        class="tw-checkbox tw-checkbox-sm theloai" />
+                                    <span class='tw-truncate'>
+                                        <?= $category['TenTheLoai'] ?>
+                                    </span>
+                                </label>
+                            </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
-            <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
+            <div
+                class="tw-collapse !tw-overflow-visible tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
                 <input type="checkbox" />
                 <div class="tw-collapse-title tw-text-xl tw-font-medium">
                     Khoảng thời gian chiếu
                 </div>
-                <div class="tw-collapse-content">
-                    <p>hello</p>
+                <div class="tw-collapse-content" x-init="
+                const elem = document.querySelector('#show-from');
+                 datepickerFrom = new Datepicker(elem, {
+                    language: 'vi',
+                    minDate: new Date(),
+                    format: 'dd/mm/yyyy',
+                }); 
+                const elem2 = document.querySelector('#show-to');
+                datepickerTo = new Datepicker(elem2, {
+                    language: 'vi',
+                    minDate: new Date(),
+                    format: 'dd/mm/yyyy',
+                });
+                ">
+                    <div class="tw-flex tw-gap-x-4 tw-flex-wrap">
+                        <label class="tw-form-control tw-border-none tw-w-full tw-max-w-xs">
+                            <div class="tw-label">
+                                <span class="tw-label-text">Từ ngày</span>
+                            </div>
+                            <input x-ref="showFromInput" readonly id="show-from" type="text" placeholder="Type here"
+                                class="tw-input tw-input-bordered tw-w-full tw-max-w-xs" />
+                        </label>
+                        <label class="tw-form-control tw-border-none tw-w-full tw-max-w-xs">
+                            <div class="tw-label">
+                                <span class="tw-label-text">Đến ngày
+                                </span>
+                            </div>
+                            <input x-ref="showToInput" readonly id="show-to" type="text" placeholder="Type here"
+                                class="tw-input tw-input-bordered tw-w-full tw-max-w-xs" />
+                        </label>
+                    </div>
+
                 </div>
             </div>
             <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
                 <input type="checkbox" />
                 <div class="tw-collapse-title tw-text-xl tw-font-medium">
-                    Thời lượng chiếu
+                    Thời lượng chiếu (phút)
                 </div>
                 <div class="tw-collapse-content">
-                    <p>hello</p>
+                    <div class="tw-flex tw-gap-x-4 tw-flex-wrap">
+                        <label class="tw-form-control tw-border-none tw-w-full tw-max-w-xs">
+                            <div class="tw-label">
+                                <span class="tw-label-text">Thời lượng tối thiểu</span>
+                            </div>
+                            <input x-ref="durrationFromInput" id="durration-from" type="text" placeholder="Type here"
+                                class="tw-input tw-input-bordered tw-w-full tw-max-w-xs" />
+                        </label>
+                        <label class="tw-form-control tw-border-none tw-w-full tw-max-w-xs">
+                            <div class="tw-label">
+                                <span class="tw-label-text">Thời lượng tối đa
+                                </span>
+                            </div>
+                            <input x-ref="durrationToInput" id="show-to" type="text" placeholder="Type here"
+                                class="tw-input tw-input-bordered tw-w-full tw-max-w-xs" />
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
@@ -125,8 +202,71 @@ img {
                     Sắp xếp kết quả
                 </div>
                 <div class="tw-collapse-content">
-                    <p>hello</p>
+                    <div class="tw-flex tw-gap-x-4 tw-flex-wrap">
+                        <label class="tw-form-control tw-border-none tw-w-full tw-max-w-xs">
+                            <div class="tw-label">
+                                <span class="tw-label-text">
+                                    Sắp xếp theo
+                                </span>
+                            </div>
+                            <select x-ref="sortByInput" class="tw-select tw-select-bordered">
+                                <option>Star Wars</option>
+                                <option>Harry Potter</option>
+                                <option>Lord of the Rings</option>
+                                <option>Planet of the Apes</option>
+                                <option>Star Trek</option>
+                            </select>
+
+                        </label>
+                        <label class="tw-form-control tw-border-none tw-w-full tw-max-w-36">
+                            <div class="tw-label">
+                                <span class="tw-label-text">
+                                    Thứ tự
+                                </span>
+                            </div>
+                            <select class="tw-select tw-select-bordered">
+                                <option x-ref="sortInput" value="ASC">Tăng dần</option>
+                                <option value="DESC">Giảm dần</option>
+                            </select>
+                        </label>
+                    </div>
                 </div>
+            </div>
+            <div class='tw-flex tw-justify-center tw-pt-8 tw-pb-3 tw-gap-2 '>
+                <button class="tw-btn tw-w-full tw-max-w-xs">
+                    Xoá bộ lọc
+                </button>
+                <button x-on:click="
+                const keyword = $refs.keywordInput.value;
+                const theloais = Array.from(document.querySelectorAll('.theloai:checked')).map(e => e.value);
+                const rapchieus = Array.from(document.querySelectorAll('.rapchieu:checked')).map(e => e.value);
+                const showFrom = $refs.showFromInput.value;
+                const showTo = $refs.showToInput.value;
+                const durrationFrom = $refs.durrationFromInput.value;
+                const durrationTo = $refs.durrationToInput.value;
+                const sortBy = $refs.sortByInput.value;
+                const sort = $refs.sortInput.value;
+                const queryParam = {
+                    'tu-khoa': keyword,
+                    'the-loais': theloais,
+                    'raps': rapchieus,
+                    'thoi-gian-tu': showFrom,
+                    'thoi-gian-den': showTo,
+                    'thoi-luong-tu': durrationFrom,
+                    'thoi-luong-den': durrationTo,
+                    'sap-xep': sortBy,
+                    'thu-tu': sort
+                }
+                const query = queryString.stringify(queryParam);
+                window.history.pushState({}, '', '?' + query);
+                axios.post('/api/phim/tim-kiem-nang-cao', queryParam).then(res => {
+                    console.log(res.data);
+                }).catch(err => {
+                    console.log(err);
+                });
+                " class="tw-btn tw-text-white tw-btn-primary tw-w-full tw-max-w-xs">
+                    Áp dụng
+                </button>
             </div>
         </div>
     </div>
@@ -181,4 +321,8 @@ img {
 import queryString from 'https://cdn.jsdelivr.net/npm/query-string@9.0.0/+esm'
 window.queryString = queryString
 </script>
-<?php require ('partials/footer.php'); ?>
+
+<?php
+script("https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/datepicker.min.js");
+script("https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.3.4/dist/js/locales/vi.js");
+require ('partials/footer.php'); ?>

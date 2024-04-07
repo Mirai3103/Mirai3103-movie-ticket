@@ -24,21 +24,30 @@ class ShowService
     //      7. Định dạng -> select
     //      8. Rạp -> select -> rạp nào có suất chiếu phim đó
     //      9.  Sắp xếp -> select theo tên, ngày chiếu, thời lượng,
-
+    //  {
+    //             'tu-khoa': keyword,
+    //             'the-loais': theloais,
+    //             'raps': rapchieus,
+    //             'thoi-gian-tu': showFrom,
+    //             'thoi-gian-den': showTo,
+    //             'thoi-luong-tu': durrationFrom,
+    //             'thoi-luong-den': durrationTo,
+    //             'sap-xep': sortBy,
+    //             'thu-tu': sort
+    //         }
     public static function advanceSearch($queryInput)
     {
         $keyword = $queryInput['tu-khoa'] ?? '';
-        $genre = $queryInput['the-loai'] ?? '';
+        $genre = $queryInput['the-loais'] ?? [];
         $timeRangeFrom = $queryInput['thoi-gian-tu'] ?? '';
         $timeRangeTo = $queryInput['thoi-gian-den'] ?? '';
         $durationFrom = $queryInput['thoi-luong-tu'] ?? '0';
         $durationTo = $queryInput['thoi-luong-den'] ?? '0';
-        $format = $queryInput['dinh-dang'] ?? '';
-        $cinema = $queryInput['rap'] ?? '';
-        $sort = $queryInput['sap-xep'] ?? '';
-        $sortBy = $queryInput['theo'] ?? '';
-        $page = $queryInput['page'] ?? 1;
-        $limit = $queryInput['limit'] ?? 20;
+        $cinema = $queryInput['rapchieus'] ?? [];
+        $sortDir = $queryInput['thu-tu'] ?? 'ASC';
+        $sortBy = $queryInput['sap-xep'] ?? 'Phim.TenPhim';
+        $page = $queryInput['trang'] ?? 1;
+        $limit = $queryInput['limit'] ?? 10;
         $sql = "Select Phim.MaPhim from Phim ";
         $sql .= "LEFT JOIN ct_phim_theloai ON ct_phim_theloai.MaPhim = phim.MaPhim ";
         $sql .= "WHERE 1=1 ";
@@ -48,33 +57,42 @@ class ShowService
         if (!empty($genre)) {
             $sql .= "AND ct_phim_theloai.MaTheLoai = $genre ";
         }
-        $sql .= "AND Phim.ThoiLuong >= $durationFrom ";
+        if ($durationFrom != '0')
+            $sql .= "AND Phim.ThoiLuong >= $durationFrom ";
         if ($durationTo != '0') {
             $sql .= "AND Phim.ThoiLuong <= $durationTo ";
         }
-        if (!empty($format)) {
-            $sql .= "AND Phim.DinhDang = $format ";
-        }
+
         if (!empty($cinema)) {
-            $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND SuatChieu.MaRap = $cinema) ";
+            $sql .= "AND EXISTS (SELECT * FROM SuatChieu JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in ($cinema)) ";
         }
         if (!empty($timeRangeFrom)) {
-            $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND SuatChieu.NgayGioChieu >= '$timeRangeFrom') ";
+            $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) >= DATE('$timeRangeFrom')) ";
         }
         if (!empty($timeRangeTo)) {
-            $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND SuatChieu.NgayGioChieu <= '$timeRangeTo') ";
+            $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) <= DATE('$timeRangeTo')) ";
         }
         $sql .= "GROUP BY Phim.MaPhim ";
+        //     	Select Phim.MaPhim from Phim 
+        //  JOIN CT_Phim_TheLoai ON CT_Phim_TheLoai.MaPhim = Phim.MaPhim 
+        //  WHERE CT_Phim_TheLoai.MaTheLoai IN (6, 7)
+        // AND (Phim.TenPhim LIKE '%%' OR Phim.DaoDien LIKE '%%') 
+        // AND Phim.ThoiLuong >= 120
+        // AND EXISTS (SELECT * FROM SuatChieu Join PhongChieu on SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in (1))
+        // GROUP BY Phim.MaPhim
+        // HAVING COUNT(DISTINCT CT_Phim_TheLoai.MaTheLoai) = 2;
+        if (!empty($genre)) {
+            $count = count($genre);
+            $sql .= "HAVING COUNT(DISTINCT CT_Phim_TheLoai.MaTheLoai) = $count ";
+        }
         echo $sql;
-        die();
-        // giờ tìm các phim trong danh sách phim trên in ids
         $movies = Database::query($sql, []);
         $ids = array_map(function ($movie) {
             return $movie['MaPhim'];
         }, $movies);
         $sql = "SELECT * FROM Phim WHERE MaPhim IN (" . implode(",", $ids) . ") ";
         if (!empty($sort)) {
-            $sql .= "ORDER BY $sort $sortBy ";
+            $sql .= "ORDER BY $sortBy $sortDir ";
         }
         $sql .= "LIMIT " . ($page - 1) * $limit . ", $limit";
         $movies = Database::query($sql, []);
