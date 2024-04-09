@@ -63,6 +63,12 @@ class MomoPaymentStrategy implements PaymentStrategy
      */
     public function callback($data): PaymentStatus
     {
-        return PaymentStatus::Success;
+        // /pay/callback/momo?partnerCode=MOMOBKUN20180529&orderId=aff414cd-9d7b-4a9b-b4d0-e3e0b3de478c&requestId=74a6c7db-c3e3-44a3-8da3-9070e56e8e7a&amount=110000&orderInfaff414cd-9d7bo=Thanh+to%C3%A1n+v%C3%A9+xem+phim&orderType=momo_wallet&transId=4018910890&resultCode=0&message=Th%C3%A0n%A1n+v%C3%A9+h+c%C3%B4ng.&payType=qr&responseTime=1712687780480&extraData=&signature=81ce1416f1dd7527615a76c4309f377565sponseTime=17ccb4d36710c6d5a2d35be24d943512&paymentOption=momo  
+        //toDo: check signature
+        $status = $data['resultCode'];
+        if ($status == 0) {
+            return PaymentStatus::Success;
+        }
+        return PaymentStatus::Failed;
     }
 }
