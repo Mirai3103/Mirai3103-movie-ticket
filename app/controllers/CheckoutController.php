@@ -81,8 +81,12 @@ class CheckoutController
         if (is_null($payment_method)) {
             return json(["message" => "Phương thức thanh toán không hợp lệ"], 400);
         }
+        $totalPrice = $bookingData['TongTien'];
+        $displayText = "Thanh toán vé xem phim";
         $paymentStrategy = getPaymentStrategy($payment_method);
-        $payment = $paymentStrategy->createPayment(guidv4(), "100000", "thanh toan ve xem phim");
+        $tempId = guidv4();
+        $_SESSION['bookingData']['id'] = $tempId;
+        $payment = $paymentStrategy->createPayment($tempId, $totalPrice, $displayText);
         return json($payment);
     }
 }
