@@ -34,13 +34,15 @@ img {
 <div x-data="{
     data: [],
     page: 1,
-    limit: 10,
+    limit: 12,
     total: 0,
+    listPage: [],
     isLoading: false,
     isShowFilter: false,
     onSearch: async function(){
-            
-          const keyword = $refs.keywordInput.value;
+            this.isLoading = true;
+            this.data = [];
+            const keyword = $refs.keywordInput.value;
                 const theloais = Array.from(document.querySelectorAll('.theloai:checked')).map(e => e.value);
 
                 const rapchieus = Array.from(document.querySelectorAll('.rapchieu:checked')).map(e => e.value);
@@ -51,23 +53,33 @@ img {
                 const durrationTo = $refs.durrationToInput.value;
                 const sortBy = $refs.sortByInput.value;
                 const sort = $refs.sortInput.value;
+                console.log(keyword, theloais, rapchieus, showFrom, showTo, durrationFrom, durrationTo, sortBy, sort);
                 const queryParam = {
                     'tu-khoa': keyword,
                     'the-loais': theloais,
                     'raps': rapchieus,
-                    'thoi-gian-tu': showFrom,
-                    'thoi-gian-den': showTo,
+                    'thoi-gian-tu': showFrom && dayjs(showFrom, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                    'thoi-gian-den':showTo && dayjs(showTo, 'DD/MM/YYYY').format('YYYY-MM-DD'),
                     'thoi-luong-tu': durrationFrom,
                     'thoi-luong-den': durrationTo,
                     'sap-xep': sortBy,
-                    'thu-tu': sort
+                    'thu-tu': sort,
+                    trang: this.page,
+                    limit: this.limit
                 }
                 const query = window.queryString.stringify(queryParam);
                 window.history.pushState({}, '', '?' + query);
                 axios.post('/api/phim/tim-kiem-nang-cao', queryParam).then(res => {
-                    console.log(res.data);
+                    console.log(res.data.data);
+                    this.data = res.data.data;
+                    this.total = res.headers['x-total-count'];  
+                    const totalPage = Math.ceil(this.total / this.limit);
+                    this.listPage = Array.from({length: totalPage}, (_, i) => i + 1);
                 }).catch(err => {
                     console.log(err);
+                    
+                }).finally(() => {
+                    this.isLoading = false;
                 });
     },
 }" x-init="
@@ -88,14 +100,20 @@ elements.forEach(e => {
         e.checked = true;
     }
 });
-$refs.showFromInput.value = query['thoi-gian-tu'] ?? '';
-$refs.showToInput.value = query['thoi-gian-den'] ?? '';
+$refs.showFromInput.value = dayjs(query['thoi-gian-tu']|| new Date()).format('DD/MM/YYYY');
+$refs.showToInput.value = query['thoi-gian-den'] ? dayjs(query['thoi-gian-den']|| new Date()).format('DD/MM/YYYY') : '';
 $refs.durrationFromInput.value = parseInt(query['thoi-luong-tu']) || '';
 $refs.durrationToInput.value = parseInt(query['thoi-luong-den']) || '';
 
 $refs.sortByInput.value = query['sap-xep'] ?? 'Phim.TenPhim';
 $refs.sortInput.value = query['thu-tu'] ?? 'ASC';
-
+$watch('page', (value) => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+    onSearch();
+});
  $nextTick(() => {
         onSearch();
  });
@@ -119,21 +137,7 @@ $refs.sortInput.value = query['thu-tu'] ?? 'ASC';
             </div>
             <div class="tw-collapse-content" style="visibility: hidden;"
                 :style="isShowFilter ? 'visibility: visible; opacity: 1;' : 'visibility: hidden; opacity: 0;'">
-                <!-- $keyword = $queryInput['tu-khoa'] ?? '';
-        $genre = $queryInput['the-loai'] ?? '';
-        $timeRangeFrom = $queryInput['thoi-gian-tu'] ?? '';
-        $timeRangeTo = $queryInput['thoi-gian-den'] ?? '';
-        $durationFrom = $queryInput['thoi-luong-tu'] ?? '0';
-        $durationTo = $queryInput['thoi-luong-den'] ?? '0';
-        $format = $queryInput['dinh-dang'] ?? '';
-        $cinema = $queryInput['rap'] ?? '';
-        $sort = $queryInput['sap-xep'] ?? '';
-        $sortBy = $queryInput['theo'] ?? '';
-        $page = $queryInput['page'] ?? 1;
-        $limit = $queryInput['limit'] ?? 20;
-        $sql = "Select Phim.MaPhim from Phim ";
-        $sql .= "LEFT JOIN CT_Phim_TheLoai ON CT_Phim_TheLoai.MaPhim = phim.MaPhim ";
-        $sql .= "WHERE 1=1 "; -->
+
                 <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
                     <input type="checkbox" />
                     <div class="tw-collapse-title tw-text-xl tw-font-medium">
@@ -316,7 +320,7 @@ $refs.sortInput.value = query['thu-tu'] ?? 'ASC';
         <div class="row tw-gap-y-4 ">
             <template x-if="isLoading">
                 <div class="col-12 text-center tw-justify-center tw-items-center tw-py-12">
-                    <span class="loading loading-dots loading-lg"></span>
+                    <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
                 </div>
             </template>
             <template x-if="!isLoading && data.length == 0">
@@ -327,40 +331,42 @@ $refs.sortInput.value = query['thu-tu'] ?? 'ASC';
             <template x-for="item in data" :key="item.MaPhim">
                 <div class="col-xl-3 gx-5 mb-4 mb-xl-0 col-md-4 col-6 col-lg-4 ">
                     <div class="tw-rounded-md  tw-pb-2">
-                        <div class="app-carousel-movie-item__img">
+                        <div class="app-carousel-movie-item__img" x-on:mouseover="onItemMouseOver($event)"
+                            x-on:mouseout="onItemMouseOut($event)">
+
                             <div class="app-carousel-movie-item__info--hover text-white p-4 text-start fs-5">
                                 <h2 class="fs-4 fw-bold" x-text="item.TenPhim"></h2>
 
                                 <div class="mt-5">
                                     <div>
                                         <i class="me-3 fa-solid fa-layer-group"></i>
-                                        <span>
-                                            ${movie.DinhDang}</span>
+                                        <span x-text="item.DinhDang"></span>
                                     </div>
 
                                     <div>
                                         <i class="me-3 mt-2 fa-solid fa-clock"></i>
-                                        <span>${movie.ThoiLuong}'</span>
+                                        <span x-text="item.ThoiLuong"></span>
                                     </div>
 
                                     <div>
                                         <i class="fa-solid fa-closed-captioning  me-3 mt-2"></i>
-                                        <span>${movie.NgonNgu}</span>
+                                        <span x-text="item.NgonNgu"></span>
                                     </div>
 
 
                                 </div>
                             </div>
-                            <img src="https://api-website.cinestar.com.vn/media/wysiwyg/Posters/03-2024/hoi-chung-tuoi-thanh-xuan.jpg"
-                                class="d-block w-100" alt="...">
+                            <img :src="item.HinhAnh" class="d-block w-100" alt="...">
                         </div>
-                        <h4 class="mt-3 app-carousel-movie-item__title">${movie.TenPhim}</h4>
+                        <h4 class="mt-3 app-carousel-movie-item__title" x-text="item.TenPhim"></h4>
                         <div class="d-flex justify-content-around mt-4 align-items-center">
-                            <a style="color: var(--color1)" href=${movie.Trailer}>
+                            <a style="color: var(--color1)" :href="item.Trailer">
                                 <i class="fa-solid fa-star"></i>
                                 <span>Xem Trailer</span>
                             </a>
-                            <a style="margin-right: 4px;" class="login-item btn-login btn" href="/phim/${movie.MaPhim}">
+                            <a style="margin-right: 4px;" class="login-item btn-login btn"
+                                :href="'/phim/' + item.MaPhim">
+
                                 <i class="fa-solid fa-star"></i>
                                 <span class="ms-2">Đặt vé</span>
                             </a>
@@ -369,13 +375,37 @@ $refs.sortInput.value = query['thu-tu'] ?? 'ASC';
                 </div>
             </template>
         </div>
+        <nav aria-label="..." class='tw-flex tw-items-center tw-justify-center tw-py-5 tw-my-10'>
+            <div class="tw-join">
+                <template x-for="item in listPage" :key="item">
+
+                    <input class="tw-join-item tw-btn tw-btn-square" type="radio" name="options" :aria-label="item"
+                        :value="item" x-model="page" :checked="item == page" />
+
+                </template>
+            </div>
+
+        </nav>
     </div>
 </div>
 <script>
-window.addEventListener('DOMContentLoaded', (event) => {
-    console.log('DOM fully loaded and parsed');
-});
+function onItemMouseOver(e) {
+    const target = e.currentTarget;
+    const infoEle = target.getElementsByClassName(
+        "app-carousel-movie-item__info--hover"
+    )[0];
+    infoEle.style.opacity = 1;
+}
+
+function onItemMouseOut(e) {
+    const target = e.currentTarget;
+    const infoEle = target.getElementsByClassName(
+        "app-carousel-movie-item__info--hover"
+    )[0];
+    infoEle.style.opacity = 0;
+}
 </script>
+
 <script type="module">
 import queryString from 'https://cdn.jsdelivr.net/npm/query-string@9.0.0/+esm'
 window.queryString = queryString

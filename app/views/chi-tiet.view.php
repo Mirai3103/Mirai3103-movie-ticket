@@ -353,8 +353,7 @@ $watch('selectedSchedule',async (value) => {
                                     <i class="icon-age fa-solid fa-user-check"></i>
                                 </div>
                                 <span class="info__detail-title" x-text="ageTags['<?= $phim['HanCheDoTuoi'] ?>'].name">
-                                    >
-
+                                    P
                                 </span>
                             </div>
                         </div>

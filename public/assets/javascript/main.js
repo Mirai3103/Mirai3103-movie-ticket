@@ -1,36 +1,3 @@
-// const myCarouselElement = document.querySelector('#carousel__card');
-// // const menuMobile = document.getElementById()
-
-// if (window.matchMedia("(min-width:576px)").matches) {
-//     const carousel = new bootstrap.Carousel(myCarouselElement, {
-//         interval: false,
-//         touch: false
-//     });
-
-//     var carouselWidth = myCarouselElement.querySelector('.carousel-inner').scrollWidth;
-//     var cardWidth = myCarouselElement.querySelector('.carousel-item').offsetWidth;
-
-//     var scrollPosition = 0;
-
-//     $('.carousel-control-next').on('click', function() {
-//         if (scrollPosition < (carouselWidth - (cardWidth * 5))) {
-//             console.log('next');
-//             scrollPosition += cardWidth;
-//             $('.carousel-inner').animate({scrollLeft: scrollPosition}, 600);
-//         }
-//     });
-
-//     $('.carousel-control-prev').on('click', function() {
-//         if (scrollPosition > 0) {
-//             console.log('prev');
-//             scrollPosition -= cardWidth;
-//             $('.carousel-inner').animate({scrollLeft: scrollPosition}, 600);
-//         }
-//     });
-// } else {
-//     $(myCarouselElement).addClass('slide');
-// }
-
 //-----------------show navbar-mobile----------------
 var checkbox = document.getElementById("checkShowMenu");
 

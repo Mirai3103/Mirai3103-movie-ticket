@@ -29,6 +29,7 @@ class ComposerStaticInit7d8cde7a46b174acd021ce9a6503a48a
         'App\\Services\\OrderService' => __DIR__ . '/../..' . '/app/services/OrderService.php',
         'App\\Services\\Payments\\Models\\CreatePaymentResponse' => __DIR__ . '/../..' . '/app/services/payments/models/CreatePaymentResponse.php',
         'App\\Services\\Payments\\MomoPaymentStrategy' => __DIR__ . '/../..' . '/app/services/payments/MomoStrategy.php',
+        'App\\Services\\Payments\\PaymentStatus' => __DIR__ . '/../..' . '/app/services/payments/PaymentStrategy.php',
         'App\\Services\\Payments\\PaymentStrategy' => __DIR__ . '/../..' . '/app/services/payments/PaymentStrategy.php',
         'App\\Services\\Payments\\ZaloPayStrategy' => __DIR__ . '/../..' . '/app/services/payments/ZaloPayStrategy.php',
         'App\\Services\\PermissionService' => __DIR__ . '/../..' . '/app/services/PermissionService.php',

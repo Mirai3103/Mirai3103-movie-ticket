@@ -24,6 +24,7 @@ return array(
     'App\\Services\\OrderService' => $baseDir . '/app/services/OrderService.php',
     'App\\Services\\Payments\\Models\\CreatePaymentResponse' => $baseDir . '/app/services/payments/models/CreatePaymentResponse.php',
     'App\\Services\\Payments\\MomoPaymentStrategy' => $baseDir . '/app/services/payments/MomoStrategy.php',
+    'App\\Services\\Payments\\PaymentStatus' => $baseDir . '/app/services/payments/PaymentStrategy.php',
     'App\\Services\\Payments\\PaymentStrategy' => $baseDir . '/app/services/payments/PaymentStrategy.php',
     'App\\Services\\Payments\\ZaloPayStrategy' => $baseDir . '/app/services/payments/ZaloPayStrategy.php',
     'App\\Services\\PermissionService' => $baseDir . '/app/services/PermissionService.php',
