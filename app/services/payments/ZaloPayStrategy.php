@@ -58,4 +58,13 @@ class ZaloPayStrategy implements PaymentStrategy
         $rs->redirectUrl = $response['order_url'];
         return $rs;
     }
+    /**
+     *
+     * @param mixed $data
+     * @return PaymentStatus
+     */
+    public function callback($data): PaymentStatus
+    {
+        return PaymentStatus::Success;
+    }
 }
