@@ -78,16 +78,46 @@
                      </div>
                  </label>
              </div>
+             <div>
+                 <label class="checkout-button  tw-border-secondary tw-border-3"
+                     for="<?= PaymentType::Mock_Succeed->value ?>">
+                     <div class="checkout-selector">
+                         <input x-model="data.payment_method" id="<?= PaymentType::Mock_Succeed->value ?>" type="radio"
+                             class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method"
+                             value="<?php echo PaymentType::Mock_Succeed->value ?>">
+                     </div>
+                     <div class="content" style="  display: flex;align-items: center;">
+                         <span class="checkout-title">
+                             Test thanh toán thành công
+                         </span>
+                     </div>
+                 </label>
+             </div>
+             <div>
+                 <label class="checkout-button  tw-border-secondary tw-border-3"
+                     for="<?= PaymentType::Mock_Failed->value ?>">
+                     <div class="checkout-selector">
+                         <input x-model="data.payment_method" id="<?= PaymentType::Mock_Failed->value ?>" type="radio"
+                             class="btn btn-m2 btn-checkout btn-logo-inline" name="payment-method"
+                             value="<?php echo PaymentType::Mock_Failed->value ?>">
+                     </div>
+                     <div class="content" style="  display: flex;align-items: center;">
+                         <span class="checkout-title">
+                             Test thanh toán thất bại
+                         </span>
+                     </div>
+                 </label>
+             </div>
          </div>
          <?php if (Request::isAuthenicated()): ?>
-             <div>
-                 <label for="discount" class="tw-block  tw-font-bold  tw-text-gray-700">
-                     Mã giảm giá
-                 </label>
-                 <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount"
-                     class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-3  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
-                     placeholder="Nhập mã giảm giá">
-             </div>
+         <div>
+             <label for="discount" class="tw-block  tw-font-bold  tw-text-gray-700">
+                 Mã giảm giá
+             </label>
+             <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount"
+                 class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-3  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                 placeholder="Nhập mã giảm giá">
+         </div>
          <?php endif; ?>
          <div class="tw-flex tw-justify-center">
              <button data-ripple-light="true" x-on:click="if (validate()) { 
@@ -161,23 +191,23 @@
                  <h4 class='tw-mt-2'>
                      <span class='tw-font-semibold tw-text-secondary'>Ghế: </span>
                      <?php foreach ($seats as $seat): ?>
-                         <span><?= $seat['SoGhe'] ?> </span>
+                     <span><?= $seat['SoGhe'] ?> </span>
                      <?php endforeach; ?>
                  </h4>
                  <h4>
                      <span class='tw-font-semibold tw-text-secondary'>Bắp nước: </span>
                      <?php foreach ($foods as $food): ?>
 
-                         <span>
-                             <?= $food['TenThucPham'] ?> X
-                             <?= $bookingData['ThucPhams'][array_search($food['MaThucPham'], array_column($bookingData['ThucPhams'], 'MaThucPham'))]['SoLuong'] ?>
-                         </span>
+                     <span>
+                         <?= $food['TenThucPham'] ?> X
+                         <?= $bookingData['ThucPhams'][array_search($food['MaThucPham'], array_column($bookingData['ThucPhams'], 'MaThucPham'))]['SoLuong'] ?>
+                     </span>
                      <?php endforeach; ?>
                      <?php foreach ($combos as $combo): ?>
-                         <span>
-                             <?= $combo['TenCombo'] ?> X
-                             <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
-                         </span>
+                     <span>
+                         <?= $combo['TenCombo'] ?> X
+                         <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
+                     </span>
                      <?php endforeach; ?>
                  </h4>
              </div>

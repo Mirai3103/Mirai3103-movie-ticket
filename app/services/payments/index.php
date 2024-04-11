@@ -11,6 +11,8 @@ enum PaymentType: string
 {
     case Momo = 'momo';
     case ZaloPay = 'zalopay';
+    case Mock_Succeed = 'mock_succeed';
+    case Mock_Failed = 'mock_failed';
 }
 
 function getPaymentStrategy(PaymentType $type): PaymentStrategy

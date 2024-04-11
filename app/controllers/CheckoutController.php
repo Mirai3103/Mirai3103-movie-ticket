@@ -6,6 +6,7 @@ use App\Core\Logger;
 use App\Models\JsonResponse;
 use App\Services\ComboService;
 use App\Services\OrderService;
+use App\Services\Payments\Models\CreatePaymentResponse;
 use App\Services\SeatService;
 use App\Services\ShowService;
 use App\Services\TicketService;
@@ -76,14 +77,30 @@ class CheckoutController
         return view("checkout-success");
     }
     #[Route("/thanh-toan", "POST")]
-    public static function store()
+    public static function createPayUrl()
     {
 
         $data = request_body();
         $bookingData = $_SESSION['bookingData'];
         $payment_method = PaymentType::tryFrom($data['payment_method']);
+
         if (is_null($payment_method)) {
             return json(["message" => "Phương thức thanh toán không hợp lệ"], 400);
+        }
+        if ($payment_method == PaymentType::Mock_Succeed) {
+            $payment = new CreatePaymentResponse();
+            $payment->redirectUrl = $_SERVER['HTTP_HOST'] . "/thanh-toan/success";
+            $payment->paymentId = "mock_payment_id";
+            $payment->isRedirect = true;
+            $payment->mobileUrl = true;
+            return json($payment);
+        } else if ($payment_method == PaymentType::Mock_Failed) {
+            $payment = new CreatePaymentResponse();
+            $payment->redirectUrl = $_SERVER['HTTP_HOST'] . "/thanh-toan/failed";
+            $payment->paymentId = "mock_payment_id";
+            $payment->isRedirect = true;
+            $payment->mobileUrl = true;
+            return json($payment);
         }
         $totalPrice = $bookingData['TongTien'];
         $displayText = "Thanh toán vé xem phim";
