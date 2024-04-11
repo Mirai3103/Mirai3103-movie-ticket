@@ -50,20 +50,14 @@ function redirect($path)
 {
     header("Location: /{$path}");
 }
+use Hidehalo\Nanoid\Client;
+use Hidehalo\Nanoid\GeneratorInterface;
 
-function guidv4($data = null)
+function uid()
 {
-    // Generate 16 bytes (128 bits) of random data or use the data passed into the function.
-    $data = $data ?? random_bytes(16);
-    assert(strlen($data) == 16);
+    $client = new Client();
+    return $client->generateId($size = 21);
 
-    // Set version to 0100
-    $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
-    // Set bits 6-7 to 10
-    $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
-
-    // Output the 36 character UUID.
-    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
 function isNullOrEmptyString($str)
 {
@@ -78,10 +72,10 @@ function isNullOrEmptyArray($arr)
 {
     return (!isset($arr) || count($arr) === 0);
 }
-    function getArrayValueSafe($arr, $key, $default = null)
-    {
-        return isset($arr[$key]) ? $arr[$key] : $default;
-    }
+function getArrayValueSafe($arr, $key, $default = null)
+{
+    return isset($arr[$key]) ? $arr[$key] : $default;
+}
 function execPostRequest($url, $data)
 {
     $ch = curl_init($url);

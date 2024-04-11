@@ -17,7 +17,14 @@
 https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js
 "></script>
 
-    <script src="/public/js/alpine.js"></script>
+    <script>
+import alpinejs from 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.8/+esm'
+
+window.Alpine = alpinejs
+window.addEventListener('DOMContentLoaded', () => {
+    alpinejs.start()
+})
+    </script>
 
     <!-- from cdn -->
 

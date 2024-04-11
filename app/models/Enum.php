@@ -20,3 +20,10 @@ enum TrangThaiPhong: int
     case DangBaoTri = 6;
     case DangHoatDong = 7;
 }
+
+enum TrangThaiHoaDon: int
+{
+    case ThanhCong = 8;
+    case Nhap = 9;
+    case An = 10;
+}

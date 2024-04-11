@@ -4,6 +4,7 @@ use App\Core\App;
 use App\Core\Database\Database;
 use App\Models\JsonResponse;
 use App\Services\ComboService;
+use App\Services\OrderService;
 use App\Services\SeatService;
 use App\Services\ShowService;
 use App\Services\TicketService;
@@ -19,7 +20,7 @@ class CheckoutController
         $data = request_body();
 
 
-        $result = TicketService::startCheckout($data);
+        $result = OrderService::startCheckout($data);
 
         return json($result);
     }
@@ -84,9 +85,8 @@ class CheckoutController
         $totalPrice = $bookingData['TongTien'];
         $displayText = "Thanh toán vé xem phim";
         $paymentStrategy = getPaymentStrategy($payment_method);
-        $tempId = guidv4();
-        $_SESSION['bookingData']['id'] = $tempId;
-        $payment = $paymentStrategy->createPayment($tempId, $totalPrice, $displayText);
+        $id = $_SESSION['bookingData']['id'];
+        $payment = $paymentStrategy->createPayment($id, $totalPrice, $displayText);
         return json($payment);
     }
 }

@@ -50,55 +50,6 @@ class TicketService
         return $lockTime;
     }
 
-    public static function startCheckout($data)
-    {
-
-        $DanhSachVe = $data['DanhSachVe'];
-        $SeatIds = array_map(function ($item) {
-            return $item['MaGhe'];
-        }, $DanhSachVe);
-        if (TicketService::isAnySeatsLocked($SeatIds, $data['MaXuatChieu'])) {
-            return JsonResponse::error("Có vé đã bị đặt trong lúc bạn chọn, vui lòng chọn lại", 409);
-        }
-
-        $lockToTime = TicketService::lockSeats($SeatIds, $data['MaXuatChieu']);
-        // tiền vé = tiền xuất chiếu + tiền loại ghế + tiền loại vé
-        // tiền combo = tiền combo * số lượng
-        // tiền thức ăn = tiền thức ăn * số lượng
-        // tổng tiền = tiền vé + tiền combo + tiền thức ăn
-        // tính tiền vé 
-        foreach ($DanhSachVe as $ve) {
-            Database::execute("UPDATE Ve SET MaLoaiVe = ? WHERE MaGhe = ? AND MaSuatChieu = ?", [$ve['MaLoaiVe'], $ve['MaGhe'], $data['MaXuatChieu']]);
-        }
-        $SeatIdsIn = implode(",", $SeatIds);
-        $sql = "SELECT 
-        LoaiVe.GiaVe+LoaiGhe.GiaVe+SuatChieu.GiaVe as GiaVe
-         FROM Ve JOIN LoaiVe ON Ve.MaLoaiVe = LoaiVe.MaLoaiVe 
-        JOIN Ghe ON Ve.MaGhe = Ghe.MaGhe 
-        JOIN LoaiGhe ON Ghe.MaLoaiGhe = LoaiGhe.MaLoaiGhe
-        JOIN SuatChieu ON Ve.MaSuatChieu = SuatChieu.MaXuatChieu
-        WHERE Ve.MaSuatChieu = ? and Ve.MaGhe IN ($SeatIdsIn)";
-        $ticketPrice = Database::query($sql, [$data['MaXuatChieu']]);
-
-        $ticketPrice = array_reduce($ticketPrice, function ($acc, $item) {
-            return $acc + $item['GiaVe'];
-        }, 0);
-
-        $comboPrice = ComboService::calCombosPrice($data['Combos']);
-        $foodPrice = ComboService::calFoodsPrice($data['ThucPhams'] ?? []);
-        $totalPrice = $ticketPrice + $comboPrice + $foodPrice;
-        // set session 
-        $bookingData = [
-            'MaXuatChieu' => $data['MaXuatChieu'],
-            'TongTien' => $totalPrice,
-            "DanhSachVe" => $SeatIds,
-            "ThucPhams" => $data['ThucPhams'],
-            "Combos" => $data['Combos'],
-            "lockTo" => $lockToTime
-        ];
-        $_SESSION['bookingData'] = $bookingData;
-        return JsonResponse::ok($bookingData);
-    }
     public static function getAllTicketsOfShow($showId)
     {
         return Database::query("SELECT * FROM Ve WHERE MaSuatChieu = ?", [$showId]);

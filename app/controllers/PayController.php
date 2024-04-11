@@ -1,9 +1,15 @@
 <?php
+require_once ('app/services/payments/index.php');
 
-use App\Core\App;
-use Core\Attributes\Controller;
+use App\Core\Logger;
+use App\Services\ComboService;
+use App\Services\OrderService;
+use App\Services\Payments\PaymentStatus;
+use App\Services\SeatService;
+use App\Services\ShowService;
+use App\Services\TicketService;
 use Core\Attributes\Route;
-
+use Dompdf\Options;
 
 class PayController
 {
@@ -19,9 +25,79 @@ class PayController
     public static function momoCallback()
     {
         $paymentStrategy = getPaymentStrategy(PaymentType::Momo);
-        $paymentStrategy->callback($_GET);
-        echo "Momo callback";
+        $paymentStatus = $paymentStrategy->callback($_GET);
+        if ($paymentStatus == PaymentStatus::Failed) {
+            echo "Thanh toán thất bại";
+            $_SESSION['bookingData'] = null;
+            return;
+        }
+        $bookingData = isset($_SESSION['bookingData']) ? $_SESSION['bookingData'] : null;
+        if ($bookingData == null) {
+            echo "Không tìm thấy thông tin đặt vé";
+            die();
+        }
+        $show = ShowService::getShowInfoById($bookingData['MaXuatChieu']);
+        $tickets = TicketService::getTicketOfSeats($bookingData['DanhSachVe'], $bookingData['MaXuatChieu']);
+        $seats = SeatService::getSeatByIds($bookingData['DanhSachVe']);
+        $foods = ComboService::getFoodByIds(array_map(fn($item) => $item['MaThucPham'], $bookingData['ThucPhams']));
+        $combos = ComboService::getComboByIds(array_map(fn($item) => $item['MaCombo'], $bookingData['Combos']));
+        $orderId = $_SESSION['bookingData']['id'];
+        $_SESSION['bookingData']['payment_method'] = PaymentType::Momo->value;
+        OrderService::saveOrder($_SESSION['bookingData']);
+        return view("checkout-success", [
+            "show" => $show,
+            "bookingData" => $bookingData,
+            "tickets" => $tickets,
+            "seats" => $seats,
+            "foods" => $foods,
+            "combos" => $combos,
+            "orderId" => $orderId,
+            "paymentType" => "Ví điện tử Momo",
+        ]);
     }
+
+    #[Route("/pay/test", "GET")]
+    public static function test()
+    {
+        $bookingData = isset($_SESSION['bookingData']) ? $_SESSION['bookingData'] : null;
+        if ($bookingData == null) {
+            echo "Không tìm thấy thông tin đặt vé";
+            die();
+        }
+        $show = ShowService::getShowInfoById($bookingData['MaXuatChieu']);
+        $tickets = TicketService::getTicketOfSeats($bookingData['DanhSachVe'], $bookingData['MaXuatChieu']);
+        $seats = SeatService::getSeatByIds($bookingData['DanhSachVe']);
+        $foods = ComboService::getFoodByIds(array_map(fn($item) => $item['MaThucPham'], $bookingData['ThucPhams']));
+        $combos = ComboService::getComboByIds(array_map(fn($item) => $item['MaCombo'], $bookingData['Combos']));
+        $orderId = $_SESSION['bookingData']['id'];
+        $barCodeUrl = "https://barcode.orcascan.com/?type=code128&format=jpg&data=" . $orderId;
+        // download and save svg to file
+        $barCodeContent = file_get_contents($barCodeUrl);
+        $base64 = "data:image/png;base64," . base64_encode($barCodeContent);
+        extract([
+            "show" => $show,
+            "bookingData" => $bookingData,
+            "tickets" => $tickets,
+            "seats" => $seats,
+            "foods" => $foods,
+            "combos" => $combos,
+            "orderId" => $orderId,
+            "paymentType" => "Ví điện tử Momo",
+            "barCodeUrl" => $base64,
+        ]);
+        $ticketFile = 'app/views/partials/ticket.php';
+        ob_start();
+        require_once ($ticketFile);
+        $ticketHtml = ob_get_clean();
+        file_put_contents('ticket.html', $ticketHtml);
+        $options = new Options();
+        $dompdf = new Dompdf\Dompdf($options);
+        $dompdf->loadHtml($ticketHtml);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $dompdf->stream();
+    }
+
     #[Route("/pay/callback/zalopay", "GET")]
     public static function zalopayCallback()
     {

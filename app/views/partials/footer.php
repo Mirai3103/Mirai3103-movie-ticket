@@ -94,7 +94,7 @@ foreach ($scripts as $script) {
 import alpinejs from 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.8/+esm'
 
 window.Alpine = alpinejs
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
     alpinejs.start()
 })
 </script>

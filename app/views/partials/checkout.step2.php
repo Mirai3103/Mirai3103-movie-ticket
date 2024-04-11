@@ -168,13 +168,17 @@
                      <span class='tw-font-semibold tw-text-secondary'>Bắp nước: </span>
                      <?php foreach ($foods as $food): ?>
 
-                         <span><?= $food['TenThucPham'] ?> X
+                         <span>
+                             <?= $food['TenThucPham'] ?> X
                              <?= $bookingData['ThucPhams'][array_search($food['MaThucPham'], array_column($bookingData['ThucPhams'], 'MaThucPham'))]['SoLuong'] ?>
-                         <?php endforeach; ?>
-                         <?php foreach ($combos as $combo): ?>
-                             <span><?= $combo['TenCombo'] ?> X
-                                 <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
-                             <?php endforeach; ?>
+                         </span>
+                     <?php endforeach; ?>
+                     <?php foreach ($combos as $combo): ?>
+                         <span>
+                             <?= $combo['TenCombo'] ?> X
+                             <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
+                         </span>
+                     <?php endforeach; ?>
                  </h4>
              </div>
              <div class=' tw-border-b-4 tw-my-4 tw-border-white tw-border-dashed'></div>
