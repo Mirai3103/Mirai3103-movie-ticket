@@ -2,6 +2,7 @@
 
 use App\Core\App;
 use App\Core\Database\Database;
+use App\Core\Logger;
 use App\Models\JsonResponse;
 use App\Services\ComboService;
 use App\Services\OrderService;
@@ -21,6 +22,7 @@ class CheckoutController
 
 
         $result = OrderService::startCheckout($data);
+        Logger::info(json($result));
 
         return json($result);
     }
@@ -41,7 +43,8 @@ class CheckoutController
         // Ve, Ghe, Loai Ve
         // 
 
-        if (!is_array($_SESSION['bookingData'])) {
+        if (!isset($_SESSION['bookingData'])) {
+            Logger::error("Booking data not found");
             redirect("");
         }
         $bookingData = $_SESSION['bookingData'];

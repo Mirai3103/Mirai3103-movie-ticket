@@ -12,6 +12,7 @@ class Database
     {
         static::$mysqli = Connection::make($GLOBALS['config']['database']);
     }
+
     public static function insert(string $table, array $parameters)
     {
         $sql = sprintf(

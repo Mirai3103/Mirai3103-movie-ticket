@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Logger;
 use App\Models\JsonResponse;
 use App\Models\TrangThaiHoaDon;
 
@@ -10,6 +11,7 @@ class OrderService
 
     public static function startCheckout($data)
     {
+        Database::beginTransaction();
         $tempId = uid();
         $DanhSachVe = $data['DanhSachVe'];
         $SeatIds = array_map(function ($item) {
@@ -26,9 +28,9 @@ class OrderService
         // tổng tiền = tiền vé + tiền combo + tiền thức ăn
         // tính tiền vé 
         foreach ($DanhSachVe as $ve) {
-            Database::execute("UPDATE Ve SET MaLoaiVe = ?, MaHoaDon = ?
+            Database::execute("UPDATE Ve SET MaLoaiVe = ?
              WHERE MaGhe = ? AND MaSuatChieu = ?",
-                [$ve['MaLoaiVe'], $tempId, $ve['MaGhe'], $data['MaXuatChieu']]
+                [$ve['MaLoaiVe'], $ve['MaGhe'], $data['MaXuatChieu']]
             );
         }
         $SeatIdsIn = implode(",", $SeatIds);
@@ -48,6 +50,7 @@ class OrderService
         $comboPrice = ComboService::calCombosPrice($data['Combos']);
         $foodPrice = ComboService::calFoodsPrice($data['ThucPhams'] ?? []);
         $totalPrice = $ticketPrice + $comboPrice + $foodPrice;
+        Database::commit();
         // set session 
         $bookingData = [
             'MaXuatChieu' => $data['MaXuatChieu'],
@@ -59,7 +62,7 @@ class OrderService
             'id' => $tempId
         ];
         $_SESSION['bookingData'] = $bookingData;
-
+        Logger::info(print_r($bookingData, true));
         return JsonResponse::ok($bookingData);
     }
 

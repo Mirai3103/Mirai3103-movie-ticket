@@ -2,6 +2,7 @@
 
 namespace App\Services\Payments;
 
+use GuzzleHttp\{Client, Request, RequestOptions};
 use App\Core\Logger;
 use App\Services\Payments\Models\CreatePaymentResponse;
 
@@ -46,10 +47,18 @@ class MomoPaymentStrategy implements PaymentStrategy
             "requestType" => "captureWallet",
             "signature" => $signature
         );
+        $client = new Client();
+        $endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+        $response = $client->post($endpoint, [
+            RequestOptions::JSON => $body,
+        ]);
+        $response = json_decode($response->getBody(), true);
 
-        $response = execPostRequest("https://test-payment.momo.vn/v2/gateway/api/create", json_encode($body));
-        $response = json_decode($response, true);
+
+        Logger::info("===================New Momo Payment===================");
+        Logger::info("Body: " . json_encode($body));
         Logger::info("Momo create payment response: " . json_encode($response));
+        Logger::info("=====================================================");
         $result = new CreatePaymentResponse();
         $result->isRedirect = true;
         $result->redirectUrl = $response['payUrl'];

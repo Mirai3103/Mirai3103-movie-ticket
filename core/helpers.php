@@ -76,10 +76,10 @@ function getArrayValueSafe($arr, $key, $default = null)
 {
     return isset($arr[$key]) ? $arr[$key] : $default;
 }
-function execPostRequest($url, $data)
+function execPostRequest($url, array $data)
 {
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    /*curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt(
@@ -96,7 +96,9 @@ function execPostRequest($url, $data)
     $result = curl_exec($ch);
     //close connection
     curl_close($ch);
-    return $result;
+    return $result;*/
+
+
 }
 
 
