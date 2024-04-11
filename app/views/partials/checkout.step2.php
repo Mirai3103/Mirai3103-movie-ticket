@@ -130,7 +130,11 @@
                 }).then(response => response.json())
                 .then(data => {
                     if(data.isRedirect){
-                        window.location.href = data.redirectUrl;
+                        if(data.redirectUrl.startsWith('http')){
+                            window.location.href = data.redirectUrl;
+                        }else{
+                            window.location.href = window.location.origin + data.redirectUrl;
+                        }
                     }
                     console.log('Success:', data);
                 })
