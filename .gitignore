@@ -7,3 +7,4 @@ controllers.cache.php
 php_dir
 vendor
 *.log
+composer.lock
