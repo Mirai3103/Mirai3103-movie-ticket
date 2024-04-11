@@ -74,11 +74,11 @@ class SeatService
 
         $sql = "
         SELECT Ghe.*, Ve.MaVe from Ghe left join (
-                        select * from Ve where Ve.MaSuatChieu = ?  and Ve.KhoaDen is not null and Ve.KhoaDen >= ? and Ve.TrangThai = ?
-                    ) as Ve on Ghe.MaGhe = Ve.MaGhe 
+                        select * from Ve where Ve.MaSuatChieu = ?  and Ve.TrangThai = ? or (Ve.KhoaDen is not null and Ve.KhoaDen > ?)
+                    ) as Ve on Ghe.MaGhe = Ve.MaGhe     
             where Ghe.MaPhongChieu = ?
         ";
-        $seats = Database::query($sql, [$showId, date('Y-m-d H:i:s', time()), TrangThaiVe::DaDat->value, $roomId]);
+        $seats = Database::query($sql, [$showId, TrangThaiVe::DaDat->value, date('Y-m-d H:i:s', time()), $roomId]);
         return $seats;
     }
 }

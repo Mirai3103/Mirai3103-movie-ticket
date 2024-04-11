@@ -5,6 +5,7 @@ use App\Core\Database\Database;
 use App\Core\Logger;
 use App\Models\JsonResponse;
 use App\Models\TrangThaiHoaDon;
+use App\Models\TrangThaiVe;
 
 class OrderService
 {
@@ -98,8 +99,9 @@ class OrderService
             'TrangThai' => $TrangThai
         ]);
         $danhSachVe = $data['DanhSachVe'];
-        foreach ($danhSachVe as $ve) {
-            Database::execute("UPDATE Ve SET MaHoaDon = ? WHERE MaGhe = ? AND MaSuatChieu = ?", [$uid, $ve['MaGhe'], $data['MaXuatChieu']]);
+        Logger::info(print_r($danhSachVe, true));
+        foreach ($danhSachVe as $maGhe) {
+            Database::execute("UPDATE Ve SET MaHoaDon = ? , TrangThai = ? WHERE MaGhe = ? AND MaSuatChieu = ?", [$uid, TrangThaiVe::DaDat->value, $maGhe, $data['MaXuatChieu']]);
         }
         $combos = $data['Combos'];
         foreach ($combos as $combo) {

@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiVe;
 
 class TicketService
 {
@@ -11,6 +12,10 @@ class TicketService
     {
         $ticket = Database::queryOne("SELECT * FROM Ve WHERE MaGhe = ? AND MaSuatChieu = ?", [$seatId, $showId]);
         // KhoaDen	type = timestamp	
+        $trangThai = $ticket['TrangThai'];
+        if ($trangThai == TrangThaiVe::DaDat) {
+            return true;
+        }
         if ($ticket['KhoaDen'] == null)
             return false;
         $now = time();
@@ -24,6 +29,11 @@ class TicketService
         $tickets = Database::query("SELECT * FROM Ve WHERE MaGhe IN ($seatIds) AND MaSuatChieu = ?", [$showId]);
         $now = time();
         foreach ($tickets as $ticket) {
+            // check if TrangThai = 4
+            $trangThai = $ticket['TrangThai'];
+            if ($trangThai == TrangThaiVe::DaDat) {
+                return true;
+            }
             if ($ticket['KhoaDen'] == null)
                 continue;
             $lockTime = strtotime($ticket['KhoaDen']);

@@ -11,8 +11,8 @@ enum TrangThaiPhim: int
 
 enum TrangThaiVe: int
 {
-    case DaDat = 4;
-    case ChuaDat = 5;
+    case DaDat = 5;
+    case ChuaDat = 4;
 }
 
 enum TrangThaiPhong: int
