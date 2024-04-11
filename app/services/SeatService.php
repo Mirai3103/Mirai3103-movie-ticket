@@ -62,7 +62,8 @@ class SeatService
     }
     public static function getSeatByIds($ids)
     {
-        $sql = "SELECT * FROM Ghe WHERE MaGhe IN  (" . implode(",", $ids) . ")";
+        $sql = "SELECT * FROM Ghe JOIN LoaiGhe ON Ghe.MaLoaiGhe = LoaiGhe.MaLoaiGhe
+        WHERE MaGhe IN  (" . implode(",", $ids) . ")";
         $seats = Database::query($sql, []);
         return $seats;
     }

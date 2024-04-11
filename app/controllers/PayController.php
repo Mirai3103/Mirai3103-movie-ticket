@@ -36,6 +36,14 @@ class PayController
             echo "Không tìm thấy thông tin đặt vé";
             die();
         }
+        $orderModel = self::createOrderModel();
+        $orderModel['paymentType'] = "Ví điện tử Momo";
+        return view("checkout-success", $orderModel);
+    }
+
+    private static function createOrderModel()
+    {
+        $bookingData = $_SESSION['bookingData'];
         $show = ShowService::getShowInfoById($bookingData['MaXuatChieu']);
         $tickets = TicketService::getTicketOfSeats($bookingData['DanhSachVe'], $bookingData['MaXuatChieu']);
         $seats = SeatService::getSeatByIds($bookingData['DanhSachVe']);
@@ -44,7 +52,7 @@ class PayController
         $orderId = $_SESSION['bookingData']['id'];
         $_SESSION['bookingData']['payment_method'] = PaymentType::Momo->value;
         OrderService::saveOrder($_SESSION['bookingData']);
-        return view("checkout-success", [
+        return [
             "show" => $show,
             "bookingData" => $bookingData,
             "tickets" => $tickets,
@@ -52,8 +60,20 @@ class PayController
             "foods" => $foods,
             "combos" => $combos,
             "orderId" => $orderId,
-            "paymentType" => "Ví điện tử Momo",
-        ]);
+        ];
+    }
+
+    #[Route("/pay/callback/mock_succeed", "GET")]
+    public static function mockSucceedCallback()
+    {
+        $orderModel = self::createOrderModel();
+        return view("checkout-success", $orderModel);
+    }
+    #[Route("/pay/callback/mock_failed", "GET")]
+    public static function mockFailedCallback()
+    {
+        $_SESSION['bookingData'] = null;
+        return view("checkout-failed");
     }
 
     #[Route("/pay/test", "GET")]

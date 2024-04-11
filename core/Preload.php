@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Database\Database;
+use App\Core\Logger;
 use App\Services\SeatService;
 
 $GLOBALS['config'] = require 'config.php';
@@ -17,3 +18,8 @@ Router::load_from_class(SeatController::class);
 Router::load_from_class(StatusController::class);
 Router::load_from_class(MovieController::class);
 Router::build();
+function exception_handler(Throwable $exception)
+{
+    Logger::error($exception->getMessage());
+    Logger::error($exception->getTraceAsString());
+}

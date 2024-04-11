@@ -5,13 +5,14 @@ namespace App\Core;
 class Logger
 {
     private static $logFile = "app.log";
-    public static function info($message)
+    public static function info(...$message)
     {
-        self::write("INFO", $message);
+        self::write("INFO", implode(" ", $message));
     }
-    public static function error($message)
+
+    public static function error(...$message)
     {
-        self::write("ERROR", $message);
+        self::write("ERROR", implode(" ", $message));
     }
 
     private static function write($level, $message)

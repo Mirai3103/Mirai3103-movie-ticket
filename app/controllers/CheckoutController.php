@@ -89,14 +89,14 @@ class CheckoutController
         }
         if ($payment_method == PaymentType::Mock_Succeed) {
             $payment = new CreatePaymentResponse();
-            $payment->redirectUrl . "/thanh-toan/success";
+            $payment->redirectUrl = "/pay/callback/mock_succeed";
             $payment->paymentId = "mock_payment_id";
             $payment->isRedirect = true;
             $payment->mobileUrl = true;
             return json($payment);
         } else if ($payment_method == PaymentType::Mock_Failed) {
             $payment = new CreatePaymentResponse();
-            $payment->redirectUrl = "/thanh-toan/failed";
+            $payment->redirectUrl = "/pay/callback/mock_failed";
             $payment->paymentId = "mock_payment_id";
             $payment->isRedirect = true;
             $payment->mobileUrl = true;

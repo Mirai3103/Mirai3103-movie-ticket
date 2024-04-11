@@ -4,14 +4,26 @@ require ('partials/head.php');
 ?>
 
 
-<script src="
-https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js
-"></script>
-<script>
-const tickets = <?= json_encode($tickets) ?>;
-// ticked grouped by type
-const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
-</script>
+
+<?php
+//  group by php instead of js
+$ticketGroups = [];
+foreach ($tickets as $ticket) {
+    if (!isset($ticketGroups[$ticket['MaLoaiVe']])) {
+        $ticketGroups[$ticket['MaLoaiVe']] = [];
+    }
+    $ticketGroups[$ticket['MaLoaiVe']][] = $ticket;
+}
+
+$seatGroups = [];
+foreach ($seats as $seat) {
+    if (!isset($seatGroups[$seat['MaLoaiGhe']])) {
+        $seatGroups[$seat['MaLoaiGhe']] = [];
+    }
+    $seatGroups[$seat['MaLoaiGhe']][] = $seat;
+}
+
+?>
 
 
 <main class="2xl:tw-max-w-7xl xl:tw-max-w-[78rem] tw-mx-auto tw-mt-10  tw-px-1" x-data="{
@@ -38,8 +50,7 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
             <div class="tw-p-1 tw-flex tw-flex-col tw-gap-y-1">
                 <div class="tw-flex tw-gap-x-2 md:tw-gap-x-8">
                     <div class="tw-flex-none tw-basis-1/3">
-                        <img class="tw-object-cover" style="display: inline-block;"
-                            src="https://api-website.cinestar.com.vn/media/wysiwyg/Posters/03-2024/hoi-chung-tuoi-thanh-xuan.jpg"
+                        <img class="tw-object-cover" style="display: inline-block;" src="<?= $show['HinhAnh'] ?>"
                             alt="">
                     </div>
                     <div class="tw-flex-1">
@@ -77,27 +88,39 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
                         <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Loại vé</div>
                         <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Số vé</div>
                     </div>
-
-
-                    <template x-for="ticket in Object.keys(ticketGroups)">
-                        <div class='tw-flex tw-flex-wrap tw-gap-x-4 tw-text-base'>
-                            <div class='tw-basis-1/3 tw-font-semibold '>
-                                <span x-text="ticketGroups[ticket][0].TenLoaiVe"></span>
-                            </div>
-                            <div class='tw-basis-1/3 tw-font-semibold '>
-                                <span x-text="ticketGroups[ticket].length||1"></span>
-                            </div>
+                    <?php foreach ($ticketGroups as $ticketGroup): ?>
+                    <div class='tw-flex tw-flex-wrap tw-gap-x-4 tw-text-base'>
+                        <div class='tw-basis-1/3 tw-font-semibold '>
+                            <span><?= $ticketGroup[0]['TenLoaiVe'] ?></span>
                         </div>
-                    </template>
-                </div>
-                <h4 class='tw-mt-2'>
-                    <span class='tw-font-semibold tw-text-secondary'>Ghế: </span>
-                    <?php foreach ($seats as $seat): ?>
-                    <span><?= $seat['SoGhe'] ?> </span>
+                        <div class='tw-basis-1/3 tw-font-semibold '>
+                            <span><?= count($ticketGroup) ?></span>
+                        </div>
+                    </div>
                     <?php endforeach; ?>
-                </h4>
-                <h4>
-                    <span class='tw-font-semibold tw-text-secondary'>Bắp nước: </span>
+                </div>
+                <div class='tw-flex tw-flex-col tw-mt-3  '>
+                    <div class='tw-flex tw-flex-wrap tw-gap-x-4'>
+                        <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Loại Ghế</div>
+                        <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Số Ghế</div>
+                    </div>
+                    <?php foreach ($seatGroups as $seatGroup): ?>
+                    <div class='tw-flex tw-flex-wrap tw-gap-x-4 tw-text-base'>
+                        <div class='tw-basis-1/3 tw-font-semibold '>
+                            <span><?= $seatGroup[0]['TenLoaiGhe'] ?></span>
+                        </div>
+                        <div class='tw-basis-1/3 tw-font-semibold '>
+                            <?php foreach ($seatGroup as $seat): ?>
+                            <span><?= $seat['SoGhe'] ?> </span>
+
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <h4 class='tw-my-2'>
+                    <span class=' tw-font-semibold tw-text-secondary'>Bắp nước: </span>
                     <?php foreach ($foods as $food): ?>
 
                     <span>
@@ -132,29 +155,15 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
             </div>
         </div>
         <div>
-            <button class="tw-bg-[#FFC700] tw-text-white tw-p-2 tw-rounded-md tw-w-full tw-mt-4" x-on:click="
-            htmlToImage.toPng(document.getElementById('ticket'))
-            .then(function (dataUrl) {
-                var link = document.createElement('a');
-                link.download = 'ticket.png';
-                link.href = dataUrl;
-                link.click();
-            });
-            
-            ">
-                Lưu hóa đơn
-            </button>
+
         </div>
 
 
-    </div>
     </div>
 
 
 
 </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.js"
-    integrity="sha512-zPMZ/3MBK+R1rv6KcBFcf7rGwLnKS+xtB2OnWkAxgC6anqxlDhl/wMWtDbiYI4rgi/NrCJdXrmNGB8pIq+slJQ=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <?php
 require ('partials/footer.php'); ?>
