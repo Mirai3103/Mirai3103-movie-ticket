@@ -1,4 +1,5 @@
 SETLOCAL
+@echo off
 SET PHP_VERSION=8.1.x
 SET PHP_URL=https://windows.php.net/downloads/releases/php-8.1.28-nts-Win32-vs16-x64.zip
 SET FULL_PATH=%~dp0
@@ -35,7 +36,7 @@ IF NOT EXIST %PHP_DIR% (
     php.exe composer-setup.php
     php.exe -r "unlink('composer-setup.php');"
 
-    @REM echo "Nhap ma so sinh vien: "
+    echo "Lien he huu hoang de co file csdl"
     @REM set /p mssv=
     cd ..
     echo Install dependencies
@@ -51,4 +52,8 @@ echo Starting PHP built-in server...
 
 
 %PHP_EXE% -S localhost:8000
+echo Do you want to open the browser? (y/n)
+set /p choice=
+if %choice%==y start http://localhost:8000
+
 ENDLOCAL
