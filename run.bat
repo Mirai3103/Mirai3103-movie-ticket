@@ -1,17 +1,17 @@
 SETLOCAL
-@echo off
 SET PHP_VERSION=8.1.x
 SET PHP_URL=https://windows.php.net/downloads/releases/php-8.1.28-nts-Win32-vs16-x64.zip
 SET FULL_PATH=%~dp0
 SET PHP_DIR=%FULL_PATH%php_dir
 echo %PHP_DIR%
 SET PHP_EXE=%PHP_DIR%\php.exe
-
+set CERT_PATH= %FULL_PATH%ssl/cacert.crt 
 set COMPOSER_CMD=%PHP_EXE% %PHP_DIR%\composer.phar
 IF NOT EXIST %PHP_DIR% (
     echo Php not found, downloading...
     mkdir %PHP_DIR%
     cd %PHP_DIR%
+    
     del php.zip
     echo Downloading PHP %PHP_VERSION%...
     powershell -Command "Invoke-WebRequest %PHP_URL% -OutFile php.zip"
@@ -25,6 +25,10 @@ IF NOT EXIST %PHP_DIR% (
     echo extension=./ext/php_curl.dll >> php.ini
     echo extension=./ext/php_gd.dll >> php.ini
     echo extension=./ext/php_mbstring.dll >> php.ini
+
+    echo openssl.cafile=%CERT_PATH% >> php.ini
+    echo date.timezone=Asia/Ho_Chi_Minh >> php.ini
+    echo curl.cainfo=%CERT_PATH% >> php.ini
 
 
     php.exe -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
