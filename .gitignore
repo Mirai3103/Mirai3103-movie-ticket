@@ -5,3 +5,5 @@ config.php
 controllers.cache.php
 .env
 php_dir
+vendor
+*.log
