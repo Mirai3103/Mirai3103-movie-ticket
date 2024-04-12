@@ -55,8 +55,8 @@ class CheckoutController
             redirect("");
         }
         $show = ShowService::getShowInfoById($bookingData['MaXuatChieu']);
-        $tickets = TicketService::getTicketOfSeats($bookingData['DanhSachVe'], $bookingData['MaXuatChieu']);
-        $seats = SeatService::getSeatByIds($bookingData['DanhSachVe']);
+        $tickets = TicketService::getTicketOfSeats(array_map(fn($item) => $item['MaGhe'], $bookingData['DanhSachVe']), $bookingData['MaXuatChieu']);
+        $seats = SeatService::getSeatByIds(array_map(fn($item) => $item['MaGhe'], $bookingData['DanhSachVe']));
         $foods = ComboService::getFoodByIds(array_map(fn($item) => $item['MaThucPham'], $bookingData['ThucPhams']));
         $combos = ComboService::getComboByIds(array_map(fn($item) => $item['MaCombo'], $bookingData['Combos']));
         return view("checkout", [

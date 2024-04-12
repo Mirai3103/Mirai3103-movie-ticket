@@ -3832,10 +3832,6 @@ details.tw-collapse summary::-webkit-details-marker {
   max-width: 80rem;
 }
 
-.tw-max-w-\[350px\] {
-  max-width: 350px;
-}
-
 .tw-max-w-\[40px\] {
   max-width: 40px;
 }
@@ -4291,11 +4287,6 @@ details.tw-collapse summary::-webkit-details-marker {
   background-color: rgb(217 217 217 / var(--tw-bg-opacity));
 }
 
-.tw-bg-\[\#FFC700\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 199 0 / var(--tw-bg-opacity));
-}
-
 .tw-bg-\[\#FFE7AA\] {
   --tw-bg-opacity: 1;
   background-color: rgb(255 231 170 / var(--tw-bg-opacity));
@@ -4417,6 +4408,11 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
+}
+
+.tw-bg-\[\#FFC700\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 199 0 / var(--tw-bg-opacity));
 }
 
 .tw-bg-opacity-60 {
@@ -4654,6 +4650,11 @@ details.tw-collapse summary::-webkit-details-marker {
   line-height: 2.25rem;
 }
 
+.tw-text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+}
+
 .tw-text-\[11px\] {
   font-size: 11px;
 }
@@ -4687,12 +4688,21 @@ details.tw-collapse summary::-webkit-details-marker {
   line-height: 1rem;
 }
 
+.tw-text-5xl {
+  font-size: 3rem;
+  line-height: 1;
+}
+
 .\!tw-font-semibold {
   font-weight: 600 !important;
 }
 
 .tw-font-bold {
   font-weight: 700;
+}
+
+.tw-font-extrabold {
+  font-weight: 800;
 }
 
 .tw-font-medium {
@@ -4705,10 +4715,6 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-font-semibold {
   font-weight: 600;
-}
-
-.tw-font-extrabold {
-  font-weight: 800;
 }
 
 .tw-uppercase {

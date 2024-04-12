@@ -49,11 +49,11 @@ echo PHP %PHP_VERSION% is ready to use.
 %COMPOSER_CMD% update
 %COMPOSER_CMD% dump-autoload
 echo Starting PHP built-in server...
-
-
-%PHP_EXE% -S localhost:8000
 echo Do you want to open the browser? (y/n)
 set /p choice=
 if %choice%==y start http://localhost:8000
+
+%PHP_EXE% -S localhost:8000
+
 
 ENDLOCAL

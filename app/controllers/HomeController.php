@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Database\QueryBuilder;
+use App\Services\AccountType;
 use App\Services\CategoryService;
 use App\Services\CinemaService;
 use App\Services\ComboService;
@@ -42,13 +43,14 @@ class HomeController
     {
         $username = $_POST['username'];
         $password = $_POST['password'];
-        $loginResult = UserService::login($username, $password);
+
+        $loginResult = UserService::login($username, $password, getArrayValueSafe($_POST, 'remember', false));
         if ($loginResult->isSuccessful()) {
-            $_SESSION['user'] = $loginResult->data;
-            if (isset($_POST['remember'])) {
-                setcookie("user", json_encode($loginResult->data), time() + 86400 * 30);
+            if ($loginResult->data['TaiKhoan']['LoaiTaiKhoan'] == AccountType::Customer->value) {
+                return redirect("trang-chu");
+            } else {
+                return redirect("admin");
             }
-            return redirect("trang-chu");
         }
         return view("login", ["error" => $loginResult->message]);
     }
@@ -95,8 +97,7 @@ class HomeController
     #[Route("/dang-xuat", "GET")]
     public static function logout()
     {
-        unset($_SESSION['user']);
-        setcookie("user", "", time() - 3600);
+        UserService::logout();
         return redirect("trang-chu");
     }
     #[Route("/test", "GET")]

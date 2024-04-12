@@ -23,3 +23,5 @@ function exception_handler(Throwable $exception)
     Logger::error($exception->getMessage());
     Logger::error($exception->getTraceAsString());
 }
+
+set_exception_handler('exception_handler');

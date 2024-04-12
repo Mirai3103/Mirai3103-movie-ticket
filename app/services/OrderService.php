@@ -56,10 +56,11 @@ class OrderService
         $bookingData = [
             'MaXuatChieu' => $data['MaXuatChieu'],
             'TongTien' => $totalPrice,
-            "DanhSachVe" => $SeatIds,
+            "DanhSachVe" => $DanhSachVe,
             "ThucPhams" => $data['ThucPhams'],
             "Combos" => $data['Combos'],
             "lockTo" => $lockToTime,
+
             'id' => $tempId
         ];
         $_SESSION['bookingData'] = $bookingData;
@@ -98,7 +99,7 @@ class OrderService
             'MaKhuyenMai' => $MaKhuyenMai,
             'TrangThai' => $TrangThai
         ]);
-        $danhSachVe = $data['DanhSachVe'];
+        $danhSachVe = array_map(fn($item) => $item['MaGhe'], $data['DanhSachVe']);
         Logger::info(print_r($danhSachVe, true));
         foreach ($danhSachVe as $maGhe) {
             Database::execute("UPDATE Ve SET MaHoaDon = ? , TrangThai = ? WHERE MaGhe = ? AND MaSuatChieu = ?", [$uid, TrangThaiVe::DaDat->value, $maGhe, $data['MaXuatChieu']]);

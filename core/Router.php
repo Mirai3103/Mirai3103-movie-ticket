@@ -1,5 +1,7 @@
 <?php
 
+use App\Core\Logger;
+use App\Core\Request;
 use Core\Attributes\Route;
 
 class Router
@@ -39,7 +41,25 @@ class Router
         }
 
     }
+    private static function logRequest($execFnName = null)
+    {
+        $userId = $_SERVER['REMOTE_ADDR'];
+        if (Request::isAuthenicated()) {
+            $userId = $_SESSION['user']['MaNguoiDung'];
+        }
+        $sessId = session_id();
+        $requestUri = $_SERVER['REQUEST_URI'];
+        $requestUri = explode('?', $requestUri)[0];
+        $requestMethod = $_SERVER['REQUEST_METHOD'];
+        $log = "[Session: $sessId] [User: $userId] [$requestMethod] $requestUri";
+        if ($execFnName) {
+            $log .= " => $execFnName";
+        } else {
+            $log .= " => 404 Not Found";
+        }
+        Logger::info($log);
 
+    }
     public static function dispatch()
     {
 
@@ -72,6 +92,7 @@ class Router
             if (strpos($pattern, '{') === false) {
                 if ($pattern === $requestUri) {
                     $callback = $route['function'];
+                    self::logRequest($callback);
                     call_user_func($callback);
                     return true;
                 }
@@ -83,11 +104,12 @@ class Router
             if (preg_match($pattern, $requestUri, $matches)) {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
                 $callback = $route['function'];
+                self::logRequest($callback);
                 call_user_func_array($callback, array_values($params));
                 return true;
             }
         }
-
+        self::logRequest(null);
         return false;
     }
 

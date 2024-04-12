@@ -17,8 +17,16 @@ class Logger
 
     private static function write($level, $message)
     {
-        $date = date("Y-m-d H:i:s");
-        $line = "[$date] [$level] $message\n";
+        $date = date("H:i:s d/m/Y");
+        // $backtrace = debug_backtrace();
+        // $callerFile = $backtrace[1]['file'];
+        // $callerLine = $backtrace[1]['line'];
+        // [$callerFile:$callerLine]
+        $line = "[$date] [$level]  $message" . PHP_EOL;
         file_put_contents(self::$logFile, $line, FILE_APPEND);
+    }
+    public static function getLogsPath()
+    {
+        return self::$logFile;
     }
 }
