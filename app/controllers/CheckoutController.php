@@ -7,6 +7,7 @@ use App\Models\JsonResponse;
 use App\Services\ComboService;
 use App\Services\OrderService;
 use App\Services\Payments\Models\CreatePaymentResponse;
+use App\Services\PromotionService;
 use App\Services\SeatService;
 use App\Services\ShowService;
 use App\Services\TicketService;
@@ -81,6 +82,7 @@ class CheckoutController
     {
 
         $data = request_body();
+        $discountCode = $data['discount'];
         $bookingData = $_SESSION['bookingData'];
         $payment_method = PaymentType::tryFrom($data['payment_method']);
 
@@ -101,6 +103,10 @@ class CheckoutController
             $payment->isRedirect = true;
             $payment->mobileUrl = true;
             return json($payment);
+        }
+        $discount = PromotionService::checkPromotion($discountCode, array_map(fn($item) => $item['MaLoaiVe'], $bookingData['DanhSachVe']), $bookingData['TongTien']);
+        if ($discount->data['reducePrice'] > 0) {
+            $bookingData['TongTien'] = $bookingData['TongTien'] - $discount->data['reducePrice'];
         }
         $totalPrice = $bookingData['TongTien'];
         $displayText = "Thanh toán vé xem phim";

@@ -23,4 +23,25 @@ class DashboardController
         print_r($params);
         echo "/{id1}", "GET";
     }
+
+    #[Route("/website-settings/config", "POST")]
+    public function config()
+    {
+//         <?php
+// return [
+//     "Auth" => [
+//         "secret" => %AUTH_SECRET%,
+//         "remember_time_in_days" => %REMEMBER_TIME_IN_DAYS%,
+//     ],
+//     "Website" => [
+//         "name" => %WEBSITE_NAME%,
+//         "logo" => %WEBSITE_LOGO%,
+//         "phone" => %WEBSITE_PHONE%,
+//         "email" => %WEBSITE_EMAIL%,
+//         "description" => %WEBSITE_DESCRIPTION%,
+//         "hold_time" => %TICKET_HOLD_TIME%,
+//     ],
+// ];
+        echo "/website-settings/config", "POST";
+    }
 }

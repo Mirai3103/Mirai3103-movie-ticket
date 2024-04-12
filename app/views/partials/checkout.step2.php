@@ -1,4 +1,6 @@
- <div class=' tw-gap-x-14 tw-flex-col lg:tw-flex-row  tw-text-xl tw-gap-y-8 tw-hidden' x-init="
+ <div class=' tw-gap-x-14 tw-flex-col lg:tw-flex-row  tw-text-xl tw-gap-y-8 tw-hidden' x-data="{
+    reducePrice:0,
+    }" x-init="
  $el.classList.remove('tw-hidden');
  $el.classList.add('tw-flex');
  " x-show="step === 2">
@@ -48,10 +50,15 @@
      <div x-data="{
         isLoading:false,
         checkPromotion:async function(code) {
-          const res=  axios.get(`/api/promotions/${code}`,{validateStatus: () => true});
+            code = code.trim();
+          const res=await  axios.get(`/api/promotions/${code}`,{validateStatus: () => true});
           if(res.status === 200){
+            console.log(res.data.reducePrice);
+              reducePrice = res.data.data.reducePrice;
               return res.data;
           }
+          console.log(res.data);
+          console.log(errors);
           errors.discount=res.data.message;
           return null;
         },
@@ -62,8 +69,12 @@
                 return;
             }
             const promotion = await this.checkPromotion(data.discount);
-            console.log(promotion);
-            return;
+            if(promotion === null){
+                this.isLoading=false;
+                return;
+            }
+                   this.isLoading=false;
+            return 
            const res = await axios.post('',this.data);
            if(res.data.isRedirect){
                if(res.data.redirectUrl.startsWith('http')){
@@ -73,6 +84,7 @@
                }
            }
            console.log('Success:', res.data);
+           this.isLoading=false;
         },
      }" class='tw-basis-2/5 tw-grow-0  lg:tw-shrink-0  tw-flex tw-flex-col  tw-gap-4 lg:tw-text-xl'>
          <div class='tw-mt-16 tw-flex tw-flex-col tw-gap-4'>
@@ -153,6 +165,8 @@
                  <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount"
                      class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-3  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
                      placeholder="Nhập mã giảm giá">
+                 <div x-show="errors.discount" x-text="errors.discount"
+                     class="tw-text-red-500 tw-mt-1 tw-italic tw-text-sm"></div>
              </div>
          <?php endif; ?>
          <div class="tw-flex tw-justify-center">
@@ -246,18 +260,24 @@
                  <h2>
                      Giảm giá
                  </h2>
-                 <div class='tw-text-primary'>
-                     0đ
+                 <div class='tw-text-primary' x-text="formatVnd(reducePrice||0)">
                  </div>
              </div>
              <div class='tw-flex tw-px-4 tw-py-4 tw-text-2xl sm:tw-text-3xl tw-justify-between'>
                  <h2>
                      Tổng thanh toán
                  </h2>
-                 <div class='tw-text-primary'>
-                     <?= number_format($bookingData['TongTien']) ?>đ
+                 <div class='tw-text-primary' x-text="formatVnd(<?= $bookingData['TongTien'] ?> - reducePrice||0)">
                  </div>
              </div>
          </div>
      </div>
  </div>
+ <script>
+function formatVnd(value) {
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(value);
+}
+ </script>

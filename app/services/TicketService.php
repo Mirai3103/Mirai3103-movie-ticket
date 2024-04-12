@@ -7,7 +7,7 @@ use App\Models\TrangThaiVe;
 
 class TicketService
 {
-    private static $LOCK_TIME = 60 * 10;
+
     public static function isSeatLocked($seatId, $showId)
     {
         $ticket = Database::queryOne("SELECT * FROM Ve WHERE MaGhe = ? AND MaSuatChieu = ?", [$seatId, $showId]);
@@ -48,14 +48,14 @@ class TicketService
 
     public static function lockTicket($ticketId)
     {
-        $lockTime = time() + self::$LOCK_TIME;
+        $lockTime = time() + getArrayValueSafe($GLOBALS['config'], 'ticket_lock_time', 10) * 60;
         Database::execute("UPDATE Ve SET KhoaDen = ? WHERE id = ?", [date('Y-m-d H:i:s', $lockTime), $ticketId]);
         return $lockTime;
     }
     public static function lockSeats($seatIds, $showId)
     {
         $seatIds = implode(",", $seatIds);
-        $lockTime = time() + self::$LOCK_TIME;
+        $lockTime = time() + getArrayValueSafe($GLOBALS['config'], 'ticket_lock_time', 10) * 60;
         Database::execute("UPDATE Ve SET KhoaDen = ? WHERE MaGhe IN ($seatIds) AND MaSuatChieu = ?", [date('Y-m-d H:i:s', $lockTime), $showId]);
         return $lockTime;
     }

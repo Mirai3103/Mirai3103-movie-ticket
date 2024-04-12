@@ -529,6 +529,7 @@ return array(
     'Mpdf\\Writer\\ResourceWriter' => $vendorDir . '/mpdf/mpdf/src/Writer/ResourceWriter.php',
     'PayController' => $baseDir . '/app/controllers/PayController.php',
     'PaymentType' => $baseDir . '/app/services/payments/index.php',
+    'PromotionController' => $baseDir . '/app/controllers/PromotionController.php',
     'Psr\\Http\\Client\\ClientExceptionInterface' => $vendorDir . '/psr/http-client/src/ClientExceptionInterface.php',
     'Psr\\Http\\Client\\ClientInterface' => $vendorDir . '/psr/http-client/src/ClientInterface.php',
     'Psr\\Http\\Client\\NetworkExceptionInterface' => $vendorDir . '/psr/http-client/src/NetworkExceptionInterface.php',

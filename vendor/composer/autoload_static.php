@@ -655,6 +655,7 @@ class ComposerStaticInite44a5cdfdb9524c66336502a386131b2
         'Mpdf\\Writer\\ResourceWriter' => __DIR__ . '/..' . '/mpdf/mpdf/src/Writer/ResourceWriter.php',
         'PayController' => __DIR__ . '/../..' . '/app/controllers/PayController.php',
         'PaymentType' => __DIR__ . '/../..' . '/app/services/payments/index.php',
+        'PromotionController' => __DIR__ . '/../..' . '/app/controllers/PromotionController.php',
         'Psr\\Http\\Client\\ClientExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientExceptionInterface.php',
         'Psr\\Http\\Client\\ClientInterface' => __DIR__ . '/..' . '/psr/http-client/src/ClientInterface.php',
         'Psr\\Http\\Client\\NetworkExceptionInterface' => __DIR__ . '/..' . '/psr/http-client/src/NetworkExceptionInterface.php',
