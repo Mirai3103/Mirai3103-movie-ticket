@@ -2,6 +2,7 @@
 
 namespace App\Core\Database;
 
+use App\Core\Logger;
 use mysqli;
 
 
@@ -56,11 +57,12 @@ class Database
         $sql = sprintf(
             'update %s set %s where %s',
             $table,
-            implode(', ', array_map(fn($key) => "$key = :$key", array_keys($parameters))),
+            implode(', ', array_map(fn($key) => "$key = $parameters[$key]", array_keys($parameters))),
             $condition
         );
+        Logger::info($sql);
         $statement = static::$mysqli->prepare($sql);
-        return $statement->execute($parameters);
+        return $statement->execute();
     }
     public static function delete(string $table, string $condition)
     {

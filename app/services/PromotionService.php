@@ -69,18 +69,20 @@ class PromotionService
         $count = Database::queryOne($query, [$promotionId, $userId]);
         return $count;
     }
-    public static function usePromotion($code, $ticketTypeIds, $totalPrice)
+    public static function usePromotion($code)
     {
-        $result = self::checkPromotion($code, $ticketTypeIds, $totalPrice);
-        if (!$result->isSuccessful()) {
-            return $result;
+
+        $promotion = self::getPromotionByCode($code);
+        if (!$promotion) {
+            return JsonResponse::error("Không tìm thấy mã khuyến mãi");
         }
-        // decrease promotion usage count
-        $promotion = $result->data['promotion'];
+        if ($promotion['GioiHanSuDung'] == null) {
+            return JsonResponse::ok();
+        }
         Database::update("KhuyenMai", [
             "GioiHanSuDung" => $promotion['GioiHanSuDung'] - 1
-        ], " MaKhuyenMai = " . $promotion['MaKhuyenMai']);
-        return $result;
+        ], " MaKhuyenMai = '" . $promotion['MaKhuyenMai'] . "'");
+        return JsonResponse::ok();
 
     }
 }

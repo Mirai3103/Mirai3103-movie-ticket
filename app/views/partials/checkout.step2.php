@@ -73,8 +73,6 @@
                 this.isLoading=false;
                 return;
             }
-                   this.isLoading=false;
-            return 
            const res = await axios.post('',this.data);
            if(res.data.isRedirect){
                if(res.data.redirectUrl.startsWith('http')){

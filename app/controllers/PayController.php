@@ -5,6 +5,7 @@ use App\Core\Logger;
 use App\Services\ComboService;
 use App\Services\OrderService;
 use App\Services\Payments\PaymentStatus;
+use App\Services\PromotionService;
 use App\Services\SeatService;
 use App\Services\ShowService;
 use App\Services\TicketService;
@@ -13,14 +14,7 @@ use Dompdf\Options;
 
 class PayController
 {
-    #[Route("/pay/momo", "GET")]
-    public static function index()
-    {
 
-        $paymentStrategy = getPaymentStrategy(PaymentType::Momo);
-        // $paymentStrategy->createPayment(guidv4(), "100000", "Thanh toán vé xem phim");
-        return view("pay");
-    }
     #[Route("/pay/callback/momo", "GET")]
     public static function momoCallback()
     {
@@ -33,8 +27,7 @@ class PayController
         }
         $bookingData = isset($_SESSION['bookingData']) ? $_SESSION['bookingData'] : null;
         if ($bookingData == null) {
-            echo "Không tìm thấy thông tin đặt vé";
-            die();
+            return redirect("");
         }
         $orderModel = self::createOrderModel();
         $orderModel['paymentType'] = "Ví điện tử Momo";
@@ -44,14 +37,17 @@ class PayController
     private static function createOrderModel()
     {
         $bookingData = $_SESSION['bookingData'];
+        $_SESSION['bookingData'] = null;
+        Logger::info(print_r($bookingData, true));
         $show = ShowService::getShowInfoById($bookingData['MaXuatChieu']);
         $tickets = TicketService::getTicketOfSeats(array_map(fn($item) => $item['MaGhe'], $bookingData['DanhSachVe']), $bookingData['MaXuatChieu']);
         $seats = SeatService::getSeatByIds(array_map(fn($item) => $item['MaGhe'], $bookingData['DanhSachVe']));
         $foods = ComboService::getFoodByIds(array_map(fn($item) => $item['MaThucPham'], $bookingData['ThucPhams']));
         $combos = ComboService::getComboByIds(array_map(fn($item) => $item['MaCombo'], $bookingData['Combos']));
-        $orderId = $_SESSION['bookingData']['id'];
-        $_SESSION['bookingData']['payment_method'] = PaymentType::Momo->value;
-        OrderService::saveOrder($_SESSION['bookingData']);
+        $orderId = $bookingData['id'];
+        $bookingData['payment_method'] = PaymentType::Momo->value;
+        OrderService::saveOrder($bookingData);
+        PromotionService::usePromotion($bookingData['promotion_code']);
         return [
             "show" => $show,
             "bookingData" => $bookingData,
@@ -66,12 +62,22 @@ class PayController
     #[Route("/pay/callback/mock_succeed", "GET")]
     public static function mockSucceedCallback()
     {
+        $bookingData = isset($_SESSION['bookingData']) ? $_SESSION['bookingData'] : null;
+        if ($bookingData == null) {
+            return redirect("");
+        }
         $orderModel = self::createOrderModel();
+        $orderModel['paymentType'] = "Thanh toán thử nghiệm";
+
         return view("checkout-success", $orderModel);
     }
     #[Route("/pay/callback/mock_failed", "GET")]
     public static function mockFailedCallback()
     {
+        $bookingData = isset($_SESSION['bookingData']) ? $_SESSION['bookingData'] : null;
+        if ($bookingData == null) {
+            return redirect("");
+        }
         $_SESSION['bookingData'] = null;
         return view("checkout-failed");
     }
@@ -91,7 +97,6 @@ class PayController
         $combos = ComboService::getComboByIds(array_map(fn($item) => $item['MaCombo'], $bookingData['Combos']));
         $orderId = $_SESSION['bookingData']['id'];
         $barCodeUrl = "https://barcode.orcascan.com/?type=code128&format=jpg&data=" . $orderId;
-        // download and save svg to file
         $barCodeContent = file_get_contents($barCodeUrl);
         $base64 = "data:image/png;base64," . base64_encode($barCodeContent);
         extract([

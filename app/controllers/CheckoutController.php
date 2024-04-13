@@ -31,20 +31,6 @@ class CheckoutController
     #[Route("/thanh-toan", "GET")]
     public static function index()
     {
-        // $bookingData = [
-        //     'MaXuatChieu' => $data['MaXuatChieu'],
-        //     'TongTien' => $totalPrice,
-        //     "DanhSachVe" => $SeatIds,
-        //     "ThucPhams" => $data['ThucPhams'],
-        //     "Combos" => $data['Combos'],
-        //     "lockTo" => $lockToTime
-        // ];
-        // Phim
-        // Rap
-        // SuatChieu
-        // Ve, Ghe, Loai Ve
-        // 
-
         if (!isset($_SESSION['bookingData'])) {
             Logger::error("Booking data not found");
             redirect("");
@@ -70,13 +56,6 @@ class CheckoutController
         ]);
     }
 
-    #[Route("/thanh-toan/success", "GET")]
-    public static function success()
-    {
-        // toDo: clear session
-        // toDo: save booking data to database
-        return view("checkout-success");
-    }
     #[Route("/thanh-toan", "POST")]
     public static function createPayUrl()
     {
@@ -106,10 +85,12 @@ class CheckoutController
         }
         $discount = PromotionService::checkPromotion($discountCode, array_map(fn($item) => $item['MaLoaiVe'], $bookingData['DanhSachVe']), $bookingData['TongTien']);
         if ($discount->data['reducePrice'] > 0) {
-            $bookingData['TongTien'] = $bookingData['TongTien'] - $discount->data['reducePrice'];
+            $_SESSION['bookingData']['TongTien'] = $bookingData['TongTien'] - $discount->data['reducePrice'];
             $_SESSION['bookingData']['promotion_code'] = $discountCode;
+            $bookingData = $_SESSION['bookingData'];
         }
         $totalPrice = $bookingData['TongTien'];
+        Logger::info("Total price: $totalPrice");
         $displayText = "Thanh toán vé xem phim";
         $paymentStrategy = getPaymentStrategy($payment_method);
         $id = $_SESSION['bookingData']['id'];
