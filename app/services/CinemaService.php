@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
+use App\Models\JsonResponse;
 
 class CinemaService
 {
@@ -49,5 +50,45 @@ class CinemaService
 
     }
 
+    public static function createNewCinema($data)
+    {
+        $params = [
+            'MaRapChieu' => $data['MaRapChieu'],
+            'TenRapChieu' => $data['TenRapChieu'],
+            'DiaCchi' => $data['DiaChi'],
+            'HinhAnh' => $data['HinhAnh'],
+            'MoTa' => $data['MoTa'],
+            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+        ];
+        $result = Database::insert('RapChieu', $params);
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Thêm mới thất bại', 500);
+    }
 
+    public static function updateCinema($data, $id)
+    {
+        $params = [
+            'TenRapChieu' => $data['TenRapChieu'],
+            'DiaCchi' => $data['DiaChi'],
+            'HinhAnh' => $data['HinhAnh'],
+            'MoTa' => $data['MoTa'],
+            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+        ];
+        $result = Database::update('RapChieu', $params, "MaRapChieu=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+
+    public static function deleteCinema($id)
+    {
+        $result = Database::delete('RapChieu', "MaRapChieu=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Xóa thất bại', 500);
+    }
 }

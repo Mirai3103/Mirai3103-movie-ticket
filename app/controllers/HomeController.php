@@ -63,7 +63,7 @@ class HomeController
         $upcomingShows = ShowService::getUpcomingShowsOfMovie($id);
         $ticketTypes = TicketService::getTicketTypes();
         $seatTypes = SeatTypeService::getAllSeatType();
-        $foods = ComboService::getAllFoods();
+        $foods = ComboService::getAllFoodnDrink();
         $combos = ComboService::getAllCombo();
         return view("chi-tiet", [
             "phim" => $phim,

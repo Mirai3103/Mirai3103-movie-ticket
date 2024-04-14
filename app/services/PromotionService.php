@@ -16,6 +16,63 @@ class PromotionService
         $promotion = Database::queryOne($query, [$code]);
         return $promotion;
     }
+    public static function getAllDiscount()
+    {
+        $sql = "SELECT * FROM KhuyenMai";
+        $discount = Database::query($sql, []);
+        return $discount;
+    }
+    public static function getDiscountByDayEnd()
+    {
+        $sql = "SELECT * FROM KhuyenMai WHERE NgayKetThuc > NOW()";
+        $discount = Database::query($sql, []);
+        return $discount;
+    }
+    public static function createNewDiscount($data)
+    {
+        $params = [
+            'MaKhuyenMai' => $data['MaKhuyenMai'],
+            'TenKhuyenMai' => $data['TenKhuyenMai'],
+            'MoTa' => $data['MoTa'],
+            'NgayBatDau' => $data['NgayBatDau'],
+            'NgayKetThuc' => $data['NgayKetThuc'],
+            'GiamToiDa' => $data['GiamToiDa'],
+            'TiLeGiam' => $data['TiLeGiam']
+        ];
+        $result = Database::insert('KhuyenMai', $params);
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Thêm mới thất bại', 500);
+    }
+
+    public static function updateDiscount($data, $id)
+    {
+        $params = [
+            'TenKhuyenMai' => $data['TenKhuyenMai'],
+            'MoTa' => $data['MoTa'],
+            'NgayBatDau' => $data['NgayBatDau'],
+            'NgayKetThuc' => $data['NgayKetThuc'],
+            'GiamToiDa' => $data['GiamToiDa'],
+            'TiLeGiam' => $data['TiLeGiam']
+        ];
+        $result = Database::update('KhuyenMai', $params, "MaKhuyenMai=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+
+    public static function deleteDiscount($id)
+    {
+        $result = Database::delete('KhuyenMai', "MaKhuyenMai=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Xóa thất bại', 500);
+    }
+
+
     public static function checkPromotion($code, $ticketTypeIds, $totalPrice)
     {
         $promotion = self::getPromotionByCode($code);

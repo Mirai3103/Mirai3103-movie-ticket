@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Models\JsonResponse;
 
 class CategoryService
 {
@@ -18,4 +19,43 @@ class CategoryService
         $categories = Database::query($sql, [$id]);
         return $categories;
     }
+
+    // insert
+    public static function createNewCategory($data)
+    {
+        $params = [
+            'MaTheLoai' => $data['MaTheLoai'],
+            'TenTheLoai' => $data['TenTheLoai'],
+            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+        ];
+        $result = Database::insert('TheLoai', $params);
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Thêm mới thất bại', 500);
+    }
+
+
+    public static function updateCategory($data, $id)
+    {
+        $params = [
+            'TenTheLoai' => $data['TenTheLoai'],
+            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+        ];
+        $result = Database::update('TheLoai', $params, "MaTheLoai=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Không thể cập nhật', 500);
+    }
+
+    public static function deleteCategory($id)
+    {
+        $result = Database::delete('TheLoai', "MaTheLoai=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Xóa thất bại', 500);
+    }
+
 }

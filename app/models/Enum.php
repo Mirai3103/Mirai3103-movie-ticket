@@ -27,7 +27,11 @@ enum TrangThaiHoaDon: int
     case Nhap = 9;
     case An = 10;
 }
-
+enum TrangThaiLoaiVe: int
+{
+    case An = 13;
+    case DangHoatDong = 14;
+}
 enum TrangThaiKhuyenMai: int
 {
     case An = 11;

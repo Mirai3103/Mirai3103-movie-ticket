@@ -3,16 +3,109 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Database\QueryBuilder;
+use App\Models\JsonResponse;
 
 class ComboService
 {
-    public static function getAllFoods()
+    public static function getAllFoodnDrink()
     {
-        return Database::findAll('ThucPham');
+        $sql = "SELECT * FROM ThucPham";
+        $foodndrink = Database::query($sql, []);
+        return $foodndrink;
     }
+    public static function getFoodnDrinkById($id)
+    {
+        $sql = "SELECT ThucPham.* FROM ThucPham WHERE MaThucPham=?;";
+        $foodndrink = Database::queryOne($sql, [$id]);
+        return $foodndrink;
+    }
+    public static function createNewFoodnDrink($data)
+    {
+        $params = [
+            'MaThucPham' => $data['MaThucPham'],
+            'TenThucPham' => $data['TenThucPham'],
+            'LoaiThucPham' => $data['LoaiThucPham'],
+            'GiaThucPham' => $data['GiaThucPham'],
+            'MoTa' => $data['MoTa'],
+            //    'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+        ];
+        $result = Database::insert('ThucPham', $params);
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Thêm mới thất bại', 500);
+    }
+    public static function updateFoodnDrink($data, $id)
+    {
+        $params = [
+            'TenThucPham' => $data['TenThucPham'],
+            'LoaiThucPham' => $data['LoaiThucPham'],
+            'GiaThucPham' => $data['GiaThucPham'],
+            'MoTa' => $data['MoTa'],
+            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+        ];
+        $result = Database::update('ThucPham', $params, "MaThucPham=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+    public static function deleteFoodnDrink($id)
+    {
+        $result = Database::delete('ThucPham', "MaThucPham=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Xóa thất bại', 500);
+    }
+
+
     public static function getAllCombo()
     {
         return Database::findAll('Combo');
+    }
+    public static function getComboById($id)
+    {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->select(
+            [
+                'Combo.MaCombo' => 'MaCombo',
+                'Combo.GiaCombo' => 'GiaCombo',
+                'Combo.TenCombo' => 'TenCombo',
+                'Combo.MoTa' => 'MoTa',
+                'Combo.TrangThai' => 'TrangThai',
+                'CT_Combo_ThucPham.MaThucPham' => 'MaThucPham',
+                'ThucPham.TenThucPham' => 'TenThucPham',
+                'ThucPham.GiaThucPham' => 'GiaThucPham',
+                'CT_Combo_ThucPham.SoLuong' => 'SoLuong'
+            ]
+        )->from('Combo')
+            ->join('CT_Combo_ThucPham', 'Combo.MaCombo = CT_Combo_ThucPham.MaCombo')
+            ->join('ThucPham', 'CT_Combo_ThucPham.MaThucPham = ThucPham.MaThucPham')
+            ->where('Combo.MaCombo', '=', $id);
+        $data = $queryBuilder->get();
+        // nhóm dữ liệu theo MaCombo
+        if (empty($data)) {
+            return JsonResponse::error('Không tìm thấy combo', 404);
+        }
+        $combo = [
+            'MaCombo' => $data[0]['MaCombo'],
+            'GiaCombo' => $data[0]['GiaCombo'],
+            'TenCombo' => $data[0]['TenCombo'],
+            'MoTa' => $data[0]['MoTa'],
+            'TrangThai' => $data[0]['TrangThai'],
+            'ThucPham' => []
+        ];
+        foreach ($data as $item) {
+            $combo['ThucPham'][] = [
+                'MaThucPham' => $item['MaThucPham'],
+                'TenThucPham' => $item['TenThucPham'],
+                'GiaThucPham' => $item['GiaThucPham'],
+                'SoLuong' => $item['SoLuong']
+            ];
+        }
+        return $combo;
     }
 
     public static function getComboByIds($ids)
@@ -47,6 +140,38 @@ class ComboService
             $total += $food['GiaThucPham'] * $data[array_search($food['MaThucPham'], array_column($data, 'MaThucPham'))]['SoLuong'];
         }
         return $total;
+    }
+
+    public static function createNewCombo($data)
+    {
+        $params = [
+            'MaCombo' => $data['MaCombo'],
+            'GiaCombo' => $data['GiaCombo'],
+            'TenCombo' => $data['TenCombo'],
+            'TrangThai' => $data['TrangThai'],
+            'MoTa' => $data['MoTa']
+        ];
+
+        $result = Database::insert('Combo', $data);
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Thêm mới combo thất bại', 500);
+    }
+
+    public static function updateCombo($data, $id)
+    {
+        $params = [
+            'GiaCombo' => $data['GiaCombo'],
+            'TenCombo' => $data['TenCombo'],
+            'TrangThai' => $data['TrangThai'],
+            'MoTa' => $data['MoTa']
+        ];
+        $result = Database::update('Combo', $data, "MaCombo=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật combo thất bại', 500);
     }
 
 }

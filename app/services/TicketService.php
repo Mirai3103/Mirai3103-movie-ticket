@@ -81,4 +81,46 @@ class TicketService
     {
         return Database::query("SELECT * FROM LoaiVe", []);
     }
+
+    public static function createNewTicketType($data)
+    {
+        $params = [
+            'MaLoaiVe' => $data['MaLoaiVe'],
+            'TenLoaiVe' => $data['TenLoaiVe'],
+            'GiaVe' => $data['GiaVe'],
+            'MoTa' => $data['MoTa'],
+            //   'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value,
+            'Rong' => $data['Rong']
+        ];
+        $result = Database::insert('LoaiVe', $params);
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Thêm mới thất bại', 500);
+    }
+
+    public static function updateTicketType($data, $id)
+    {
+        $params = [
+            'TenLoaiVe' => $data['TenLoaiVe'],
+            'GiaVe' => $data['GiaVe'],
+            'MoTa' => $data['MoTa'],
+            //      'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value,
+            'Rong' => $data['Rong']
+        ];
+        $result = Database::update('LoaiVe', $params, "MaLoaiVe=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+
+    public static function deleteTicketType($id)
+    {
+        $result = Database::delete('LoaiVe', "MaLoaiVe=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Xóa thất bại', 500);
+    }
 }
