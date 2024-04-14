@@ -75,6 +75,20 @@ class Router
     }
     public static function build()
     {
+        // $domain = $_SERVER['HTTP_HOST'];
+        // $protocol = isset($_SERVER['HTTPS']) ? 'https' : 'http';
+        // $robotContent = "";
+        // foreach (static::$routes as $route) {
+        //     $pattern = $route['pattern'];
+        //     // only get method
+        //     if ($route['method'] !== 'GET') {
+        //         continue;
+        //     }
+        //     $fullPath = $protocol . '://' . $domain . $pattern;
+        //     $robotContent .= "$fullPath\n";
+        // }
+        // // write to robots.txt
+        // file_put_contents('robots.txt', $robotContent);
         usort(static::$routes, function ($a, $b) {
             return strlen($a['pattern']) > strlen($b['pattern']) ? 1 : -1;
         });

@@ -1,19 +1,29 @@
 <?php
-title("Quản lý nhóm quyền");
+title("Quản lý tài khoản");
 require ('app/views/admin/header.php');
-
-
-
 ?>
-<link rel="stylesheet" href="/public/css/role.css">
+
+<link rel="stylesheet" href="/public/tiendat/account.css">
+<!-- End sidebar -->
+
 <div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
-    <div class="access container-fluid  shadow">
-        <!-- thanh tim kiem va nut them nhom quyen moi -->
-        <div class="row justify-content-between px-5 mt-4 mb-3">
+    <div class="account container-fluid  shadow">
+        <!-- thanh phan loai phim -->
+        <div class="border-bottom mb-4">
+            <div>
+                <input type="button" name id="customer" class="btn button button-nav-active fw-semibold"
+                    value="Khách hàng" onclick="optionOfList(this)">
+                <input type="button" name id="staff" class="btn button fw-semibold" value="Nhân viên"
+                    onclick="optionOfList(this)">
+            </div>
+        </div>
+
+        <!-- thanh tim kiem va nut them phim moi -->
+        <div class="row justify-content-between px-5">
             <div class="col-6">
                 <div class="input-group">
                     <input type="text" name id="searchMovie" placeholder="Nhập thông tin cần tìm" class="form-control">
-                    <button class="btn btn-outline-secondary align-items-center" type="button" id="searchTicketType">
+                    <button class="btn btn-outline-secondary align-items-center" type="button" id="searchMovie">
                         <i class="fa-solid fa-magnifying-glass" style="display: flex;"></i>
                     </button>
                 </div>
@@ -21,13 +31,12 @@ require ('app/views/admin/header.php');
 
             <div class="col-6">
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="/admin/nhom-quyen/them" class="btn btn-primary me-md-2" type="button">Thêm nhóm quyền</a>
+                    <button class="btn btn-primary me-md-2" type="button">Thêm tài khoản</button>
                 </div>
             </div>
         </div>
-        <!-- hết thanh tìm kiếm và nút thêm nhóm quyền mới -->
 
-        <!-- chứa bảng nhóm quyền -->
+        <!-- chua bang phim -->
         <div class="row m-3 table-responsive" style="flex: 1;">
             <table class="table table-hover align-middle" style="height: 100%;">
                 <thead class="table-light">
@@ -41,7 +50,7 @@ require ('app/views/admin/header.php');
                                     <path d="M3 9l4 -4l4 4m-4 -4v14" />
                                     <path d="M21 15l-4 4l-4 -4m4 4v-14" />
                                 </svg>
-                                Mã nhóm quyền
+                                Mã tài khoản
                             </div>
                         </th>
                         <th scope="col">
@@ -53,22 +62,20 @@ require ('app/views/admin/header.php');
                                     <path d="M3 9l4 -4l4 4m-4 -4v14" />
                                     <path d="M21 15l-4 4l-4 -4m4 4v-14" />
                                 </svg>
-                                Tên nhóm quyền
+                                Tên đăng nhập
                             </div>
                         </th>
-                        <th scope="col">Mô tả</th>
+                        <th scope="col">Mật khẩu</th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
-
-                    <?php foreach ($roles as $role): ?>
                     <tr>
-                        <th scope="row"><?= $role['MaNhomQuyen'] ?></th>
-                        <td><?= $role['TenNhomQuyen'] ?></td>
-                        <td><?= $role['MoTa'] ?></td>
-                        <td><?= $role['TrangThai'] ?></td>
+                        <th scope="row">4</th>
+                        <td>huuhoag1413@outlook.com</td>
+                        <td>123456</td>
+                        <td>NULL</td>
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn btn-light btn-icon rounded-circle"
@@ -104,7 +111,7 @@ require ('app/views/admin/header.php');
                                         </div>
                                     </li>
                                     <li>
-                                        <div class="dropdown-item">
+                                        <div class="dropdown-item ">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                                 <path
@@ -117,14 +124,67 @@ require ('app/views/admin/header.php');
                             </div>
                         </td>
                     </tr>
-                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
+
+        <!-- thanh phan trang -->
+        <div class="d-flex justify-content-end column-gap-3">
+            <div class="d-flex input-group h-50 w-25">
+                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Rows per
+                    page</label>
+                <select class="form-select rounded" id="inputGroupSelect01">
+                    <option value="1">5</option>
+                    <option value="2">10</option>
+                    <option value="3">15</option>
+                    <option value="3">20</option>
+                </select>
+            </div>
+
+            <div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- het thanh phan trang -->
     </div>
 </div>
+<!-- javascript -->
 
+<script>
+const customer_btn = document.getElementById('customer');
+const staff_btn = document.getElementById('staff');
 
+function optionOfList(button) {
+    button.remove
+    if (button.id == 'customer') {
+        customer_btn.classList.add('button-nav-active');
+        setupButtonInavActive(staff_btn);
+    } else {
+        staff_btn.classList.add('button-nav-active');
+        setupButtonInavActive(customer_btn);
+    }
+}
+
+function setupButtonInavActive(button) {
+    button.classList.remove('button-nav-active');
+}
+</script>
 <?php
 require ('app/views/admin/footer.php');
 

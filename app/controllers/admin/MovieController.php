@@ -32,4 +32,15 @@ class MovieController
         return json(JsonResponse::ok($phims));
     }
 
+    #[Route(path: '/admin/phim', method: 'GET')]
+    public static function index()
+    {
+        return view('admin/movie/index');
+    }
+    #[Route(path: '/admin/phim/them', method: 'GET')]
+    public static function add()
+    {
+        return view('admin/movie/add');
+    }
+
 }

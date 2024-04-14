@@ -20,6 +20,8 @@ Router::load_from_class(MovieController::class);
 Router::load_from_class(PromotionController::class);
 Router::load_from_class(RoleController::class);
 Router::load_from_class(TicketTypeController::class);
+Router::load_from_class(BillController::class);
+Router::load_from_class(AccountController::class);
 Router::build();
 function exception_handler(Throwable $exception)
 {

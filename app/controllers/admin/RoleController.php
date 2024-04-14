@@ -28,8 +28,7 @@ class RoleController
     public static function edit($id)
     {
         $role = RoleService::getRoleById($id);
-        return view('admin/role/edit', ['role' => $role]);
+        return view('admin/role/update', ['role' => $role]);
     }
-
 
 }

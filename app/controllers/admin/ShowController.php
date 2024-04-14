@@ -12,7 +12,14 @@ use Core\Attributes\Route;
 
 class ShowController
 {
-    // 
-// 
-
+    #[Route(path: '/admin/suat-chieu', method: 'GET')]
+    public static function index()
+    {
+        return view('admin/show/index');
+    }
+    #[Route(path: '/admin/suat-chieu/them', method: 'GET')]
+    public static function add()
+    {
+        return view('admin/show/add');
+    }
 }
