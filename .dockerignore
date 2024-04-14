@@ -3,3 +3,5 @@ node_modules
 controllers.cache.php
 .env
 php_dir
+vendor
+ssl
