@@ -23,7 +23,9 @@
 https://cdn.jsdelivr.net/npm/socket.io@4.7.4/client-dist/socket.io.min.js
 "></script>
     <script>
-    const socket = io("ws://localhost:3000");
+    const socket = io("ws://localhost:3000", {
+        reconnection: false
+    });
     socket.on("file-change", () => {
         window.location.reload();
     });

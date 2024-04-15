@@ -83,7 +83,6 @@ class ShowService
         // AND EXISTS (SELECT * FROM SuatChieu Join PhongChieu on SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in (1))
         // GROUP BY Phim.MaPhim
         // HAVING COUNT(DISTINCT CT_Phim_TheLoai.MaTheLoai) = 2;
-        Request::setHeader("X-Query", $sql);
         if (!isNullOrEmptyArray($genre)) {
             $count = count($genre);
             $sql .= "HAVING COUNT(DISTINCT CT_Phim_TheLoai.MaTheLoai) = $count ";
