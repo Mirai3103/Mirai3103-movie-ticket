@@ -19,10 +19,50 @@
 https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js
 "></script>
 
-    <script>
+    <script type='module'>
 import alpinejs from 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.8/+esm'
 
 window.Alpine = alpinejs
+alpinejs.data('dataTable', ({
+    initialQuery = {},
+    endpoint,
+}) => ({
+    data: [],
+    selected: null,
+    isFetching: false,
+    query: initialQuery,
+    totalItems: 0,
+    init() {
+        this.refresh();
+        this.$watch('query', async (value) => {
+            this.refresh();
+            const queryStr = queryString.stringify(value);
+            // set window history
+            window.history.pushState({}, '', window.location.pathname + '?' + queryStr);
+        }, {
+            deep: true
+        });
+    },
+    createOrderFn: function(orderBy) {
+        if (this.query['sap-xep'] === orderBy) {
+            this.query['thu-tu'] = this.query['thu-tu'] === 'ASC' ? 'DESC' : 'ASC';
+        } else {
+            this.query['thu-tu'] = 'ASC';
+            this.query['sap-xep'] = orderBy;
+        }
+    },
+    refresh: function() {
+        this.data = [];
+        this.isFetching = true;
+        const url = `${endpoint}?${queryString.stringify(this.query)}`;
+        const queryRs = axios.get(url).then(response => {
+            this.data = response.data.data;
+            this.totalItems = response.headers['x-total-count'];
+        }).finally(() => {
+            this.isFetching = false;
+        });
+    },
+}))
 window.addEventListener('DOMContentLoaded', () => {
     alpinejs.start()
 })

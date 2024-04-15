@@ -28,6 +28,7 @@ class Database
             $lastId = static::$mysqli->insert_id;
             return $lastId;
         } catch (\Exception $e) {
+            Logger::error($e->getMessage());
         }
         return false;
     }

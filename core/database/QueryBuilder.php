@@ -44,24 +44,50 @@ class QueryBuilder
 
     public function where($column, $operator, $value)
     {
+        $includeWhere = strpos($this->sql, "WHERE") === false;
+        $prefix = $includeWhere ? " WHERE " : " ";
         if ($operator === "IN") {
-            $this->sql .= " WHERE $column $operator $value";
+            if (is_array($value)) {
+                $value = "(" . implode(",", $value) . ")";
+            } else {
+                $value = "($value)";
+            }
+            $this->sql .= "$prefix $column $operator $value";
             return $this;
         }
-        $this->sql .= " WHERE $column $operator '$value'";
+        $this->sql .= "$prefix $column $operator '$value'";
         return $this;
     }
 
     public function andWhere($column, $operator, $value)
     {
-        $this->sql .= " AND ";
+        $this->and();
         return $this->where($column, $operator, $value);
     }
-
+    public function and()
+    {
+        $this->sql .= " AND ";
+        return $this;
+    }
+    public function or()
+    {
+        $this->sql .= " OR ";
+        return $this;
+    }
+    public function startGroup()
+    {
+        $this->sql .= " ( ";
+        return $this;
+    }
+    public function endGroup()
+    {
+        $this->sql .= " ) ";
+        return $this;
+    }
 
     public function orWhere($column, $operator, $value)
     {
-        $this->sql .= " OR ";
+        $this->or();
         return $this->where($column, $operator, $value);
 
     }

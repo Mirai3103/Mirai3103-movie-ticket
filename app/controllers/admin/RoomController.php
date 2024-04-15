@@ -74,4 +74,10 @@ class RoomController
         $rooms = RoomService::getRoomByIds($ids);
         return json(JsonResponse::ok($rooms));
     }
+    #[Route("/admin/rap-chieu/{id}/phong-chieu", "GET")]
+    public static function getRoomsByCinemaId($id)
+    {
+        $rooms = RoomService::getAllRoomOfCinema(intval($id), $_GET);
+        return json(JsonResponse::ok($rooms));
+    }
 }

@@ -3,7 +3,10 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
+use App\Core\Logger;
 use App\Core\Request;
+use App\Models\JsonDataErrorRespose;
+use App\Models\JsonResponse;
 
 class ShowService
 {
@@ -132,5 +135,96 @@ class ShowService
         $sql = "SELECT * FROM SuatChieu WHERE MaXuatChieu = ?";
         $show = Database::queryOne($sql, [$id]);
         return $show;
+    }
+
+    public static function getAllShows($query)
+    {
+        $queryBuilder = new QueryBuilder();
+        $keyword = getArrayValueSafe($query, 'tu-khoa');
+        $status = getArrayValueSafe($query, 'trang-thai');
+        $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
+        $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 10);
+        $cinemaIds = getArrayValueSafe($query, 'rapchieus', []);
+        $sortDir = ifNullOrEmptyString(getArrayValueSafe($query, 'thu-tu'), 'ASC');
+        $sortBy = ifNullOrEmptyString(getArrayValueSafe($query, 'sap-xep'), 'NgayGioChieu');
+        $phimIds = getArrayValueSafe($query, 'phims', []);
+        $tuNgay = getArrayValueSafe($query, 'tu-ngay');
+        $denNgay = getArrayValueSafe($query, 'den-ngay');
+        // select display fields MaXuatChieu, TenRap, Phong, BatDau, KetThuc, TenPhim, TrangThai
+
+        $queryBuilder->select([
+            'SuatChieu.MaXuatChieu',
+            'RapChieu.TenRapChieu',
+            'PhongChieu.TenPhongChieu',
+            'SuatChieu.NgayGioChieu',
+            'SuatChieu.NgayGioKetThuc',
+            'Phim.TenPhim',
+            'SuatChieu.TrangThai',
+        ])->from('SuatChieu')
+            ->join('Phim', 'SuatChieu.MaPhim = Phim.MaPhim')
+            ->join('PhongChieu', 'SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu')
+            ->join('RapChieu', 'PhongChieu.MaRapChieu = RapChieu.MaRapChieu')
+            ->where('1', '=', '1');
+        if (!isNullOrEmptyString($keyword)) {
+            $queryBuilder->andWhere('Phim.TenPhim', 'LIKE', "%$keyword%");
+        }
+        if (!isNullOrEmptyString($status)) {
+            $queryBuilder->andWhere('SuatChieu.TrangThai', '=', $status);
+        }
+        if (!isNullOrEmptyArray($cinemaIds)) {
+            $queryBuilder->andWhere('RapChieu.MaRapChieu', 'IN', $cinemaIds);
+        }
+        if (!isNullOrEmptyArray($phimIds)) {
+            $queryBuilder->andWhere('Phim.MaPhim', 'IN', $phimIds);
+        }
+        if (!isNullOrEmptyString($tuNgay)) {
+            $queryBuilder->andWhere('DATE(SuatChieu.NgayGioChieu)', '>=', $tuNgay);
+        }
+        if (!isNullOrEmptyString($denNgay)) {
+            $queryBuilder->andWhere('DATE(SuatChieu.NgayGioChieu)', '<=', $denNgay);
+        }
+        Logger::info($queryBuilder->__toString());
+
+        $count = $queryBuilder->count();
+        Request::setQueryCount($count);
+        if (!isNullOrEmptyString($sortBy)) {
+            $queryBuilder->orderBy($sortBy, $sortDir);
+        }
+        $queryBuilder->limit($limit, ($page - 1) * $limit);
+        $shows = $queryBuilder->get();
+        return $shows;
+    }
+    private static function validateShowTime($show)
+    {
+        $showTime = $show['NgayGioBatDau'];
+        $endTime = $show['NgayGioKetThuc'];
+        $roomId = $show['MaPhongChieu'];
+        $sql = "SELECT * FROM SuatChieu WHERE MaPhongChieu = ? AND ((NgayGioChieu BETWEEN ? AND ?) OR (NgayGioKetThuc BETWEEN ? AND ?) OR (NgayGioChieu < ? AND NgayGioKetThuc > ?))";
+        $result = Database::queryOne($sql, [$roomId, $showTime, $endTime, $showTime, $endTime, $showTime, $endTime]);
+        return $result;
+    }
+
+    public static function createShow($show)
+    {
+
+        $exists = self::validateShowTime($show);
+        if ($exists) {
+            return JsonDataErrorRespose::create()->addFieldError('NgayGioBatDau', 'Suất chiếu bị trùng giờ');
+        }
+        $params = [
+            'MaPhim' => $show['MaPhim'],
+            'MaPhongChieu' => $show['MaPhongChieu'],
+            'NgayGioChieu' => $show['NgayGioBatDau'],
+            'NgayGioKetThuc' => $show['NgayGioKetThuc'],
+            'GiaVe' => $show['GiaVe']
+        ];
+        $result = Database::insert('SuatChieu', $params);
+        if (!$result) {
+            return JsonResponse::error('Tạo suất chiếu thất bại', 500);
+        }
+        TicketService::createEmptyTickets($result);
+        return JsonResponse::ok([
+            'MaXuatChieu' => $result
+        ]);
     }
 }

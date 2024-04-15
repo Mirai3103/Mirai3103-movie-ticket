@@ -123,4 +123,21 @@ class TicketService
         }
         return JsonResponse::error('Xóa thất bại', 500);
     }
+    public static function createEmptyTickets($showId)
+    {
+        $show = ShowService::getShowById($showId);
+        $roomId = $show['MaPhongChieu'];
+        $seats = SeatService::getSeatsByRoomId($roomId);
+        Database::beginTransaction();
+        foreach ($seats as $seat) {
+            $params = [
+                'MaSuatChieu' => $showId,
+                'MaGhe' => $seat['MaGhe'],
+                'TrangThai' => TrangThaiVe::ChuaDat->value
+            ];
+            Database::insert('Ve', $params);
+        }
+        Database::commit();
+        return true;
+    }
 }

@@ -26,6 +26,8 @@ Router::load_from_class(ShowController::class);
 Router::build();
 function exception_handler(Throwable $exception)
 {
+    error_log($exception->getMessage());
+    error_log($exception->getTraceAsString());
     Logger::error($exception->getMessage());
     Logger::error($exception->getTraceAsString());
 }

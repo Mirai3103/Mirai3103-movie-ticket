@@ -6,7 +6,7 @@ enum TrangThaiPhim: int
 {
     case DangChieu = 1;
     case SapChieu = 2;
-    case SapKhoiChieu = 3;
+    case NgungChieu = 3;
 }
 
 enum TrangThaiVe: int
@@ -36,4 +36,11 @@ enum TrangThaiKhuyenMai: int
 {
     case An = 11;
     case DangHoatDong = 12;
+}
+
+enum TrangThaiSuatChieu: int
+{
+    case Hidden = 15;
+    case DangMoBan = 16;
+    case HeVe = 17;
 }

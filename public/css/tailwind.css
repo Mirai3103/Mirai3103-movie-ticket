@@ -9,3 +9,11 @@
 .error_message {
   @apply tw-text-red-500 tw-text-sm tw-italic;
 }
+
+.col-name {
+  @apply tw-flex tw-items-center tw-gap-x-2;
+}
+
+.dropdown-item {
+  @apply !tw-flex tw-items-center tw-gap-x-2 tw-cursor-pointer;
+}

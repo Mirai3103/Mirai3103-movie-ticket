@@ -4410,11 +4410,6 @@ details.tw-collapse summary::-webkit-details-marker {
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
 }
 
-.tw-bg-\[\#FFC700\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 199 0 / var(--tw-bg-opacity));
-}
-
 .tw-bg-opacity-60 {
   --tw-bg-opacity: 0.6;
 }
@@ -4655,6 +4650,11 @@ details.tw-collapse summary::-webkit-details-marker {
   line-height: 2.5rem;
 }
 
+.tw-text-5xl {
+  font-size: 3rem;
+  line-height: 1;
+}
+
 .tw-text-\[11px\] {
   font-size: 11px;
 }
@@ -4686,11 +4686,6 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
-}
-
-.tw-text-5xl {
-  font-size: 3rem;
-  line-height: 1;
 }
 
 .\!tw-font-semibold {
@@ -4995,6 +4990,21 @@ details.tw-collapse summary::-webkit-details-marker {
   font-style: italic;
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
+.col-name {
+  display: flex;
+  align-items: center;
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
+}
+
+.dropdown-item {
+  display: flex !important;
+  cursor: pointer;
+  align-items: center;
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
 }
 
 .before\:tw-pointer-events-none::before {

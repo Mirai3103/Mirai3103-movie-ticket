@@ -3,6 +3,8 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
+use App\Core\Logger;
+use App\Core\Request;
 use App\Models\JsonResponse;
 
 class CinemaService
@@ -13,10 +15,39 @@ class CinemaService
         $cinemas = Database::query($sql, []);
         return $cinemas;
     }
-    public static function getAllCinemas()
+
+
+    public static function getAllCinemas($query = [])
     {
-        $cinemas = Database::findAll("RapChieu", ["MaRapChieu", "TenRapChieu"]);
+        // $cinemas = Database::findAll("RapChieu", ["MaRapChieu", "TenRapChieu"]);
+        // return $cinemas;
+        $queryBuilder = new QueryBuilder();
+        $keyword = getArrayValueSafe($query, 'tu-khoa');
+        $statuses = getArrayValueSafe($query, 'trang-thais');
+        $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
+        $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 10);
+        $offset = ($page - 1) * $limit;
+        $queryBuilder->select(['RapChieu.*'])
+            ->from('RapChieu')
+            ->where('1', '=', '1');
+        if (!isNullOrEmptyString($keyword)) {
+            $queryBuilder->and();
+            $queryBuilder->startGroup();
+            $queryBuilder->where('TenRapChieu', 'LIKE', "%$keyword%");
+            $queryBuilder->orWhere('DiaChi', 'LIKE', "%$keyword%");
+            $queryBuilder->endGroup();
+        }
+        if (!isNullOrEmptyArray($statuses)) {
+            $queryBuilder->and();
+            $queryBuilder->where('TrangThai', 'IN', $statuses);
+        }
+        Logger::info($queryBuilder->__toString());
+        $total = $queryBuilder->count();
+        $queryBuilder->limit($limit, $offset);
+        $cinemas = $queryBuilder->get();
+        Request::setQueryCount($total);
         return $cinemas;
+
     }
     public static function getCinemaById($id)
     {

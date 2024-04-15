@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
+use App\Core\Logger;
+use App\Core\Request;
 use App\Models\JsonResponse;
 use App\Models\TrangThaiPhong;
 use App\Models\TrangThaiVe;
@@ -77,6 +79,38 @@ class RoomService
         $sql = "UPDATE PhongChieu SET SoGhe = ? WHERE MaPhongChieu = ?";
         $result = Database::execute($sql, [$count['count'], $roomId]);
         return $result;
+    }
+    public static function getAllRoomOfCinema($cinemaId, $query)
+    {
+        $queryBuilder = new QueryBuilder();
+        $keyword = getArrayValueSafe($query, 'tu-khoa');
+        $statuses = getArrayValueSafe($query, 'trang-thais');
+        $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
+        $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 10);
+
+        $queryBuilder->select([
+            'PhongChieu.*',
+        ])->from('PhongChieu')
+            ->where('MaRapChieu', '=', $cinemaId);
+        if (!isNullOrEmptyArray($statuses)) {
+            $queryBuilder->andWhere('TrangThai', 'IN', $statuses);
+        }
+        if (!isNullOrEmptyString($keyword)) {
+            $queryBuilder->and();
+            $queryBuilder->startGroup();
+            $queryBuilder->where('TenPhongChieu', 'LIKE', "%$keyword%");
+            $queryBuilder->orWhere('ManHinh', 'LIKE', "%$keyword%");
+            $queryBuilder->endGroup();
+        }
+        $total = $queryBuilder->count();
+
+        $queryBuilder->orderBy('MaPhongChieu', 'ASC');
+        Logger::info($queryBuilder->__toString());
+        Request::setQueryCount($total);
+        $queryBuilder->limit($limit, ($page - 1) * $limit);
+        $rooms = $queryBuilder->get();
+        return $rooms;
+
     }
 
 }
