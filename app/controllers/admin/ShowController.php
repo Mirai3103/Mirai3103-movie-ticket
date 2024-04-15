@@ -19,7 +19,17 @@ class ShowController
     public static function index()
     {
 
-        return view('admin/show/index');
+        $cinemas = CinemaService::getAllCinemas([
+        ]);
+        $movies = PhimService::getTatCaPhim([
+            'trang-thais' => [TrangThaiPhim::DangChieu->value, TrangThaiPhim::SapChieu->value],
+        ]);
+        $showStatuses = StatusService::getAllStatus('SuatChieu');
+        return view('admin/show/index', [
+            'cinemas' => $cinemas,
+            'movies' => $movies,
+            'showStatuses' => $showStatuses
+        ]);
     }
     #[Route(path: '/api/suat-chieu', method: 'GET')]
     public static function getShows()

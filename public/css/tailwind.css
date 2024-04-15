@@ -17,3 +17,9 @@
 .dropdown-item {
   @apply !tw-flex tw-items-center tw-gap-x-2 tw-cursor-pointer;
 }
+[x-cloak] {
+  display: none;
+}
+.dropdown-item.selected {
+  @apply tw-bg-blue-200;
+}

@@ -183,13 +183,14 @@ class ShowService
         if (!isNullOrEmptyString($denNgay)) {
             $queryBuilder->andWhere('DATE(SuatChieu.NgayGioChieu)', '<=', $denNgay);
         }
-        Logger::info($queryBuilder->__toString());
 
         $count = $queryBuilder->count();
         Request::setQueryCount($count);
         if (!isNullOrEmptyString($sortBy)) {
             $queryBuilder->orderBy($sortBy, $sortDir);
         }
+        Logger::info($queryBuilder->__toString());
+
         $queryBuilder->limit($limit, ($page - 1) * $limit);
         $shows = $queryBuilder->get();
         return $shows;
