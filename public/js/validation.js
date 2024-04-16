@@ -149,3 +149,6 @@ document.addEventListener("alpine:init", () => {
     };
   });
 });
+
+window.Validator = Validator;
+window.FormValidator = FormValidator;

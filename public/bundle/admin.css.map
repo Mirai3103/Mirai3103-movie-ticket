@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../css/tailwind.css"],
+  "sourcesContent": ["@tailwind base;\r\n\r\n@tailwind components;\r\n@tailwind utilities;\r\n\r\n* {\r\n  font-family: \"Inter\", sans-serif;\r\n}\r\n.error_message {\r\n  @apply tw-text-red-500 tw-text-sm tw-italic;\r\n}\r\n\r\n.col-name {\r\n  @apply tw-flex tw-items-center tw-gap-x-2;\r\n}\r\n\r\n.dropdown-item {\r\n  @apply !tw-flex tw-items-center tw-gap-x-2 tw-cursor-pointer;\r\n}\r\n[x-cloak] {\r\n  display: none;\r\n}\r\n.dropdown-item.selected {\r\n  @apply tw-bg-blue-200;\r\n}\r\n"],
+  "mappings": "AAAA,UAAU,KAEV,UAAU,WACV,UAAU,UAEV,EACE,YAAa,KAAO,CAAE,UACxB,CACA,CAAC,cACC,OAAO,gBAAgB,WAAW,UACpC,CAEA,CAAC,SACC,OAAO,QAAQ,gBAAgB,WACjC,CAEA,CAAC,cACC,OAAO,CAAC,QAAQ,gBAAgB,WAAW,kBAC7C,CACA,CAAC,SACC,QAAS,IACX,CACA,CANC,aAMa,CAAC,SACb,OAAO,eACT",
+  "names": []
+}

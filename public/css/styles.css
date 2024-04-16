@@ -3670,6 +3670,10 @@ details.tw-collapse summary::-webkit-details-marker {
   height: 1.25rem;
 }
 
+.tw-h-6 {
+  height: 1.5rem;
+}
+
 .tw-h-9 {
   height: 2.25rem;
 }
@@ -3684,10 +3688,6 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-h-screen {
   height: 100vh;
-}
-
-.tw-h-6 {
-  height: 1.5rem;
 }
 
 .tw-max-h-20 {
@@ -3770,6 +3770,10 @@ details.tw-collapse summary::-webkit-details-marker {
   width: 14rem;
 }
 
+.tw-w-6 {
+  width: 1.5rem;
+}
+
 .tw-w-64 {
   width: 16rem;
 }
@@ -3797,10 +3801,6 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-w-max {
   width: -moz-max-content;
   width: max-content;
-}
-
-.tw-w-6 {
-  width: 1.5rem;
 }
 
 .tw-min-w-60 {
@@ -4785,6 +4785,26 @@ details.tw-collapse summary::-webkit-details-marker {
   color: rgb(0 0 0 / var(--tw-text-opacity)) !important;
 }
 
+.\!tw-text-danger {
+  --tw-text-opacity: 1 !important;
+  color: rgb(227 52 47 / var(--tw-text-opacity)) !important;
+}
+
+.\!tw-text-red-500 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(239 68 68 / var(--tw-text-opacity)) !important;
+}
+
+.\!tw-text-warning {
+  --tw-text-opacity: 1 !important;
+  color: var(--fallback-wa,oklch(var(--wa)/var(--tw-text-opacity))) !important;
+}
+
+.\!tw-text-yellow-400 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(250 204 21 / var(--tw-text-opacity)) !important;
+}
+
 .tw-text-\[\#E48C44\] {
   --tw-text-opacity: 1;
   color: rgb(228 140 68 / var(--tw-text-opacity));
@@ -4891,26 +4911,6 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.\!tw-text-danger {
-  --tw-text-opacity: 1 !important;
-  color: rgb(227 52 47 / var(--tw-text-opacity)) !important;
-}
-
-.\!tw-text-warning {
-  --tw-text-opacity: 1 !important;
-  color: var(--fallback-wa,oklch(var(--wa)/var(--tw-text-opacity))) !important;
-}
-
-.\!tw-text-red-500 {
-  --tw-text-opacity: 1 !important;
-  color: rgb(239 68 68 / var(--tw-text-opacity)) !important;
-}
-
-.\!tw-text-yellow-400 {
-  --tw-text-opacity: 1 !important;
-  color: rgb(250 204 21 / var(--tw-text-opacity)) !important;
 }
 
 .tw-antialiased {

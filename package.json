@@ -13,10 +13,12 @@
     "bootstrap": "^5.3.3",
     "bootstrap-select": "^1.14.0-beta3",
     "dayjs": "^1.11.10",
+    "esbuild-style-plugin": "^1.0.8",
     "got": "^14.2.1",
     "html2canvas-pro": "^1.4.3",
     "jquery": "^3.7.1",
     "lodash": "^4.17.21",
+    "npm-run-all": "^4.1.5",
     "query-string": "^9.0.0"
   },
   "devDependencies": {
@@ -25,12 +27,14 @@
     "autoprefixer": "^10.4.18",
     "daisyui": "^4.9.0",
     "esbuild": "0.20.2",
+    "esbuild-plugin-tailwindcss": "^1.2.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1"
   },
   "scripts": {
     "watch:css": "npx tailwindcss -i public/css/tailwind.css -o public/css/styles.css --watch",
-    "bundle:adminjs": "esbuild ./public/bundle/admin.js --bundle --minify --target=es2017 --outdir=public/bundle/admin.bundle.js",
-    "bundle:clientjs": "esbuild ./public/bundle/client.js --bundle --minify --target=chrome58,firefox57,safari11,edge16 --sourcemap --watch"
-  }
+    "bundlejs": "esbuild ./public/admin.js ./public/client.js --bundle --minify --target=es2017 --outdir=public/bundle/ --sourcemap --watch",
+    "build:all": "npm-run-all --parallel watch:css bundlejs"
+  },
+  "type": "module"
 }
