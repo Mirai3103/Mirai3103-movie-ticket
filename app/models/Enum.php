@@ -44,3 +44,9 @@ enum TrangThaiSuatChieu: int
     case DangMoBan = 16;
     case HeVe = 17;
 }
+
+enum TrangThaiGhe: int
+{
+    case An = 18;
+    case Hien = 19;
+}

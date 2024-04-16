@@ -253,13 +253,20 @@ $watch('selectedShow',async (value) => {
         const temp= res.data.data;
         temp.forEach(seat => {
             const seatType = seatTypes.find(type => type.MaLoaiGhe === seat.MaLoaiGhe);
-            const index = parseInt(seat.X) * ChieuRongInt +  parseInt(seat.Y)
+            const index = parseInt(seat.Y) * ChieuRongInt +  parseInt(seat.X)
             cells[index] = {
                 ...cells[index],
                 ...seat,
                 ...seatType,
                 index: index
             }
+            const take = seatType.Rong - 1
+                for(let i = 1; i <= take; i++){
+                    cells[index+i] = {
+                        ...hiddenSeat,
+                        index: index+i,
+                    }
+                }
         });
         seats = cells;
       })
@@ -881,10 +888,10 @@ $watch('selectedSchedule',async (value) => {
                     <div class="bill-time col-2 justify-content-center align-items-center">
                         <span class="d-block">Thời gian giữ vé: </span>
                         <span class="bill-time-countdown fs-4" id="countdown">
-                            <?php 
-                             $locketTime = getArrayValueSafe($GLOBALS['config'], 'ticket_lock_time', 10);
-                             // format MM:SS
-                             echo $locketTime . ':00';
+                            <?php
+                            $locketTime = getArrayValueSafe($GLOBALS['config'], 'ticket_lock_time', 10);
+                            // format MM:SS
+                            echo $locketTime . ':00';
                             ?>
                         </span>
                     </div>

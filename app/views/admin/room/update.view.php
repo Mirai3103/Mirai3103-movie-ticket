@@ -10,6 +10,7 @@ const statuses = <?= json_encode($statuses) ?>;
 const cinemas = <?= json_encode($cinemas) ?>;
 const seats = <?= json_encode($seats) ?>;
 const room = <?= json_encode($room) ?>;
+console.log(seats)
 const validatorRule = {
     TenPhongChieu: {
         default: room.TenPhongChieu,
@@ -106,28 +107,32 @@ formValidator(validatorRule);
                 },
                 createInputSeats: function(maPhongChieu) {
                     const inputSeats = []
+                    const deleteSeats = []
                     this.listCells.forEach((cell, index) => {
                         if (cell.MaLoaiGhe > 0) {
-                            inputSeats.push({
-                                MaLoaiGhe: cell.MaLoaiGhe,
-                                SoGhe: this.getCellName(cell),
-                                X: index % data.ChieuRong,
-                                Y: Math.floor(index / data.ChieuRong),
-                                MaPhongChieu: maPhongChieu,
-                            })
+                            if(cell.MaLoaiGhe != cell.defaultType||cell.SoGhe !=cell.defaultSoGhe)
+                            {
+                                    inputSeats.push({
+                                        MaGhe: cell.MaGhe,
+                                        MaLoaiGhe: cell.MaLoaiGhe,
+                                        SoGhe: this.getCellName(cell),
+                                    })
+                            }
+                        }else {
+                            if(cell.MaGhe){
+                                deleteSeats.push(cell.MaGhe)
+                            }
                         }
                     })
-                    return inputSeats
+                    return [inputSeats, deleteSeats]
                 },
                 createRequest: async function() {
-                    const createRoomPayload = {
+                    const updateRoomPayload = {
                         ...data,
                         MaRapChieu: parseInt(data.MaRapChieu),
                         TrangThai: parseInt(data.TrangThai),
-                        ChieuDai: parseInt(data.ChieuDai),
-                        ChieuRong: parseInt(data.ChieuRong),
                     };
-                    const res = await axios.post('/api/phong-chieu', createRoomPayload,{validateStatus: () => true})
+                    const res = await axios.post('', updateRoomPayload,{validateStatus: () => true})
                     if (res.status !=200) {
                         toast('Tạo phòng chiếu thất bại', {
                             position: 'bottom-center',
@@ -135,17 +140,25 @@ formValidator(validatorRule);
                         });
                         return;
                     };
-                    const MaPhongChieu = 1 //res.data.data.MaPhongChieu
-                    const inputSeats = this.createInputSeats(MaPhongChieu)
-                    const res2 = await axios.post('/api/ghe/tao-nhieu', inputSeats,{validateStatus: () => true})
-                    if (res2.status !=200) {
-                        toast('Tạo ghế thất bại', {
+                    const MaPhongChieu = <?= $room['MaPhongChieu'] ?>;
+                    const [
+                        inputSeats,
+                        deleteSeats
+                    ] = this.createInputSeats(MaPhongChieu)
+                    const res1 = await axios.put('/api/ghe/cap-nhat-nhieu', {
+                        MaPhongChieu: MaPhongChieu,
+                        inputSeats: inputSeats,
+                        deleteSeats: deleteSeats
+                    },{validateStatus: () => true})
+                    if (res1.status !=200) {
+                        toast('Cập nhật ghế thất bại', {
                             position: 'bottom-center',
                             type: 'error'
                         });
-                        window.location.href = '/admin/phong-chieu/' + MaPhongChieu+'/sua'
+                        window.location.reload()
                         return;
                     };
+                  
                 }
             }
             
@@ -160,18 +173,29 @@ formValidator(validatorRule);
                     index: index,
                     }
                 })
-            console.log(tempCells.length)
+
             seats.forEach((seat) => {
                 const seatType = seatTypes.find((item) => item.MaLoaiGhe === seat.MaLoaiGhe)
-                const index = seat.X * ChieuRong + seat.Y
+                const index = seat.Y * ChieuRong + seat.X
+                 console.log(tempCells[index],index)
                 tempCells[index] = {
                     ...seat,
                     ...seatType,
+                    defaultType: seat.MaLoaiGhe,
+                    defaultSoGhe: seat.SoGhe,
                     index: index,
                 }
+                const take = seatType.Rong - 1
+                for(let i = 1; i <= take; i++){
+                    tempCells[index+i] = {
+                        ...hiddenSeat,
+                        index: index+i,
+                    }
+                }
+
             })
-            console.log(tempCells.length)   
             listCells = [...tempCells]
+
             })
         ">
         <div class=" tw-flex tw-items-center tw-justify-between tw-gap-8 tw-mb-2">
@@ -248,9 +272,10 @@ formValidator(validatorRule);
                     <select x-model="data.TrangThai" name="TrangThai" id="TrangThai" class="form-select"
                         :class="{'is-invalid': errors?.TrangThai && errors?.TrangThai.length > 0}" required>
                         <option value="" disabled selected hidden>Chọn trạng thái</option>
-                        <template x-for="item in statuses" :key="item.MaTrangThai">
-                            <option :value="item.MaTrangThai" x-text="item.Ten"></option>
-                        </template>
+                        <?php foreach ($statuses as $status): ?>
+                        <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
+                        <?php endforeach; ?>
+
                     </select>
                     <div class="invalid-feedback" x-show="errors?.TrangThai">
                         <span x-text="errors?.TrangThai?.join(', ')"></span>
@@ -328,7 +353,6 @@ formValidator(validatorRule);
                 currentRect.classList.add('rect');
                 const { x, y } = getPosition($event);
                 $el.appendChild(currentRect);
-                console.log(x, y);
                 startX =x;
          
                 startY = y;
@@ -360,7 +384,6 @@ formValidator(validatorRule);
         const minY = Math.min(startY, endY);
         const maxX = Math.max(startX, endX);
         const maxY = Math.max(startY, endY);
-        console.log(minX, minY, maxX, maxY);
         selectedSeats = [...rememberSelectedSeats];
         const seatElements = document.querySelectorAll('.seat');
         const rootRect = $el.getBoundingClientRect();

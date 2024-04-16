@@ -65,6 +65,13 @@ class RoomController
             'room' => $room
         ]);
     }
+    #[Route("/admin/phong-chieu/{id}/sua", "POST")]
+    public static function updateRoom($id)
+    {
+        $data = request_body();
+        $result = RoomService::updateRoom(intval($id), $data);
+        return json($result);
+    }
 
     #[Route("/api/phong-chieu/ids", "POST")]
     public static function getRoomsByIds()

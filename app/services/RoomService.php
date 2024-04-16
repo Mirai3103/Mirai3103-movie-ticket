@@ -33,6 +33,20 @@ class RoomService
             'rooms' => $rooms
         ];
     }
+    public static function updateRoom($id, $data)
+    {
+        $params = [
+            'TenPhongChieu' => $data['TenPhongChieu'],
+            'ManHinh' => $data['ManHinh'],
+            'MaRapChieu' => $data['MaRapChieu'],
+            'TrangThai' => $data['TrangThai'] ?? TrangThaiPhong::DangBaoTri->value
+        ];
+        $result = Database::update('PhongChieu', $params, "MaPhongChieu = $id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật phòng chiếu thất bại', 500);
+    }
     public static function setRoomStatus(int $id, int $status)
     {
         $sql = "UPDATE RapChieu SET TrangThai = ? WHERE MaRapChieu = ?";
@@ -47,7 +61,7 @@ class RoomService
             'ChieuDai' => $data['ChieuDai'],
             'ChieuRong' => $data['ChieuRong'],
             'MaRapChieu' => $data['MaRapChieu'],
-            'TrangThai' => $data['TrangThai'] ?? TrangThaiPhong::DangBaoTri->value
+            'TrangThai' => $data['TrangThai'] ?? TrangThaiPhong::DangHoatDong->value
         ];
         $result = Database::insert('PhongChieu', $params);
         if ($result) {

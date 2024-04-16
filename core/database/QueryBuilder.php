@@ -1,6 +1,7 @@
 <?php
 namespace App\Core\Database;
 
+use App\Core\Logger;
 use mysqli;
 
 
@@ -109,6 +110,7 @@ class QueryBuilder
     }
     public function get()
     {
+        Logger::info($this->sql);
         $result = $this->mysqli->query($this->sql);
         return $result->fetch_all(MYSQLI_ASSOC);
     }

@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Core\Database\Database;
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiGhe;
 use App\Models\TrangThaiPhong;
 use App\Models\TrangThaiVe;
 
@@ -56,9 +57,42 @@ class SeatService
     }
     public static function getSeatsByRoomId($roomId)
     {
-        $sql = "SELECT * FROM Ghe WHERE MaPhongChieu = ?";
-        $seats = Database::query($sql, [$roomId]);
+        $sql = "SELECT * FROM Ghe WHERE MaPhongChieu = ? AND TrangThai = ?";
+        $seats = Database::query($sql, [$roomId, TrangThaiGhe::Hien->value]);
         return $seats;
+    }
+    public static function updateOfRoom($data)
+    {
+
+        $inputSeats = $data['inputSeats'];
+
+        Database::beginTransaction();
+        foreach ($inputSeats as $seat) {
+            $params = [
+                'MaLoaiGhe' => $seat['MaLoaiGhe'],
+                'SoGhe' => $seat['SoGhe']
+            ];
+            $result = Database::update('Ghe', $params, "MaGhe = " . $seat['MaGhe']);
+            if (!$result) {
+                Database::rollBack();
+                return JsonResponse::error('Cập nhật ghế thất bại', 500);
+            }
+        }
+        $deleteSeats = $data['deleteSeats'];
+        // just update trang thai to Hidden
+        foreach ($deleteSeats as $seat) {
+            $params = [
+                'TrangThai' => TrangThaiGhe::An->value
+            ];
+            $result = Database::update('Ghe', $params, "MaGhe = " . $seat);
+            if (!$result) {
+                Database::rollBack();
+                return JsonResponse::error('Cập nhật ghế thất bại', 500);
+            }
+        }
+        Database::commit();
+        RoomService::updateRoomSeatCount($data['MaPhongChieu']);
+        return JsonResponse::ok();
     }
     public static function getSeatByIds($ids)
     {
@@ -78,8 +112,9 @@ class SeatService
                         select * from Ve where Ve.MaSuatChieu = ?  and Ve.TrangThai = ? or (Ve.KhoaDen is not null and Ve.KhoaDen > ?)
                     ) as Ve on Ghe.MaGhe = Ve.MaGhe     
             where Ghe.MaPhongChieu = ?
+            and Ghe.TrangThai = ?
         ";
-        $seats = Database::query($sql, [$showId, TrangThaiVe::DaDat->value, date('Y-m-d H:i:s', time()), $roomId]);
+        $seats = Database::query($sql, [$showId, TrangThaiVe::DaDat->value, date('Y-m-d H:i:s', time()), $roomId, TrangThaiGhe::Hien->value]);
         return $seats;
     }
 }

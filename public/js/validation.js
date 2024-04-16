@@ -1,5 +1,16 @@
 const validations = {
-  required: (value) => value && value.trim() !== "",
+  required: (value) => {
+    if (value === undefined || value === null) {
+      return false;
+    }
+    if (typeof value === "string") {
+      return value.trim().length > 0;
+    }
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
+    return true;
+  },
   email: (value) => /\S+@\S+\.\S+/.test(value),
   minLength: (value, length) => value.length >= length,
   maxLength: (value, length) => value.length <= length,

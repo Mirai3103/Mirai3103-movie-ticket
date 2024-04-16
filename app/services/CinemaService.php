@@ -78,7 +78,7 @@ class CinemaService
             ]
         )->from('RapChieu')
             ->join('PhongChieu', 'RapChieu.MaRapChieu = PhongChieu.MaRapChieu')
-            ->where('PhongChieu.MaPhongChieu', 'IN', "(" . implode(",", $roomIds) . ")");
+            ->where('PhongChieu.MaPhongChieu', 'IN', $roomIds);
         $data = $queryBuilder->get();
         return $queryBuilder->parseMany($data, [
             'root' => 'RapChieu',

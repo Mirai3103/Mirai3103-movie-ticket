@@ -15,6 +15,13 @@ class SeatController
         $result = SeatService::createSeats($data);
         return json($result);
     }
+    #[Route("/api/ghe/cap-nhat-nhieu", "PUT")]
+    public static function updateManySeats()
+    {
+        $data = request_body();
+        $result = SeatService::updateOfRoom($data);
+        return json($result);
+    }
     #[Route("/api/loai-ghe", "GET")]
     public static function index()
     {
