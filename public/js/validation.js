@@ -121,7 +121,7 @@ document.addEventListener("alpine:init", () => {
           this.validator.register(field, validationRules[field]);
           this.data[field] = validationRules[field].default || "";
           document.getElementById(field)?.addEventListener("focus", (e) => {
-            this.errors[field] = [];
+            this.errors[field] = null;
           });
         });
         this.validate = () => {

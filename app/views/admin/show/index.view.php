@@ -11,7 +11,30 @@ require ('app/views/admin/header.php');
 // $phimIds = getArrayValueSafe($query, 'phims', []);
 // $tuNgay = getArrayValueSafe($query, 'tu-ngay');
 // $denNgay = getArrayValueSafe($query, 'den-ngay');
+// #[Route(path: '/admin/suat-chieu/{id}/ban-ve', method: 'PATCH')]
+// public static function toggleSellTicket($id)
+// {
+//     return json(ShowService::toggleSellTicked($id));
+// }
+// #[Route(path: '/admin/suat-chieu/{id}', method: 'DELETE')]
+// public static function delete($id)
+// {
+//     return json(ShowService::deleteShow($id));
+// }
+
+// #[Route(path: '/admin/suat-chieu/{id}/can-edit', method: 'GET')]
+// public static function canEdit($id)
+// {
+//     return json(JsonResponse::ok([
+//         'canEdit' => ShowService::canEditShow($id)
+//     ]));
+// }
 ?>
+
+<script>
+const trangthais = <?= json_encode($showStatuses) ?>;
+</script>
+
 
 <link rel="stylesheet" href="/public/tiendat/showtime.css">
 
@@ -35,6 +58,44 @@ require ('app/views/admin/header.php');
         }
 
     }" class="showtime container-fluid  shadow">
+        <dialog id="delete_modal" class="tw-modal">
+            <div class="tw-modal-box">
+                <h3 class="tw-font-bold tw-text-lg">
+                    Cảnh báo
+                </h3>
+                <p class="tw-py-4 tw-text-lg">
+                    Bạn có chắc chắn muốn xoá suất chiếu #<span class='tw-font-bold'
+                        x-text="selected?.MaXuatChieu"></span> không?
+                </p>
+
+                <div class="modal-action">
+                    <form method="dialog" class='tw-flex tw-justify-end tw-gap-x-1'>
+                        <button class="tw-btn tw-px-4">
+                            Huỷ
+                        </button>
+                        <button x-on:click="
+                        axios.delete(`/admin/suat-chieu/${selected?.MaXuatChieu}`).then(res=>{
+                            toast('Thành công', {
+                                position: 'bottom-center',
+                                type: 'success',
+                                description: 'Xoá suất chiếu thành công',
+                            });
+                            data = data.filter(x=>x.MaXuatChieu!=selected.MaXuatChieu);
+                            $refs.delete_modal.close();
+                        }).catch(err=>{
+                            toast('Thất bại', {
+                                position: 'bottom-center',
+                                type: 'danger',
+                                description: err.response.data.message,
+                            });
+                        })
+                        " class="tw-btn tw-btn-error tw-px-4 tw-text-white" x-on:click="deleteItem()">
+                            Xoá
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
         <!-- thanh phân loại phim -->
         <div class="border-bottom mb-4">
             <div>
@@ -245,6 +306,18 @@ require ('app/views/admin/header.php');
                         </th>
                         <th scope="col">
                             Phim</th>
+                        <th scope="col">
+                            <div class="col-name" x-on:click="createOrderFn('GiaVe')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
+                                    width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 9l4 -4l4 4m-4 -4v14" />
+                                    <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+                                </svg>
+                                Phụ thu
+                            </div>
+                        </th>
                         <th scope="col">Trạng thái</th>
                         <th scope="col"></th>
                     </tr>
@@ -279,7 +352,11 @@ require ('app/views/admin/header.php');
                                 <span x-text="item.TenPhim"></span>
                             </td>
                             <td>
-                                <span x-text="item.TrangThai??'Không biết'"></span>
+                                <span :data-value="item.GiaVe" x-text="toVnd(item.GiaVe)"></span>
+                            </td>
+                            <td>
+                                <span
+                                    x-text="trangthais.find(x=>x.MaTrangThai==item.TrangThai)?.Ten||'Không xác định'"></span>
                             </td>
                             <td>
                                 <div class="dropdown">
@@ -292,7 +369,7 @@ require ('app/views/admin/header.php');
                                                 d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
                                         </svg>
                                     </button>
-                                    <ul class="dropdown-menu">
+                                    <ul class="dropdown-menu" x-on:click="selected = item">
                                         <li>
                                             <div class="dropdown-item">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -304,7 +381,18 @@ require ('app/views/admin/header.php');
                                                 <span class="px-xl-3 ">Xem</span>
                                             </div>
                                         </li>
-                                        <li>
+                                        <li x-on:click="
+                                            const res =await axios.get(`/admin/suat-chieu/${item.MaXuatChieu}/can-edit`);
+                                            if(res.data.data.canEdit){
+                                                window.location.href = `/admin/suat-chieu/${item.MaXuatChieu}/sua`;
+                                            }else{
+                                                 toast('Không thể sửa ', {
+                                                    position: 'bottom-center',
+                                                    type: 'danger',
+                                                    description: 'Suất chiếu đã bán vé không thể sửa',
+                                                });
+                                            }
+                                        ">
                                             <div class="dropdown-item !tw-text-yellow-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -316,7 +404,15 @@ require ('app/views/admin/header.php');
                                                 <span class="px-xl-3 ">Sửa</span>
                                             </div>
                                         </li>
-                                        <li>
+                                        <li x-on:click="
+                                        const res = await axios.patch(`/admin/suat-chieu/${item.MaXuatChieu}/ban-ve`);
+                                            toast('Thành công', {
+                                                position: 'bottom-center',
+                                                type: 'success',
+                                                description: 'Đóng bán vé thành công',
+                                            });
+                                            refresh();
+                                        ">
                                             <div class="dropdown-item ">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                     fill="currentColor" class="tw-w-6 tw-h-6">
@@ -325,12 +421,13 @@ require ('app/views/admin/header.php');
                                                         clip-rule="evenodd" />
                                                 </svg>
 
-                                                <span class="px-xl-3 ">
-                                                    Đóng bán vé
-                                                </span>
+                                                <span class="px-xl-3 "
+                                                    x-text="item.TrangThai==15?'Mở bán vé':'Đóng bán vé'"></span>
                                             </div>
                                         </li>
-                                        <li>
+                                        <li x-on:click="
+                                        window['delete_modal'].showModal();
+                                        ">
                                             <div class="dropdown-item !tw-text-red-500">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                     fill="currentColor" class="tw-w-6 tw-h-6">

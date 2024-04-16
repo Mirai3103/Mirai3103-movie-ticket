@@ -1,14 +1,20 @@
 <?php
 use App\Models\TrangThaiSuatChieu;
 
-title("Quản lý suất chiếu");
+title("Sửa suất chiếu");
 require ('app/views/admin/header.php');
 
 ?>
+<script>
+
+</script>
 
 <link rel="stylesheet" href="/public/tiendat/showtime.css">
 <script>
-const validatorRule = {
+
+</script>
+<div x-data="
+formValidator({
     GiaVe: {
         required: {
             value: true,
@@ -18,11 +24,30 @@ const validatorRule = {
             value: 0,
             message: 'Giá vé phải lớn hơn 0'
         },
+        default: <?= $show['GiaVe'] ?? 0 ?>
     },
-}
-</script>
-<div x-data="
-formValidator(validatorRule);
+    NgayGioBatDau: {
+        //2024-04-10 03:00:00
+        default: dayjs('<?= $show['NgayGioChieu'] ?? date('Y-m-d H:i:s') ?>').format('YYYY-MM-DDTHH:mm')
+    },
+    KhoangThoiGianChieu: {
+        default: dayjs('<?= $show['NgayGioKetThuc'] ?? date('Y-m-d H:i:s') ?>').diff(dayjs(
+            '<?= $show['NgayGioChieu'] ?? date('Y-m-d H:i:s') ?>'), 'minute')
+    },
+    NgayGioKetThuc: {
+        default: dayjs('<?= $show['NgayGioKetThuc'] ?? date('Y-m-d H:i:s') ?>').format('YYYY-MM-DDTHH:mm')
+    },
+    MaPhim: {
+        default: <?= $show['MaPhim'] ?? 0 ?>
+    },
+    RapChieu: {
+        default: <?= $currentCinema['MaRapChieu'] ?? 0 ?>
+    },
+    PhongChieu: {
+        default: <?= $show['MaPhongChieu'] ?? 0 ?>
+    }
+
+});
 " style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper  p-5">
     <div x-data="{
         listRoom: [],
@@ -34,9 +59,9 @@ formValidator(validatorRule);
             }
             const response = await axios.get(`/admin/rap-chieu/${data.RapChieu}/phong-chieu`);
             this.listRoom = response.data.data;
+            
         }
     }" x-init="
-       
         $watch('data.RapChieu',  (value) => {
             fetchRoom();
         });
@@ -45,6 +70,7 @@ formValidator(validatorRule);
             data.KhoangThoiGianChieu = thoiLuongPhim;
         });
         $watch('data.KhoangThoiGianChieu',  (value) => {
+            console.log(errors);
             if (!data.NgayGioBatDau) {
                 return;
             }
@@ -62,8 +88,12 @@ formValidator(validatorRule);
             const texxt=ngayGioBatDau.add(Number(data.KhoangThoiGianChieu), 'minute').format('YYYY-MM-DDTHH:mm');
             data.NgayGioKetThuc = texxt;
         });
-        $nextTick(() => {
-            fetchRoom();
+        fetchRoom().then(() => {
+            $nextTick(() => {
+               setTimeout(() => {
+                document.querySelector(`#phongchieu`).value = data.PhongChieu;
+               }, 1000);
+            });
         });
     " class="info-movie container-fluid tw-bg-white tw-rounded-md p-4 shadow">
 
@@ -86,6 +116,7 @@ formValidator(validatorRule);
         if (!validate()) {
             return;
         }
+        const maSuatChieu = <?= $show['MaXuatChieu'] ?>;
         const maPhim= data.MaPhim;
         let thoiLuongPhim = document.querySelector(`#phim option[value='${maPhim}']`).dataset.thoiLuongPhim;
         thoiLuongPhim = parseInt(thoiLuongPhim);
@@ -116,7 +147,7 @@ formValidator(validatorRule);
             errors = res.data.errors;
             return;
         };
-        window.location.href = '/admin/suat-chieu/'+res.data.data.MaXFuatChieu;
+        window.history.back();
         ">
             <div class="row mb-3">
                 <div class="col">
@@ -200,6 +231,18 @@ formValidator(validatorRule);
             </div>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button x-on:click="
+                data.MaPhim = <?= $show['MaPhim'] ?>;
+                data.RapChieu = <?= $currentCinema['MaRapChieu'] ?>;
+                data.GiaVe = <?= $show['GiaVe'] ?>;
+                data.PhongChieu = <?= $show['MaPhongChieu'] ?>;
+                data.NgayGioBatDau = dayjs('<?= $show['NgayGioChieu'] ?>').format('YYYY-MM-DDTHH:mm');
+                data.NgayGioKetThuc = dayjs('<?= $show['NgayGioKetThuc'] ?>').format('HH:mm dd-MM-YYYY');
+                data.KhoangThoiGianChieu = dayjs('<?= $show['NgayGioKetThuc'] ?>').diff(dayjs('<?= $show['NgayGioChieu'] ?>'), 'minute');
+                setTimeout(() => {
+                    document.querySelector(`#phongchieu`).value = data.PhongChieu;
+                }, 1000);
+                " class="btn btn-light me-md-2" type="button">Reset</button>
                 <button class="btn btn-primary" type="submit">Lưu</button>
             </div>
         </form>

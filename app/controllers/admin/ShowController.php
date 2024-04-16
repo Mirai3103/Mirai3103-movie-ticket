@@ -39,7 +39,7 @@ class ShowController
     }
 
     #[Route(path: '/admin/suat-chieu/them', method: 'GET')]
-    public static function add()
+    public static function addView()
     {
 
         $cinemas = CinemaService::getAllCinemas([
@@ -61,4 +61,52 @@ class ShowController
 
         return json(ShowService::createShow(request_body()));
     }
+    #[Route(path: '/admin/suat-chieu/{id}/sua', method: 'GET')]
+    public static function editView($id)
+    {
+        $canEdit = ShowService::canEditShow($id);
+        if (!$canEdit) {
+            redirect('admin/suat-chieu');
+        }
+        $show = ShowService::getShowById($id);
+        $cinemas = CinemaService::getAllCinemas([
+        ]);
+        $currentCinema = CinemaService::getCinemaByRoomId($show['MaPhongChieu']);
+        $movies = PhimService::getTatCaPhim([
+            'trang-thais' => [TrangThaiPhim::DangChieu->value, TrangThaiPhim::SapChieu->value],
+        ]);
+        $showStatuses = StatusService::getAllStatus('SuatChieu');
+        return view('admin/show/edit', [
+            'show' => $show,
+            'cinemas' => $cinemas,
+            'movies' => $movies,
+            'showStatuses' => $showStatuses,
+            'currentCinema' => $currentCinema,
+        ]);
+    }
+
+    #[Route(path: '/admin/suat-chieu/{id}/sua', method: 'POST')]
+    public static function update($id)
+    {
+        return json(ShowService::editShow($id, request_body()));
+    }
+    #[Route(path: '/admin/suat-chieu/{id}/ban-ve', method: 'PATCH')]
+    public static function toggleSellTicket($id)
+    {
+        return json(ShowService::toggleSellTicked($id));
+    }
+    #[Route(path: '/admin/suat-chieu/{id}', method: 'DELETE')]
+    public static function delete($id)
+    {
+        return json(ShowService::deleteShow($id));
+    }
+
+    #[Route(path: '/admin/suat-chieu/{id}/can-edit', method: 'GET')]
+    public static function canEdit($id)
+    {
+        return json(JsonResponse::ok([
+            'canEdit' => ShowService::canEditShow($id)
+        ]));
+    }
+
 }

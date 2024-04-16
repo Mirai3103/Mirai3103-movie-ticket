@@ -55,6 +55,12 @@ class CinemaService
         $cinema = Database::queryOne($sql, [$id]);
         return $cinema;
     }
+    public static function getCinemaByRoomId($roomId)
+    {
+        $sql = "SELECT RapChieu.* FROM RapChieu JOIN PhongChieu ON RapChieu.MaRapChieu = PhongChieu.MaRapChieu WHERE PhongChieu.MaPhongChieu = ?";
+        $cinema = Database::queryOne($sql, [$roomId]);
+        return $cinema;
+    }
     public static function getCinemasByRoomIds($roomIds)
     {
         $queryBuilder = new QueryBuilder();

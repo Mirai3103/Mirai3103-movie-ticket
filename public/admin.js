@@ -19,6 +19,12 @@ window.axios = axios;
 window.dayjs = dayjs;
 Alpine.plugin(focus);
 window.Alpine = Alpine;
+window.toVnd = function (number) {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(number);
+};
 Alpine.data("dataTable", ({ initialQuery = {}, endpoint }) => ({
   data: [],
   selected: null,
@@ -79,7 +85,7 @@ Alpine.data("dataTable", ({ initialQuery = {}, endpoint }) => ({
     });
     const url = `${endpoint}?${queryStr}`;
 
-    const queryRs = axios
+    axios
       .get(url)
       .then((response) => {
         this.data = response.data.data;

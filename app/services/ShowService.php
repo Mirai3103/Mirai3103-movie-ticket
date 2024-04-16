@@ -7,6 +7,8 @@ use App\Core\Logger;
 use App\Core\Request;
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiSuatChieu;
+use App\Models\TrangThaiVe;
 
 class ShowService
 {
@@ -159,6 +161,7 @@ class ShowService
             'SuatChieu.NgayGioChieu',
             'SuatChieu.NgayGioKetThuc',
             'Phim.TenPhim',
+            'SuatChieu.GiaVe',
             'SuatChieu.TrangThai',
         ])->from('SuatChieu')
             ->join('Phim', 'SuatChieu.MaPhim = Phim.MaPhim')
@@ -227,5 +230,63 @@ class ShowService
         return JsonResponse::ok([
             'MaXuatChieu' => $result
         ]);
+    }
+    public static function canEditShow($showId)
+    {
+        $tickets = TicketService::getAllTicketsOfShow($showId);
+        $isAnyTicketSold = false;
+        foreach ($tickets as $ticket) {
+            if ($ticket['TrangThai'] == TrangThaiVe::DaDat->value) {
+                $isAnyTicketSold = true;
+                break;
+            }
+        }
+        return !$isAnyTicketSold;
+    }
+    public static function toggleSellTicked($showId)
+    {
+        $show = self::getShowById($showId);
+        if (!$show) {
+            return JsonResponse::error('Không tìm thấy suất chiếu', 404);
+        }
+        $params = [
+            'TrangThai' => $show['TrangThai'] == TrangThaiSuatChieu::Hidden->value ? TrangThaiSuatChieu::DangMoBan->value : TrangThaiSuatChieu::Hidden->value,
+        ];
+        $result = Database::update('SuatChieu', $params, "MaXuatChieu = $showId");
+        return JsonResponse::ok();
+    }
+
+    public static function editShow($showId, $show)
+    {
+        if (!self::canEditShow($showId)) {
+            return JsonResponse::error('Không thể chỉnh sửa suất chiếu vì đã có vé được bán', 400);
+        }
+        $exists = self::validateShowTime($show);
+        if ($exists && $exists['MaXuatChieu'] != $showId) {
+            return JsonDataErrorRespose::create()->addFieldError('NgayGioBatDau', 'Suất chiếu bị trùng giờ');
+        }
+        $params = [
+            'MaPhim' => $show['MaPhim'],
+            'MaPhongChieu' => $show['MaPhongChieu'],
+            'NgayGioChieu' => $show['NgayGioBatDau'],
+            'NgayGioKetThuc' => $show['NgayGioKetThuc'],
+            'GiaVe' => $show['GiaVe']
+        ];
+        $result = Database::update('SuatChieu', $params, "MaXuatChieu = $showId");
+        if (!$result) {
+            return JsonResponse::error('Chỉnh sửa suất chiếu thất bại', 500);
+        }
+        return JsonResponse::ok();
+    }
+    public static function deleteShow($showId)
+    {
+        if (!self::canEditShow($showId)) {
+            return JsonResponse::error('Không thể xóa suất chiếu vì đã có vé được bán', 400);
+        }
+        $result = Database::delete('SuatChieu', "MaXuatChieu = $showId");
+        if (!$result) {
+            return JsonResponse::error('Xóa suất chiếu thất bại', 500);
+        }
+        return JsonResponse::ok();
     }
 }

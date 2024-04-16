@@ -3690,6 +3690,10 @@ details.tw-collapse summary::-webkit-details-marker {
   height: 100vh;
 }
 
+.tw-h-8 {
+  height: 2rem;
+}
+
 .tw-max-h-20 {
   max-height: 5rem;
 }
@@ -3801,6 +3805,10 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-w-max {
   width: -moz-max-content;
   width: max-content;
+}
+
+.tw-w-8 {
+  width: 2rem;
 }
 
 .tw-min-w-60 {

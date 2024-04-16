@@ -58,12 +58,21 @@ class Database
         $sql = sprintf(
             'update %s set %s where %s',
             $table,
-            implode(', ', array_map(fn($key) => "$key = $parameters[$key]", array_keys($parameters))),
+            implode(', ', array_map(fn($key) => "$key = " . self::getSqlValue($parameters[$key]), array_keys($parameters))),
             $condition
         );
         Logger::info($sql);
         $statement = static::$mysqli->prepare($sql);
         return $statement->execute();
+    }
+    private static function getSqlValue($value)
+    {
+        if (is_string($value)) {
+            // prevent sql injection
+            $value = static::$mysqli->real_escape_string($value);
+            return "'$value'";
+        }
+        return $value;
     }
     public static function delete(string $table, string $condition)
     {

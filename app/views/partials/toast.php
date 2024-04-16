@@ -13,7 +13,7 @@
             }
 
 ">
-  <ul x-data="{ 
+    <ul x-data="{ 
                 toasts: [],
                 toastsHovered: false,
                 expanded: false,
@@ -300,9 +300,11 @@
                         }
                     }
                 });
-            " class="tw-fixed tw-block tw-w-full  tw-group tw-z-[100] sm:tw-max-w-xs" :class="{ 'tw-right-0 tw-top-0 sm:tw-mt-6 sm:tw-mr-6': position=='top-right', 'tw-left-0 tw-top-0 sm:tw-mt-6 sm:tw-ml-6': position=='top-left', 'tw-left-1/2 tw--translate-x-1/2 tw-top-0 sm:tw-mt-6': position=='top-center', 'tw-right-0 tw-bottom-0 sm:tw-mr-6 sm:tw-mb-6': position=='bottom-right', 'tw-left-0 tw-bottom-0 sm:tw-ml-6 sm:tw-mb-6': position=='bottom-left', 'tw-left-1/2 tw--translate-x-1/2 tw-bottom-0 sm:tw-mb-6': position=='bottom-center' }" x-cloak>
-    <template x-for="(toast, index) in toasts" :key="toast.id">
-      <li :id="toast.id" x-data="{
+            " class="tw-fixed tw-block tw-w-full  tw-group tw-z-[100] sm:tw-max-w-xs"
+        :class="{ 'tw-right-0 tw-top-0 sm:tw-mt-6 sm:tw-mr-6': position=='top-right', 'tw-left-0 tw-top-0 sm:tw-mt-6 sm:tw-ml-6': position=='top-left', 'tw-left-1/2 tw--translate-x-1/2 tw-top-0 sm:tw-mt-6': position=='top-center', 'tw-right-0 tw-bottom-0 sm:tw-mr-6 sm:tw-mb-6': position=='bottom-right', 'tw-left-0 tw-bottom-0 sm:tw-ml-6 sm:tw-mb-6': position=='bottom-left', 'tw-left-1/2 tw--translate-x-1/2 tw-bottom-0 sm:tw-mb-6': position=='bottom-center' }"
+        x-cloak>
+        <template x-for="(toast, index) in toasts" :key="toast.id">
+            <li :id="toast.id" x-data="{
                         toastHovered: false
                     }" x-init="
                         
@@ -341,38 +343,63 @@
                                 }, 300);
                             }, 5);
                         }, 4000); 
-                    " @mouseover="toastHovered=true" @mouseout="toastHovered=false" class="tw-absolute   tw-w-full tw-duration-300 tw-ease-out tw-select-none sm:tw-max-w-xs" :class="{ 'toast-no-description': !toast.description }">
-        <span class="tw-relative tw-flex tw-flex-col tw-items-start tw-shadow-md  tw-w-full tw-transition-all tw-duration-300 tw-ease-out tw-bg-white tw-border tw-border-gray-100 sm:tw-rounded-md sm:tw-max-w-xs group" :class="{ 'tw-p-4' : !toast.html, 'tw-p-0' : toast.html }">
-          <template x-if="!toast.html">
-            <div class="tw-relative ">
-              <div class="tw-flex tw-items-center" :class="{ 'tw-text-green-500' : toast.type=='success', 'tw-text-blue-500' : toast.type=='info', 'tw-text-orange-400' : toast.type=='warning', 'tw-text-red-500' : toast.type=='danger', 'tw-text-gray-800' : toast.type=='default' }">
-                <svg x-show="toast.type=='success'" class="tw-w-[18px] tw-h-[18px] tw-mr-1.5 tw--ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM16.7744 9.63269C17.1238 9.20501 17.0604 8.57503 16.6327 8.22559C16.2051 7.87615 15.5751 7.93957 15.2256 8.36725L10.6321 13.9892L8.65936 12.2524C8.24484 11.8874 7.61295 11.9276 7.248 12.3421C6.88304 12.7566 6.92322 13.3885 7.33774 13.7535L9.31046 15.4903C10.1612 16.2393 11.4637 16.1324 12.1808 15.2547L16.7744 9.63269Z" fill="currentColor"></path>
-                </svg>
-                <svg x-show="toast.type=='info'" class="tw-w-[18px] tw-h-[18px] tw-mr-1.5 tw--ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM12 9C12.5523 9 13 8.55228 13 8C13 7.44772 12.5523 7 12 7C11.4477 7 11 7.44772 11 8C11 8.55228 11.4477 9 12 9ZM13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12V16C11 16.5523 11.4477 17 12 17C12.5523 17 13 16.5523 13 16V12Z" fill="currentColor"></path>
-                </svg>
-                <svg x-show="toast.type=='warning'" class="tw-w-[18px] tw-h-[18px] tw-mr-1.5 tw--ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.44829 4.46472C10.5836 2.51208 13.4105 2.51168 14.5464 4.46401L21.5988 16.5855C22.7423 18.5509 21.3145 21 19.05 21L4.94967 21C2.68547 21 1.25762 18.5516 2.4004 16.5862L9.44829 4.46472ZM11.9995 8C12.5518 8 12.9995 8.44772 12.9995 9V13C12.9995 13.5523 12.5518 14 11.9995 14C11.4473 14 10.9995 13.5523 10.9995 13V9C10.9995 8.44772 11.4473 8 11.9995 8ZM12.0009 15.99C11.4486 15.9892 11.0003 16.4363 10.9995 16.9886L10.9995 16.9986C10.9987 17.5509 11.4458 17.9992 11.9981 18C12.5504 18.0008 12.9987 17.5537 12.9995 17.0014L12.9995 16.9914C13.0003 16.4391 12.5532 15.9908 12.0009 15.99Z" fill="currentColor"></path>
-                </svg>
-                <svg x-show="toast.type=='danger'" class="tw-w-[18px] tw-h-[18px] tw-mr-1.5 tw--ml-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM11.9996 7C12.5519 7 12.9996 7.44772 12.9996 8V12C12.9996 12.5523 12.5519 13 11.9996 13C11.4474 13 10.9996 12.5523 10.9996 12V8C10.9996 7.44772 11.4474 7 11.9996 7ZM12.001 14.99C11.4488 14.9892 11.0004 15.4363 10.9997 15.9886L10.9996 15.9986C10.9989 16.5509 11.446 16.9992 11.9982 17C12.5505 17.0008 12.9989 16.5537 12.9996 16.0014L12.9996 15.9914C13.0004 15.4391 12.5533 14.9908 12.001 14.99Z" fill="currentColor"></path>
-                </svg>
-                <p class="tw-text-[13px] tw-font-medium tw-leading-none tw-text-gray-800" x-text="toast.message"></p>
-              </div>
-              <p x-show="toast.description" :class="{ 'tw-pl-5' : toast.type!='default' }" class="tw-mt-1.5 tw-text-xs tw-leading-none tw-opacity-70" x-text="toast.description"></p>
-            </div>
-          </template>
-          <template x-if="toast.html">
-            <div x-html="toast.html"></div>
-          </template>
-          <span @click="burnToast(toast.id)" class="tw-absolute tw-right-0 tw-p-1.5 tw-mr-2.5 tw-text-gray-400 tw-duration-100 tw-ease-in-out tw-rounded-full tw-opacity-0 tw-cursor-pointer hover:tw-bg-gray-50 hover:tw-text-gray-500" :class="{ 'tw-top-1/2 tw--translate-y-1/2' : !toast.description && !toast.html, 'tw-top-0 tw-mt-2.5' : (toast.description || toast.html), 'tw-opacity-100' : toastHovered, 'tw-opacity-0' : !toastHovered }">
-            <svg class="tw-w-3 tw-h-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-            </svg>
-          </span>
-        </span>
-      </li>
-    </template>
-  </ul>
+                    " @mouseover="toastHovered=true" @mouseout="toastHovered=false"
+                class="tw-absolute   tw-w-full tw-duration-300 tw-ease-out tw-select-none sm:tw-max-w-xs"
+                :class="{ 'toast-no-description': !toast.description }">
+                <span
+                    class="tw-relative tw-flex tw-flex-col tw-items-start tw-shadow-md  tw-w-full tw-transition-all tw-duration-300 tw-ease-out tw-bg-white tw-border tw-border-gray-100 sm:tw-rounded-md sm:tw-max-w-xs group"
+                    :class="{ 'tw-p-4' : !toast.html, 'tw-p-0' : toast.html }">
+                    <template x-if="!toast.html">
+                        <div class="tw-relative ">
+                            <div class="tw-flex tw-items-center"
+                                :class="{ 'tw-text-green-500' : toast.type=='success', 'tw-text-blue-500' : toast.type=='info', 'tw-text-orange-400' : toast.type=='warning', 'tw-text-red-500' : toast.type=='danger', 'tw-text-gray-800' : toast.type=='default' }">
+                                <svg x-show="toast.type=='success'" class="tw-w-8 tw-h-8   tw-mr-1.5 tw--ml-1"
+                                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM16.7744 9.63269C17.1238 9.20501 17.0604 8.57503 16.6327 8.22559C16.2051 7.87615 15.5751 7.93957 15.2256 8.36725L10.6321 13.9892L8.65936 12.2524C8.24484 11.8874 7.61295 11.9276 7.248 12.3421C6.88304 12.7566 6.92322 13.3885 7.33774 13.7535L9.31046 15.4903C10.1612 16.2393 11.4637 16.1324 12.1808 15.2547L16.7744 9.63269Z"
+                                        fill="currentColor"></path>
+                                </svg>
+                                <svg x-show="toast.type=='info'" class="tw-w-8 tw-h-8 tw-mr-1.5 tw--ml-1"
+                                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM12 9C12.5523 9 13 8.55228 13 8C13 7.44772 12.5523 7 12 7C11.4477 7 11 7.44772 11 8C11 8.55228 11.4477 9 12 9ZM13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12V16C11 16.5523 11.4477 17 12 17C12.5523 17 13 16.5523 13 16V12Z"
+                                        fill="currentColor"></path>
+                                </svg>
+                                <svg x-show="toast.type=='warning'" class="tw-w-8 tw-h-8 tw-mr-1.5 tw--ml-1"
+                                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M9.44829 4.46472C10.5836 2.51208 13.4105 2.51168 14.5464 4.46401L21.5988 16.5855C22.7423 18.5509 21.3145 21 19.05 21L4.94967 21C2.68547 21 1.25762 18.5516 2.4004 16.5862L9.44829 4.46472ZM11.9995 8C12.5518 8 12.9995 8.44772 12.9995 9V13C12.9995 13.5523 12.5518 14 11.9995 14C11.4473 14 10.9995 13.5523 10.9995 13V9C10.9995 8.44772 11.4473 8 11.9995 8ZM12.0009 15.99C11.4486 15.9892 11.0003 16.4363 10.9995 16.9886L10.9995 16.9986C10.9987 17.5509 11.4458 17.9992 11.9981 18C12.5504 18.0008 12.9987 17.5537 12.9995 17.0014L12.9995 16.9914C13.0003 16.4391 12.5532 15.9908 12.0009 15.99Z"
+                                        fill="currentColor"></path>
+                                </svg>
+                                <svg x-show="toast.type=='danger'" class="tw-w-8 tw-h-8 tw-mr-1.5 tw--ml-1"
+                                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM11.9996 7C12.5519 7 12.9996 7.44772 12.9996 8V12C12.9996 12.5523 12.5519 13 11.9996 13C11.4474 13 10.9996 12.5523 10.9996 12V8C10.9996 7.44772 11.4474 7 11.9996 7ZM12.001 14.99C11.4488 14.9892 11.0004 15.4363 10.9997 15.9886L10.9996 15.9986C10.9989 16.5509 11.446 16.9992 11.9982 17C12.5505 17.0008 12.9989 16.5537 12.9996 16.0014L12.9996 15.9914C13.0004 15.4391 12.5533 14.9908 12.001 14.99Z"
+                                        fill="currentColor"></path>
+                                </svg>
+                                <p class="tw-text-lg tw-font-semibold tw-leading-none tw-text-gray-800"
+                                    x-text="toast.message"></p>
+                            </div>
+                            <p x-show="toast.description" :class="{ 'tw-pl-5' : toast.type!='default' }"
+                                class="tw-mt-1 tw-text-base tw-leading-none " x-text="toast.description">
+                            </p>
+                        </div>
+                    </template>
+                    <template x-if="toast.html">
+                        <div x-html="toast.html"></div>
+                    </template>
+                    <span @click="burnToast(toast.id)"
+                        class="tw-absolute tw-right-0 tw-p-1.5 tw-mr-2.5 tw-text-gray-400 tw-duration-100 tw-ease-in-out tw-rounded-full tw-opacity-0 tw-cursor-pointer hover:tw-bg-gray-50 hover:tw-text-gray-500"
+                        :class="{ 'tw-top-1/2 tw--translate-y-1/2' : !toast.description && !toast.html, 'tw-top-0 tw-mt-2.5' : (toast.description || toast.html), 'tw-opacity-100' : toastHovered, 'tw-opacity-0' : !toastHovered }">
+                        <svg class="tw-w-3 tw-h-3" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </span>
+                </span>
+            </li>
+        </template>
+    </ul>
 </template>
