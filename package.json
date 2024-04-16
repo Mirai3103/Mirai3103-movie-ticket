@@ -4,20 +4,33 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@alpinejs/focus": "^3.13.8",
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@material-tailwind/html": "^2.2.2",
+    "@types/bootstrap-select": "^1.13.7",
+    "alpinejs": "^3.13.8",
+    "axios": "^1.6.8",
+    "bootstrap": "^5.3.3",
+    "bootstrap-select": "^1.14.0-beta3",
+    "dayjs": "^1.11.10",
     "got": "^14.2.1",
     "html2canvas-pro": "^1.4.3",
-    "lodash": "^4.17.21"
+    "jquery": "^3.7.1",
+    "lodash": "^4.17.21",
+    "query-string": "^9.0.0"
   },
   "devDependencies": {
+    "@types/alpinejs__focus": "^3.13.4",
     "@types/node": "^20.11.25",
     "autoprefixer": "^10.4.18",
     "daisyui": "^4.9.0",
+    "esbuild": "0.20.2",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1"
   },
   "scripts": {
-    "watch:css": "npx tailwindcss -i public/css/tailwind.css -o public/css/styles.css --watch"
+    "watch:css": "npx tailwindcss -i public/css/tailwind.css -o public/css/styles.css --watch",
+    "bundle:adminjs": "esbuild ./public/bundle/admin.js --bundle --minify --target=es2017 --outdir=public/bundle/admin.bundle.js",
+    "bundle:clientjs": "esbuild ./public/bundle/client.js --bundle --minify --target=chrome58,firefox57,safari11,edge16 --sourcemap --watch"
   }
 }
