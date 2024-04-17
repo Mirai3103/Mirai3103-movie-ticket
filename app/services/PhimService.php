@@ -9,27 +9,41 @@ use App\Models\TrangThaiPhim;
 
 class PhimService
 {
+
+    public static $MOVIE_TAGS = [
+        "P" => "Thích hợp cho mọi độ tuổi",
+        "K" => "Được phổ biến người xem dưới 13 tuổi với điều kiện xem cùng cha mẹ hoặc người giám hộ",
+        "T13" => "cấm người dưới 13 tuổi",
+        "T16" => "cấm người dưới 16 tuổi",
+        "T18" => "cấm người dưới 18 tuổi"
+    ];
     public static function createMovie($data)
     {
         $result = null;
-        //         {
-//     "TenPhim": "zzz",
-//     "NgayPhatHanh": "2024-04-17",
-//     "DinhDang": "3D",
-//     "HanCheDoTuoi": "K",
-//     "HinhAnh": "http://localhost:8000/public/uploads/661f8f0f7bc48.png",
-//     "ThoiLuong": "222",
-//     "NgonNgu": "Vieetj",
-//     "DaoDien": "dsds",
-//     "TinhTrang": "2",
-//     "Trailer": "http://localhost:8000/public/uploads/661f8f00c0a2a.webm",
-//     "MoTa": "2222",
-//     "TheLoais": [
-//         "10",
-//         "11"
-//     ],
-
-        // }
+        $params = [
+            'TenPhim' => $data['TenPhim'],
+            'NgayPhatHanh' => $data['NgayPhatHanh'],
+            'HanCheDoTuoi' => $data['HanCheDoTuoi'],
+            'HinhAnh' => $data['HinhAnh'],
+            'ThoiLuong' => $data['ThoiLuong'],
+            'NgonNgu' => $data['NgonNgu'],
+            'MoTa' => $data['MoTa'],
+            'DaoDien' => $data['DaoDien'],
+            'TrangThai' => $data['TinhTrang'],
+            'DinhDang' => $data['DinhDang'],
+            'Trailer' => $data['Trailer'],
+        ];
+        $id = Database::insert("Phim", $params);
+        if ($id) {
+            $theLoais = $data['TheLoais'];
+            foreach ($theLoais as $theLoai) {
+                Database::insert("CT_Phim_TheLoai", [
+                    'MaPhim' => $id,
+                    'MaTheLoai' => $theLoai
+                ]);
+            }
+            $result = $id;
+        }
         return $result;
     }
     public static function getPhimDangChieu($page = 1, $limit = 20)
@@ -64,6 +78,12 @@ class PhimService
         }
         $ngayPhatHanhTu = getArrayValueSafe($query, 'ngay-phat-hanh-tu');
         $ngayPhatHanhDen = getArrayValueSafe($query, 'ngay-phat-hanh-den');
+        $tags = getArrayValueSafe($query, 'tags');
+        $durationFrom = getArrayValueSafe($query, 'thoi-luong-tu');
+        $durationTo = getArrayValueSafe($query, 'thoi-luong-den');
+        $orderBy = getArrayValueSafe($query, 'sap-xep', 'MaPhim');
+        $orderType = getArrayValueSafe($query, 'thu-tu', 'ASC');
+        $categoriesId = getArrayValueSafe($query, 'the-loais');
         $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
         $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 10);
         $offset = ($page - 1) * $limit;
@@ -82,6 +102,23 @@ class PhimService
             $queryBuilder->and();
             $queryBuilder->where('TrangThai', 'IN', $statuses);
         }
+        if (!isNullOrEmptyArray($categoriesId)) {
+            $queryBuilder->and();
+            $queryBuilder->where('MaPhim', 'IN', "(SELECT MaPhim FROM CT_Phim_TheLoai WHERE MaTheLoai IN (" . implode(",", $categoriesId) . "))");
+        }
+        if (!isNullOrEmptyArray($tags)) {
+            $queryBuilder->and();
+            $queryBuilder->where('MaPhim', 'IN', $tags);
+        }
+        if (!isNullOrEmptyString($durationFrom)) {
+            $queryBuilder->and();
+            $queryBuilder->where('ThoiLuong', '>=', $durationFrom);
+        }
+        if (!isNullOrEmptyString($durationTo)) {
+            $queryBuilder->and();
+            $queryBuilder->where('ThoiLuong', '<=', $durationTo);
+        }
+
         if (!isNullOrEmptyString($ngayPhatHanhTu)) {
             $queryBuilder->andWhere('NgayPhatHanh', '>=', $ngayPhatHanhTu);
         }
@@ -89,6 +126,8 @@ class PhimService
             $queryBuilder->andWhere('NgayPhatHanh', '<=', $ngayPhatHanhDen);
         }
         $total = $queryBuilder->count();
+        $queryBuilder->orderBy($orderBy, $orderType);
+
         $queryBuilder->limit($limit, $offset);
         $phims = $queryBuilder->get();
         Request::setQueryCount($total);
@@ -99,6 +138,8 @@ class PhimService
     {
         $query = "SELECT * FROM Phim WHERE MaPhim = ?;";
         $phim = Database::queryOne($query, [$id]);
+        $categories = self::getCateGoriesByMovieId($id);
+        $phim['TheLoais'] = $categories;
         return $phim;
     }
     public static function getPhimByIds($ids)
@@ -106,5 +147,44 @@ class PhimService
         $query = "SELECT * FROM Phim WHERE MaPhim IN (" . implode(",", $ids) . ");";
         $phims = Database::query($query, []);
         return $phims;
+    }
+    public static function getCateGoriesByMovieId($id)
+    {
+        $query = "SELECT * FROM TheLoai WHERE MaTheLoai IN (SELECT MaTheLoai FROM CT_Phim_TheLoai WHERE MaPhim = ?);";
+        $categories = Database::query($query, [$id]);
+        return $categories;
+    }
+    public static function removeAllCategoriesOfMovie($id)
+    {
+        Database::execute("DELETE FROM CT_Phim_TheLoai WHERE MaPhim = ?", [$id]);
+    }
+
+    public static function updateMovie($id, $data)
+    {
+        $result = null;
+        $params = [
+            'TenPhim' => $data['TenPhim'],
+            'NgayPhatHanh' => $data['NgayPhatHanh'],
+            'HanCheDoTuoi' => $data['HanCheDoTuoi'],
+            'HinhAnh' => $data['HinhAnh'],
+            'ThoiLuong' => $data['ThoiLuong'],
+            'NgonNgu' => $data['NgonNgu'],
+            'MoTa' => $data['MoTa'],
+            'DaoDien' => $data['DaoDien'],
+            'TrangThai' => $data['TinhTrang'],
+            'DinhDang' => $data['DinhDang'],
+            'Trailer' => $data['Trailer'],
+        ];
+        Database::update("Phim", $params, "MaPhim = $id");
+        self::removeAllCategoriesOfMovie($id);
+        $theLoais = $data['TheLoais'];
+        foreach ($theLoais as $theLoai) {
+            Database::insert("CT_Phim_TheLoai", [
+                'MaPhim' => $id,
+                'MaTheLoai' => $theLoai
+            ]);
+        }
+        $result = true;
+        return $result;
     }
 }

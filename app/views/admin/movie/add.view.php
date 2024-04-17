@@ -1,4 +1,6 @@
 <?php
+use App\Services\PhimService;
+
 title("Quản lý phim");
 require ('app/views/admin/header.php');
 ?>
@@ -120,7 +122,37 @@ function getTheLoaiText() {
         }
     },
     onSubmit:async function() {
-       console.log(data);
+        const payload = {
+            TenPhim: this.data.TenPhim,
+            NgayPhatHanh: dayjs(this.data.NgayPhatHanh).format('YYYY-MM-DD'),
+            DinhDang: this.data.DinhDang,
+            HanCheDoTuoi: this.data.HanCheDoTuoi,
+            HinhAnh: this.data.HinhAnh,
+            ThoiLuong: this.data.ThoiLuong,
+            NgonNgu: this.data.NgonNgu,
+            DaoDien: this.data.DaoDien,
+            TinhTrang: this.data.TinhTrang,
+            Trailer: this.data.Trailer,
+            MoTa: this.data.MoTa,
+            TheLoais: this.data.TheLoais.map((el) => parseInt(el))
+        };
+       const res = await axios.post('', payload,{
+            validateStatus:()=>true
+        });
+        if(res.status === 200) {
+            toast('Thêm phim thành công', {
+                position: 'bottom-center',
+                type: 'success'
+            });
+            window.location.href = '/admin/phim';
+        } else {
+            toast('Thêm phim thất bại', {
+                position: 'bottom-center',
+                type: 'danger',
+                description: res.data.message
+            });
+            console.log(res);
+        }
     },
    
 }" x-init="
@@ -182,13 +214,7 @@ function getTheLoaiText() {
                     <input type="date" class="form-control" id="NgayPhatHanh" x-model="data.NgayPhatHanh" required>
                 </div>
                 <script>
-                const movieTags = {
-                    "P": "Thích hợp cho mọi độ tuổi",
-                    "K": "Được phổ biến người xem dưới 13 tuổi với điều kiện xem cùng cha mẹ hoặc người giám hộ",
-                    "T13": "cấm người dưới 13 tuổi",
-                    "T16": "cấm người dưới 16 tuổi",
-                    "T18": "cấm người dưới 18 tuổi"
-                }
+                const movieTags = <?= json_encode(PhimService::$MOVIE_TAGS) ?>;
                 </script>
                 <div class="col">
                     <label for class="form-label">Định
@@ -308,8 +334,6 @@ function getTheLoaiText() {
                                     </div>
                                 </li>
                             <?php endforeach; ?>
-
-
                         </ul>
                     </div>
                 </div>
@@ -322,7 +346,6 @@ function getTheLoaiText() {
             </div>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-primary me-md-2" type="button">Reset</button>
                 <button class="btn btn-primary" type="submit">Lưu</button>
             </div>
         </form>

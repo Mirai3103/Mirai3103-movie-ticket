@@ -32,9 +32,10 @@ class MovieController
     public static function index()
     {
         $phimStatuses = StatusService::getAllStatus("Phim");
+        $categories = CategoryService::getAllCategories();
         return view(
             'admin/movie/index',
-            ['phimStatuses' => $phimStatuses]
+            ['phimStatuses' => $phimStatuses, 'categories' => $categories]
         );
     }
     #[Route(path: '/admin/phim/them', method: 'GET')]
@@ -57,4 +58,25 @@ class MovieController
             return json(JsonResponse::error("Thêm phim thất bại"));
         }
     }
+    #[Route(path: '/admin/phim/{id}/sua', method: 'GET')]
+    public static function edit($id)
+    {
+        $phim = PhimService::getPhimById($id);
+        $phimStatuses = StatusService::getAllStatus("Phim");
+        $categories = CategoryService::getAllCategories();
+        return view('admin/movie/edit', ['phim' => $phim, 'phimStatuses' => $phimStatuses, 'categories' => $categories]);
+    }
+    #[Route(path: '/admin/phim/{id}/sua', method: 'PUT')]
+    public static function update($id)
+    {
+        $data = request_body();
+        $result = PhimService::updateMovie($id, $data);
+        if ($result) {
+            return JsonResponse::ok();
+        } else {
+            return json(JsonResponse::error("Cập nhật phim thất bại"));
+        }
+    }
+
+
 }

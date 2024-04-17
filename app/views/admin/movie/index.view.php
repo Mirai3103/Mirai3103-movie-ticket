@@ -1,6 +1,8 @@
 <?php
 title("Quản lý phim");
 require ('app/views/admin/header.php');
+use App\Services\PhimService;
+
 ?>
 <?php
 
@@ -75,16 +77,16 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                     :class="{'button-nav-active': query['trang-thai']==undefined}"
                     x-on:click="query['trang-thai']=undefined;onApllyFilter()" onclick="optionOfList(this)">
                 <?php foreach ($phimStatuses as $status): ?>
-                <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                    :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
-                    x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
-                    onclick="optionOfList(this)">
+                    <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
+                        :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
+                        x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
+                        onclick="optionOfList(this)">
                 <?php endforeach; ?>
             </div>
         </div>
         <!-- thanh tim kiem va nut them phim moi -->
         <div class="row justify-content-between px-5">
-            <div class="col-6">
+            <div class="col-6 tw-flex tw-items-center tw-gap-x-2">
                 <div class="input-group">
                     <input x-on:keyup.enter="onApllyFilter()" x-model="query['tu-khoa']" type="text" name
                         id="searchMovie" placeholder="Nhập tên phim cần tìm" class="form-control">
@@ -92,6 +94,132 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                         type="button" id="searchMovie">
                         <i class="fa-solid fa-magnifying-glass" style="display: flex;"></i>
                     </button>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mx-2 tw-shrink-0">
+                    <div class="dropdown">
+                        <button data-bs-auto-close="outside" class="btn border-0 fw-medium " data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter-filled"
+                                width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path
+                                    d="M20 3h-16a1 1 0 0 0 -1 1v2.227l.008 .223a3 3 0 0 0 .772 1.795l4.22 4.641v8.114a1 1 0 0 0 1.316 .949l6 -2l.108 -.043a1 1 0 0 0 .576 -.906v-6.586l4.121 -4.12a3 3 0 0 0 .879 -2.123v-2.171a1 1 0 0 0 -1 -1z"
+                                    stroke-width="0" fill="currentColor" />
+                            </svg>
+                            Bộ lọc
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div class="d-flex justify-content-between align-items-center px-2 pb-2">
+                                    <div>
+                                        <label class="fw-semibold" for>Lọc</label>
+                                    </div>
+
+                                    <div class="d-flex flex-nowrap">
+                                        <button x-on:click="onClearFilter()" class="btn btn-light mx-2">Xóa
+                                            lọc</button>
+                                        <button x-on:click="onApllyFilter()" class="btn btn-primary">Áp
+                                            dụng</button>
+                                    </div>
+                                </div>
+
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider m-0">
+                            </li>
+                            <li>
+                                <form class="d-flex flex-wrap p-2">
+                                    <div class="row">
+                                        <label class="form-label" for>
+                                            Thời lượng
+                                        </label>
+                                    </div>
+
+                                    <div class="row d-flex tw-items-center flex-nowrap">
+                                        <div class="col">
+                                            <input x-model="query['thoi-luong-tu']" class="form-control" type="number">
+                                        </div>
+                                        <span class='col'>đến</span>
+                                        <div class="col">
+                                            <input x-model="query['thoi-luong-den']" class="form-control" type="number">
+                                        </div>
+                                    </div>
+                                </form>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider m-0">
+                            </li>
+                            <li>
+                                <form class="d-flex flex-wrap p-2">
+                                    <div class="row">
+                                        <label class="form-label" for>Ngày phát hành</label>
+                                    </div>
+
+                                    <div class="row d-flex tw-items-center flex-nowrap">
+                                        <div class="col">
+                                            <input x-model="query['ngay-phat-hanh-tu']" class="form-control"
+                                                type="date">
+                                        </div>
+                                        <span class='col'>đến</span>
+                                        <div class="col">
+                                            <input x-model="query['ngay-phat-hanh-den']" class="form-control"
+                                                type="date">
+                                        </div>
+                                    </div>
+                                </form>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider m-0">
+                            </li>
+
+
+                            <li>
+                                <div class="d-flex tw-flex-col p-2">
+                                    <div class="row">
+                                        <label class="form-label" for>Tags</label>
+                                    </div>
+                                    <select x-model="query['tags']" data-selected-text-format="count" multiple
+                                        class="selectpicker !tw-w-full">
+
+                                        <?php foreach (PhimService::$MOVIE_TAGS as $key => $value): ?>
+                                            <option value="<?= $key ?>">
+                                                <?= $key ?> -
+                                                <?= $value ?>
+                                            </option>
+                                        <?php endforeach; ?>
+
+                                    </select>
+                                </div>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider m-0">
+                            </li>
+
+                            <li>
+                                <div class="d-flex tw-flex-col p-2">
+                                    <div class="row">
+                                        <label class="form-label" for>
+                                            Thể loại
+                                        </label>
+                                    </div>
+                                    <select x-model="query['the-loais']" data-selected-text-format="count" multiple
+                                        class="selectpicker !tw-w-full">
+                                        <?php foreach ($categories as $category): ?>
+                                            <option value="<?= $category['MaTheLoai'] ?>">
+                                                <?= $category['TenTheLoai'] ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider m-0">
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
@@ -108,7 +236,7 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name" x-on:click="createOrderFn('MaPhim')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -120,7 +248,7 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name" x-on:click="createOrderFn('TenPhim')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -132,7 +260,7 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                             </div>
                         </th>
                         <th scope="col">Tag</th>
-                        <th scope="col">
+                        <th scope="col" x-on:click="createOrderFn('ThoiLuong')">
                             Thời lượng
                         </th>
                         <th scope="col">
@@ -331,7 +459,7 @@ function optionOfList(button) {
         setupButtonInavActive(movieShowing_btn);
         setupButtonInavActive(movieShown_btn);
     } else {
-        movieShown_btn.classList.add('button-nav-active');
+        movieShown_btn.classList?.add('button-nav-active');
         setupButtonInavActive(allMovie_btn);
         setupButtonInavActive(movieShowing_btn);
         setupButtonInavActive(upComingMovie_btn);
