@@ -1,14 +1,14 @@
 
-admin/phong-chieu
+/admin/phong-chieu
 
-admin/phim
+/admin/phim
 
-admin/nhom-quyen
+/admin/nhom-quyen
 
-admin/loai-ve
-admin/hoa-don
-admin/hoa-don/{id}
-admin/tai-khoan
+/admin/loai-ve
+/admin/hoa-don
+
+/admin/tai-khoan
 admin/tai-khoan/them
 admin/suat-chieu
 admin/suat-chieu/them

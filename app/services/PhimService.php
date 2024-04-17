@@ -9,6 +9,29 @@ use App\Models\TrangThaiPhim;
 
 class PhimService
 {
+    public static function createMovie($data)
+    {
+        $result = null;
+        //         {
+//     "TenPhim": "zzz",
+//     "NgayPhatHanh": "2024-04-17",
+//     "DinhDang": "3D",
+//     "HanCheDoTuoi": "K",
+//     "HinhAnh": "http://localhost:8000/public/uploads/661f8f0f7bc48.png",
+//     "ThoiLuong": "222",
+//     "NgonNgu": "Vieetj",
+//     "DaoDien": "dsds",
+//     "TinhTrang": "2",
+//     "Trailer": "http://localhost:8000/public/uploads/661f8f00c0a2a.webm",
+//     "MoTa": "2222",
+//     "TheLoais": [
+//         "10",
+//         "11"
+//     ],
+
+        // }
+        return $result;
+    }
     public static function getPhimDangChieu($page = 1, $limit = 20)
     {
         $query = "SELECT * FROM Phim WHERE TrangThai = ? LIMIT ? , ?;";
@@ -35,6 +58,10 @@ class PhimService
         $queryBuilder = new QueryBuilder();
         $keyword = getArrayValueSafe($query, 'tu-khoa');
         $statuses = getArrayValueSafe($query, 'trang-thais');
+        $status = getArrayValueSafe($query, 'trang-thai');
+        if ($status) {
+            $statuses = [$status];
+        }
         $ngayPhatHanhTu = getArrayValueSafe($query, 'ngay-phat-hanh-tu');
         $ngayPhatHanhDen = getArrayValueSafe($query, 'ngay-phat-hanh-den');
         $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);

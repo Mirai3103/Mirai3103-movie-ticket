@@ -46,3 +46,6 @@ https://cdn.jsdelivr.net/npm/socket.io@4.7.4/client-dist/socket.io.min.js
         require ('sidebar.php');
         ?>
         <section class='tw-bg-gray-100 tw-h-screen tw-overflow-y-auto tw-grow '>
+            <span id="to-top" style="
+            visibility: hidden;
+            "></span>

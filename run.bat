@@ -26,6 +26,9 @@ IF NOT EXIST %PHP_DIR% (
     echo extension=./ext/php_curl.dll >> php.ini
     echo extension=./ext/php_gd.dll >> php.ini
     echo extension=./ext/php_mbstring.dll >> php.ini
+ 
+    echo post_max_size = 900M >> php.ini
+    echo upload_max_filesize = 900M >> php.ini
 
     echo openssl.cafile=%CERT_PATH% >> php.ini
     echo date.timezone=Asia/Ho_Chi_Minh >> php.ini

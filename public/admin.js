@@ -75,11 +75,23 @@ Alpine.data("dataTable", ({ initialQuery = {}, endpoint }) => ({
       this.query["thu-tu"] = "ASC";
       this.query["sap-xep"] = orderBy;
     }
-    this.refresh();
+    this.refresh({
+      resetPage: true,
+    });
   },
-  refresh: function () {
+  refresh: function ({ resetPage = false } = {}) {
+    if (resetPage) {
+      this.query.trang = 1;
+    }
     this.data = [];
     this.isFetching = true;
+
+    this.$nextTick(() => {
+      this.$el.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    });
     const queryStr = queryString.stringify(this.query, {
       arrayFormat: "bracket",
     });

@@ -3463,6 +3463,10 @@ details.tw-collapse summary::-webkit-details-marker {
   margin-bottom: 0.5rem;
 }
 
+.tw-mb-3 {
+  margin-bottom: 0.75rem;
+}
+
 .tw-mb-4 {
   margin-bottom: 1rem;
 }
@@ -3708,6 +3712,14 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-max-h-\[40px\] {
   max-height: 40px;
+}
+
+.tw-max-h-44 {
+  max-height: 11rem;
+}
+
+.tw-max-h-52 {
+  max-height: 13rem;
 }
 
 .tw-min-h-screen {
@@ -4886,6 +4898,11 @@ details.tw-collapse summary::-webkit-details-marker {
   color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 
+.tw-text-red-600 {
+  --tw-text-opacity: 1;
+  color: rgb(220 38 38 / var(--tw-text-opacity));
+}
+
 .tw-text-secondary {
   --tw-text-opacity: 1;
   color: rgb(255 199 0 / var(--tw-text-opacity));
@@ -4903,11 +4920,6 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.tw-text-red-600 {
-  --tw-text-opacity: 1;
-  color: rgb(220 38 38 / var(--tw-text-opacity));
 }
 
 .tw-antialiased {
