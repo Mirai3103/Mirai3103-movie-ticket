@@ -8,6 +8,8 @@ services:
       - ./app:/var/www/html/app
       - ./public:/var/www/html/public
       - ./core:/var/www/html/core
+      - ./config.php:/var/www/html/config.php
+      
     ports:
       - "8000:80"
     environment:
