@@ -130,7 +130,10 @@ class UserService
         }
         $userInfor = self::getUserByEmail($username);
         $userInfor['TaiKhoan'] = $account;
-
+        if (isset($account['MaNhomQuyen'])) {
+            $role = RoleService::getRoleById($account['MaNhomQuyen']);
+            $userInfor['NhomQuyen'] = $role;
+        }
         self::setSession($userInfor);
         if ($rememberMe) {
             self::rememberLogin($userInfor);
