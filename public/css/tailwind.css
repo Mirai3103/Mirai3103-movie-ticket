@@ -23,3 +23,10 @@
 .dropdown-item.selected {
   @apply tw-bg-blue-200;
 }
+
+.dropdown-item .text {
+  @apply tw-whitespace-normal;
+}
+.dropdown-menu .show {
+  @apply tw-max-w-full;
+}
