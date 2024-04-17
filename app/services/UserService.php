@@ -27,21 +27,58 @@ class UserService
         return $user;
     }
 
-    public static function register($data)
+    public static function getUserAccount($userId)
+    {
+        $query = "SELECT * FROM TaiKhoan WHERE MaNguoiDung = ?;";
+        $account = Database::queryOne($query, [$userId]);
+        return $account;
+    }
+    public static function getUserOrCreateIfNotExist($data)
     {
         $email = $data['email'];
-        $isMailExist = self::isMailExist($email);
-        if ($isMailExist) {
-            return JsonDataErrorRespose::create(["email" => "Email đã tồn tại"]);
+        $user = self::getUserByEmail($email);
+        if (!$user) {
+            $id = Database::insert(
+                "NguoiDung",
+                [
+                    "HoTen" => $data['name'],
+                    "Email" => $data['email'],
+                    "SoDienThoai" => $data['phone'],
+                ]
+            );
+            if (!$id) {
+                return null;
+            }
+            return $id;
+        } else {
+            return $user['MaNguoiDung'];
         }
-        $id = Database::insert(
-            "NguoiDung",
-            [
-                "TenNguoiDung" => $data['fullname'],
-                "Email" => $data['email'],
-                "NgaySinh" => $data['dateOfBirth']
-            ]
-        );
+    }
+    public static function register($data)
+    {
+        // nếu thông tin đã tồn tại mà tài khoản có thì tạo tài khoản
+        $email = $data['email'];
+        $existUser = self::getUserByEmail($email);
+        if ($existUser) {
+            $account = self::getUserAccount($existUser['MaNguoiDung']);
+            if (isset($account)) {
+                return new JsonResponse(400, "Email đã tồn tại");
+            }
+        }
+        $id = null;
+        if (!isset($existUser)) {
+            $id = Database::insert(
+                "NguoiDung",
+                [
+                    "HoTen" => $data['name'],
+                    "Email" => $data['email'],
+                    "SoDienThoai" => $data['phone'],
+                    "DiaChi" => $data['address'],
+                ]
+            );
+        } else {
+            $id = $existUser['MaNguoiDung'];
+        }
         if (!$id) {
             return new JsonResponse(500, "Đăng ký thất bại");
         }

@@ -37,7 +37,10 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
 <main
     class="2xl:tw-max-w-7xl xl:tw-max-w-[78rem] lg:tw-max-w-[63rem]  tw-mx-auto tw-mt-10 md:tw-max-w-2xl sm:tw-max-w-[38rem]  tw-px-4 sm:tw-px-1"
     x-data="{
-    step: 1,
+    step: <?php if (isset($_SESSION['user']))
+        echo 2;
+    else
+        echo 1; ?>,
     remainingTime: 0,
     getRemainingDisplayTime() {
         const minutes = Math.floor(this.remainingTime / 60);
@@ -67,12 +70,17 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
             </span>
         </template>
     </div>
-
-    <div id="step-content" x-data="formValidator({
+    <?php
+    if (isset($_SESSION['user'])) {
+        $json = '{}';
+    } else {
+        $json = "
+        {
         name:{
             required: {
                 message: 'Họ và tên không được để trống'
             }
+            
         },
         phone:{
             pattern: {
@@ -86,7 +94,12 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
                 message: 'Email không hợp lệ'
             }
         }
-    })">
+    }
+       ";
+    }
+
+    ?>
+    <div id="step-content" x-data="formValidator(<?= $json ?>)">
         <?php
         include_once ('partials/checkout.step2.php');
         ?>

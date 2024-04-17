@@ -61,7 +61,7 @@ class CheckoutController
     {
 
         $data = request_body();
-        $discountCode = $data['discount'];
+        $discountCode = getArrayValueSafe($data, 'discount', null);
         $bookingData = $_SESSION['bookingData'];
         $payment_method = PaymentType::tryFrom($data['payment_method']);
 
@@ -83,11 +83,13 @@ class CheckoutController
             $payment->mobileUrl = true;
             return json($payment);
         }
-        $discount = PromotionService::checkPromotion($discountCode, array_map(fn($item) => $item['MaLoaiVe'], $bookingData['DanhSachVe']), $bookingData['TongTien']);
-        if ($discount->data['reducePrice'] > 0) {
-            $_SESSION['bookingData']['TongTien'] = $bookingData['TongTien'] - $discount->data['reducePrice'];
-            $_SESSION['bookingData']['promotion_code'] = $discountCode;
-            $bookingData = $_SESSION['bookingData'];
+        if ($discountCode != null) {
+            $discount = PromotionService::checkPromotion($discountCode, array_map(fn($item) => $item['MaLoaiVe'], $bookingData['DanhSachVe']), $bookingData['TongTien']);
+            if ($discount->data['reducePrice'] > 0) {
+                $_SESSION['bookingData']['TongTien'] = $bookingData['TongTien'] - $discount->data['reducePrice'];
+                $_SESSION['bookingData']['promotion_code'] = $discountCode;
+                $bookingData = $_SESSION['bookingData'];
+            }
         }
         $totalPrice = $bookingData['TongTien'];
         Logger::info("Total price: $totalPrice");

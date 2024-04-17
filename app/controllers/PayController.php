@@ -47,7 +47,8 @@ class PayController
         $orderId = $bookingData['id'];
         $bookingData['payment_method'] = PaymentType::Momo->value;
         OrderService::saveOrder($bookingData);
-        PromotionService::usePromotion($bookingData['promotion_code']);
+        if (isset($bookingData['promotion_code']))
+            PromotionService::usePromotion($bookingData['promotion_code']);
         return [
             "show" => $show,
             "bookingData" => $bookingData,

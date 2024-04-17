@@ -4,10 +4,39 @@ require ('app/views/admin/header.php');
 ?>
 <link rel="stylesheet" href="/public/css/infoAccess.css" />
 
-<div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
-    <div class="info-access container-fluid p-4 shadow">
+<div x-data="
+{
+    permissions: <?php
+    $ps = [];
+    foreach ($role['Quyen'] as $p) {
+        $ps[] = intval($p['MaQuyen']);
+    }
+    echo json_encode($ps);
+    ?>,
+    toggleCheckAll() {
+        this.permissions= this.isAllChecked ? [] : [...document.querySelectorAll('input[name=permission]')].map(e => e.value);
+    },
+    isAllChecked:false,
+}
+" x-init="
+    $watch('permissions', (permissions) => {
+        isAllChecked = permissions.length === document.querySelectorAll('input[name=permission]').length;
+    }, {deep: true});
+     isAllChecked = permissions.length === document.querySelectorAll('input[name=permission]').length;
+" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
+    <form x-on:submit.prevent="
+        const payload = {
+            tennhomquyen: document.getElementById('tennhomquyen').value,
+            description: document.getElementById('description').value,
+            permissions: permissions
+        };
+        const res= await axios.put('', payload);
+        if(res.data){
+            window.location.href = '/admin/nhom-quyen';
+        }
+    " class="info-access container-fluid p-4 shadow">
         <div class='tw-flex tw-items-center tw-justify-between'>
-            <h4>THÔNG TIN NHÓM QUYỀN</h4>
+            <h4 class='tw-font-semibold tw-text-xl '>THÔNG TIN NHÓM QUYỀN</h4>
             <a href="/admin/nhom-quyen" data-ripple-light="true" class="  tw-btn tw-btn-ghost" type="button">
 
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -21,23 +50,21 @@ require ('app/views/admin/header.php');
                 Quay lại
             </a>
         </div>
-        <form>
+        <div>
             <div class="mb-3">
                 <label for="tennhomquyen" class="form-label">Tên nhóm quyền</label>
-                <input type="text" class="form-control" id="tennhomquyen" required>
+                <input type="text" class="form-control" id="tennhomquyen" required value="<?= $role['TenNhomQuyen'] ?>">
             </div>
 
             <div class="mb-3">
                 <label for="description" class="form-label">Mô
                     tả</label>
-                <textarea class="form-control" id="description" rows="3" required></textarea>
+                <textarea class="form-control" id="description" rows="3" required><?= $role['MoTa'] ?></textarea>
             </div>
-
-
-        </form>
+        </div>
 
         <!-- bang chua cac quyen -->
-        <h4 class="mt-4 mb-0 ">QUYỀN HẠN THUỘC NHÓM QUYỀN</h4>
+        <h4 class="mt-4 mb-0 tw-font-semibold tw-text-xl ">QUYỀN HẠN THUỘC NHÓM QUYỀN</h4>
 
         <div class="row m-3 table-responsive" style="flex: 1;">
             <table class="table align-middle" style="height: 100%;">
@@ -45,12 +72,14 @@ require ('app/views/admin/header.php');
                     <tr>
                         <td class='tw-flex'>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
+                                <input class="form-check-input" type="checkbox" id="checkAll"
+                                    x-on:click="toggleCheckAll" x-bind:checked="isAllChecked">
+
+                                <label class="form-check-label">
 
                                 </label>
                             </div>
-                            <span>Quyền quản trị viên (Toàn quyền)
+                            <span class='tw-font-bold tw-text-red-600'>Quyền quản trị viên (Toàn quyền)
 
                             </span>
 
@@ -68,679 +97,38 @@ require ('app/views/admin/header.php');
                             Hành động
                         </th>
                     </tr>
-                    <tr>
-                        <td>Combo</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
+                    <?php foreach ($permissions as $resource => $permission): ?>
+                        <tr>
+                            <?php if (isset($permission['resource_name'])): ?>
 
-                    <tr>
-                        <td>Ghế</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Hóa đơn</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Khuyến mãi</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Loại ghế</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Loại vé</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Người dùng</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Nhóm quyền</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Phim</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Phòng chiếu</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Quyền</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Rạp chiếu</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Suất chiếu</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Suất chiếu</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Tài khoản</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Thể loại</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Thực phẩm</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Vé</td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Thêm
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Sửa
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xóa
-                                </label>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>Thống kê</td>
-                        <td colspan='4'>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Xem thống kê báo cáo
-                                </label>
-                            </div>
-                        </td>
-
-                    </tr>
-
-                    <tr>
-                        <td>Website</td>
-                        <td colspan='4'>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                <label class="form-check-label" for="flexCheckDefault">
-                                    Cấu hình trang web
-                                </label>
-                            </div>
-                        </td>
-
-                    </tr>
+                                <td class='tw-font-semibold'><?= $permission['resource_name'] ?></td>
+                                <?php foreach ($permission['actions'] as $action): ?>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" name="permission" type="checkbox"
+                                                id="<?= $action['MaQuyen'] ?>" value="<?= $action['MaQuyen'] ?>"
+                                                x-model="permissions">
+                                            <label class="form-check-label" for="<?= $action['MaQuyen'] ?>">
+                                                <?= $action['action_name'] ?>
+                                            </label>
+                                        </div>
+                                    </td>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            <?php if (!isset($permission['resource_name'])): ?>
+                                <td></td>
+                                <td colspan='4'>
+                                    <div class="form-check">
+                                        <input id="<?= $permission['MaQuyen'] ?>" class="form-check-input" name="permission"
+                                            type="checkbox" value="<?= $permission['MaQuyen'] ?>" x-model="permissions">
+                                        <label class="form-check-label" for="<?= $permission['MaQuyen'] ?>">
+                                            <?= $permission['description'] ?>
+                                        </label>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
@@ -753,7 +141,7 @@ require ('app/views/admin/header.php');
             </button>
         </div>
         <!-- het nut rest va luu -->
-    </div>
+    </form>
 </div>
 <?php
 require ('app/views/admin/footer.php');

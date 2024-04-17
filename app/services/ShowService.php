@@ -220,7 +220,8 @@ class ShowService
             'MaPhongChieu' => $show['MaPhongChieu'],
             'NgayGioChieu' => $show['NgayGioBatDau'],
             'NgayGioKetThuc' => $show['NgayGioKetThuc'],
-            'GiaVe' => $show['GiaVe']
+            'GiaVe' => $show['GiaVe'],
+            'TrangThai' => TrangThaiSuatChieu::Hidden->value
         ];
         $result = Database::insert('SuatChieu', $params);
         if (!$result) {

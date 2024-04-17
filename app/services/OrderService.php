@@ -60,7 +60,7 @@ class OrderService
             "ThucPhams" => $data['ThucPhams'],
             "Combos" => $data['Combos'],
             "lockTo" => $lockToTime,
-
+            'userId' => isset($_SESSION['user']) ? $_SESSION['user']['MaNguoiDung'] : UserService::getUserOrCreateIfNotExist($data),
             'id' => $tempId
         ];
         $_SESSION['bookingData'] = $bookingData;
@@ -83,6 +83,8 @@ class OrderService
         $MaNguoiDung = null;
         if (isset($_SESSION['user'])) {
             $MaNguoiDung = $_SESSION['user']['MaNguoiDung'];
+        } else {
+            $MaNguoiDung = $data['userId'];
         }
         $MaKhuyenMai = null;
         if (isset($data['MaKhuyenMai'])) {

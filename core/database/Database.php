@@ -23,6 +23,7 @@ class Database
             '?' . str_repeat(', ?', count($parameters) - 1)
         );
         try {
+            Logger::info($sql);
             $statement = static::$mysqli->prepare($sql);
             $statement->execute(array_values($parameters));
             $lastId = static::$mysqli->insert_id;
@@ -35,6 +36,7 @@ class Database
 
     public static function execute(string $sql, array $params)
     {
+        Logger::info($sql);
         $statement = static::$mysqli->prepare($sql);
         return $statement->execute($params);
     }
