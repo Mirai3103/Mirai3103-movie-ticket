@@ -35,5 +35,10 @@ class CinemaController
         $results = CinemaService::getCinemasByRoomIds(request_body()["roomIds"]);
         return json(JsonResponse::ok($results));
     }
+    #[Route("/admin/rap-chieu","GET")]
+    public static function abc(){
+        return view("admin/rap-chieu/index");
+    }
+
 
 }
