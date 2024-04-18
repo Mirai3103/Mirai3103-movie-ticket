@@ -7,6 +7,7 @@ use App\Core\Logger;
 use App\Core\Request;
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiPhim;
 use App\Models\TrangThaiSuatChieu;
 use App\Models\TrangThaiVe;
 
@@ -107,7 +108,7 @@ class ShowService
             Request::setQueryCount(0);
             return [];
         }
-        $sql = "SELECT MaPhim,TenPhim,NgayPhatHanh,HanCheDoTuoi,HinhAnh,ThoiLuong,NgonNgu,DaoDien ,DinhDang,Trailer FROM Phim WHERE MaPhim IN (" . implode(",", $ids) . ") ";
+        $sql = "SELECT MaPhim,TenPhim,NgayPhatHanh,HanCheDoTuoi,HinhAnh,ThoiLuong,NgonNgu,DaoDien ,DinhDang,Trailer FROM Phim WHERE MaPhim IN (" . implode(",", $ids) . ") and TrangThai != " . TrangThaiPhim::NgungChieu->value . " ";
         $count = Database::count($sql, []);
         Request::setQueryCount($count);
         if (!isNullOrEmptyString($sortBy)) {
