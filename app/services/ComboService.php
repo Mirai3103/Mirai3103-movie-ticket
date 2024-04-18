@@ -4,15 +4,49 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
+use App\Core\Request;
 use App\Models\JsonResponse;
 
 class ComboService
 {
-    public static function getAllFoodnDrink()
+    public static function getAllFoodnDrink($querys = [])
     {
-        $sql = "SELECT * FROM ThucPham";
-        $foodndrink = Database::query($sql, []);
-        return $foodndrink;
+        $keyword = getArrayValueSafe($querys, 'tu-khoa');
+        $priceFrom = getArrayValueSafe($querys, 'gia-tu');
+        $priceTo = getArrayValueSafe($querys, 'gia-den');
+        $sortDir = ifNullOrEmptyString(getArrayValueSafe($querys, 'thu-tu'), 'ASC');
+        $sortBy = ifNullOrEmptyString(getArrayValueSafe($querys, 'sap-xep'), 'MaThucPham');
+        $page = ifNullOrEmptyString(getArrayValueSafe($querys, 'trang'), 1);
+        $limit = ifNullOrEmptyString(getArrayValueSafe($querys, 'limit'), 100);
+        $offset = ($page - 1) * $limit;
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->select(
+            [
+                'ThucPham.*'
+            ]
+        )->from('ThucPham')
+            ->where('1', '=', '1');
+        if (!isNullOrEmptyString($keyword)) {
+            $queryBuilder->and();
+            $queryBuilder->startGroup();
+            $queryBuilder->where('TenThucPham', 'LIKE', "%$keyword%");
+            $queryBuilder->orWhere('LoaiThucPham', 'LIKE', "%$keyword%");
+            $queryBuilder->endGroup();
+        }
+        if (!isNullOrEmptyString($priceFrom)) {
+            $queryBuilder->and();
+            $queryBuilder->where('GiaThucPham', '>=', $priceFrom);
+        }
+        if (!isNullOrEmptyString($priceTo)) {
+            $queryBuilder->and();
+            $queryBuilder->where('GiaThucPham', '<=', $priceTo);
+        }
+        Request::setQueryCount($queryBuilder->count());
+        $queryBuilder->orderBy($sortBy, $sortDir);
+        $queryBuilder->limit($limit, $offset);
+
+        $data = $queryBuilder->get();
+        return $data;
     }
     public static function getFoodnDrinkById($id)
     {
