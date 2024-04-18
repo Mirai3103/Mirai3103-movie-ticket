@@ -325,11 +325,13 @@ const trangthais = <?= json_encode($showStatuses) ?>;
 
                 <tbody>
                     <template x-if="isFetching">
-                        <td class="   tw-border-b tw-border-gray-50" colspan="7">
-                            <div class='tw-w-full tw-flex tw-py-32 tw-items-center tw-justify-center'>
-                                <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
-                            </div>
-                        </td>
+                        <tr>
+                            <td class="   tw-border-b tw-border-gray-50" colspan="7">
+                                <div class='tw-w-full tw-flex tw-py-32 tw-items-center tw-justify-center'>
+                                    <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
+                                </div>
+                            </td>
+                        </tr>
                     </template>
                     <template x-for="item in data" :key="item.MaXuatChieu">
                         <tr>
