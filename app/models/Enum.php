@@ -50,3 +50,8 @@ enum TrangThaiGhe: int
     case An = 18;
     case Hien = 19;
 }
+enum TrangThaiThucPham: int
+{
+    case An = 20;
+    case Hien = 21;
+}
