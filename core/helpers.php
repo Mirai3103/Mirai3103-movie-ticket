@@ -48,7 +48,12 @@ function view($name, $data = [])
 
     return require "app/views/{$name}.view.php";
 }
-
+function ajax($name, $data = [])
+{
+    extract($data);
+    $name = str_replace('.', '/', $name);
+    return require "app/views/{$name}.ajax.php";
+}
 /**
  *
  * @param  string $path
