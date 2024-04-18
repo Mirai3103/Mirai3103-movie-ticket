@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Request;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiThucPham;
 
 class ComboService
 {
@@ -57,12 +58,12 @@ class ComboService
     public static function createNewFoodnDrink($data)
     {
         $params = [
-            'MaThucPham' => $data['MaThucPham'],
             'TenThucPham' => $data['TenThucPham'],
             'LoaiThucPham' => $data['LoaiThucPham'],
             'GiaThucPham' => $data['GiaThucPham'],
             'MoTa' => $data['MoTa'],
-            //    'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+            'HinhAnh' => $data['HinhAnh'],
+            'TrangThai' => $data['TrangThai'] ?? TrangThaiThucPham::Hien->value
         ];
         $result = Database::insert('ThucPham', $params);
         if ($result) {
@@ -77,7 +78,8 @@ class ComboService
             'LoaiThucPham' => $data['LoaiThucPham'],
             'GiaThucPham' => $data['GiaThucPham'],
             'MoTa' => $data['MoTa'],
-            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+            'TrangThai' => $data['TrangThai'],
+            'HinhAnh' => $data['HinhAnh'],
         ];
         $result = Database::update('ThucPham', $params, "MaThucPham=$id");
         if ($result) {

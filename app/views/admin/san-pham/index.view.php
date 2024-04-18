@@ -7,137 +7,7 @@ $fixedCategory = [
 ];
 ?>
 
-<?php
-// đáng lẻ tạo file riêng cho phần này nhưng vì lười nên để ở đây
-inlineScript("
-let queryObj = queryString.parse(window.location.search, {
-    arrayFormat: \"bracket\",
-});
 
-// lấy các element cần thiết
-const searchMovieInput = $('#searchMovie');
-const searchMovieBtn = $('#searchMovieBtn');
-const priceFromInput = $('#gia-tien-tu');
-const priceToInput = $('#gia-tien-den');
-const clearFilterBtn = $('#clear-filter');
-const applyFilterBtn = $('#apply-filter');
-const limitSelect = $('#limit-select');
-// khởi tạo giá trị mặc định cho các input
-searchMovieInput.val(queryObj['tu-khoa'] || '');
-priceFromInput.val(queryObj['gia-tu'] || '');
-priceToInput.val(queryObj['gia-den'] || '');
-limitSelect.val(queryObj['limit'] || 10);
-let page = queryObj['trang'] || 1;
-
-const loadingRowHtml = `<tr>
-                        <td class=\"   tw-border-b tw-border-gray-50\" colspan=\"6\">
-                            <div class='tw-w-full tw-flex tw-py-32 tw-items-center tw-justify-center'>
-                                <span class=\"tw-loading tw-loading-dots tw-loading-lg\"></span>
-                            </div>
-                        </td>
-                    </tr>
-                    `;
-
-// render page 
-function renderPage(totalItems) {
-    
-    const totalPages = Math.ceil(totalItems / queryObj['limit']);
-    var pageRoot = $('#page-root');
-    pageRoot.html('');
-    if (totalPages <= 1) {
-        return;
-    }
-    if (page > 1) {
-        pageRoot.append(`<li class=\"page-item\">
-                            <a class=\"page-link\" href=\"javascript:void(0)\" onclick=\"changePage(\${page - 1})\" aria-label=\"Previous\">
-                                <span aria-hidden=\"true\">&laquo;</span>
-                            </a>
-                        </li>`);
-    }
-    for (let i = 1; i <= totalPages; i++) {
-        pageRoot.append(`<li class=\"page-item\">
-                            <a class=\"page-link \${page == i ? 'active' : ''}\" href=\"javascript:void(0)\" onclick=\"changePage(\${i})\">\${i}</a>
-                        </li>`);
-    }
-    if (page < totalPages) {
-        pageRoot.append(`<li class=\"page-item\">
-                            <a class=\"page-link\" href=\"javascript:void(0)\" onclick=\"changePage(\${page + 1})\" aria-label=\"Next\">
-                                <span aria-hidden=\"true\">&raquo;</span>
-                            </a>
-                        </li>`);
-    }
-
-}
-
-function refetchAjax() {
-    // cập nhật queryParam 
-    const queryStr = queryString.stringify(queryObj, {
-        arrayFormat: \"bracket\"
-    });
-    page = queryObj['trang'] || 1;
-    window.history.pushState({}, '', window.location.pathname + '?' + queryStr);
-    // gọi ajax để lấy dữ liệu
-    $('#table-body').html(loadingRowHtml);
-    $.ajax({
-        url: '/ajax/san-pham',
-        type: 'GET',
-        data: queryObj,
-        success: function(data, status, request) {
-            const total = request.getResponseHeader('x-total-count');
-            renderPage(total);
-            $('#table-body').html(data);
-        },
-        error: function(error) {
-            $('#table-body').html('<tr><td colspan=\"6\">Có lỗi xảy ra</td></tr>');
-        }
-    });
-}
-// sự kiện khi click vào nút tìm kiếm
-searchMovieBtn.click(function() {
-    queryObj['tu-khoa'] = searchMovieInput.val();
-    queryObj['trang'] = 1;
-    refetchAjax();
-});
-// sự kiện khi click vào nút xóa lọc
-clearFilterBtn.click(function() {
-    searchMovieInput.val('');
-    priceFromInput.val('');
-    priceToInput.val('');
-    queryObj = {
-        'trang': 1,
-        'limit': 10
-    };
-    refetchAjax();
-});
-// sự kiện khi click vào nút áp dụng lọc
-applyFilterBtn.click(function() {
-    queryObj['gia-tu'] = priceFromInput.val();
-    queryObj['gia-den'] = priceToInput.val();
-    queryObj['trang'] = 1;
-    refetchAjax();
-});
-
-// sự kiện khi thay đổi số lượng sản phẩm trên 1 trang
-limitSelect.change(function() {
-    queryObj['limit'] = limitSelect.val();
-    queryObj['trang'] = 1;
-    refetchAjax();
-});
-// input enter
-searchMovieInput.keypress(function(e) {
-    if (e.which == 13) {
-        searchMovieBtn.click();
-    }
-});
-
-// hàm gọi khi chuyển trang
-function changePage(page) {
-    queryObj['trang'] = page;
-    refetchAjax();
-}
-refetchAjax();
-");
-?>
 <link rel="stylesheet" href="/public/san-pham/home.css">
 
 <div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
@@ -225,7 +95,7 @@ refetchAjax();
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name" onclick="createSort('MaThucPham')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -237,7 +107,7 @@ refetchAjax();
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name" onclick="createSort('TenThucPham')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -250,7 +120,7 @@ refetchAjax();
                         </th>
                         <th scope="col">Phân loại</th>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name" onclick="createSort('GiaThucPham')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -349,51 +219,54 @@ refetchAjax();
     <!-- Product Details Modal -->
     <div class="modal fade bs-example-modal-lg" id="product-detail-modal" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form id="form-input-product" class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myLargeModalLabel">
-                        Thông tin sản phẩm
+                    <h4 class="modal-title" id="edit-title">
+                        Tạo sản phẩm
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                         id="btn-close-product-detail">
                         ×
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="form-input-product">
                     <div class="create-product container bg-white">
                         <div class="row d-flex mt-2">
-                            <label for="product-id" class="col-xl-2">
+                            <label for="MaThucPham" class="col-xl-2">
                                 Mã sản phẩm
                             </label>
-                            <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="product-id"
-                                    aria-describedby="product-id-feedback" required>
-                                <div id="product-id-feedback" class="invalid-feedback">
-                                    Please choose a username.
-                                </div>
+                            <div class="input-group  col-xl-10 p-0">
+                                <input disabled type="text" class="form-control" id="MaThucPham" required>
                             </div>
                         </div>
 
                         <div class="row d-flex mt-2">
-                            <label for="product-name" class="col-xl-2">
+                            <label for="TenThucPham" class="col-xl-2">
                                 Tên sản phẩm
                             </label>
-                            <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="product-name"
-                                    aria-describedby="product-price-feedback" required>
-                                <div id="product-name-feedback" class="invalid-feedback">
-                                    Please choose a username.
+                            <div class="input-group has-validation col-xl-10 p-0" id="TenThucPham">
+                                <input type="text" class="form-control " aria-describedby="product-price-feedback"
+                                    required>
+                                <div class="invalid-feedback">
+
                                 </div>
                             </div>
                         </div>
 
                         <div class="row d-flex mt-2">
-                            <label for="product-img" class="col-xl-2">Hình ảnh</label>
-                            <div class="has-validation col-xl-10 p-0">
-                                <input type="file" class="form-control" aria-label="file example" required
-                                    id="product-img">
-                                <div class="invalid-feedback">Example invalid form file feedback</div>
+                            <label class="col-xl-2">Hình
+                                ảnh</label>
+                            <div class="input-group col-xl-10 tw-p-0" id="HinhAnh">
+                                <input type="text" class="form-control" placeholder="Link hình ảnh"
+                                    aria-label="Recipient's username" aria-describedby="button-addon2" id="HinhAnh">
+                                <label class="btn btn-outline-secondary">Chọn
+                                    <input type="file" hidden accept="image/*">
+                                    <span hidden class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                </label>
+                                <div class="invalid-feedback">
+                                </div>
                             </div>
                         </div>
 
@@ -401,11 +274,9 @@ refetchAjax();
                             <label for="product-des" class="col-xl-2">
                                 Mô tả
                             </label>
-                            <div class="input-group has-validation col-xl-10 p-0">
-                                <textarea id="product-des" required class="form-control is-invalid"
-                                    aria-describedby="product-des-feedback"></textarea>
-                                <div id="product-des-feedback" class="invalid-feedback">
-                                    Please choose a username.
+                            <div class="input-group has-validation col-xl-10 p-0" id="MoTa">
+                                <textarea id="product-des" required class="form-control"></textarea>
+                                <div class="invalid-feedback">
                                 </div>
                             </div>
                         </div>
@@ -413,14 +284,14 @@ refetchAjax();
                             <label for="combo-product-type" class="col-xl-2">
                                 Phân loại
                             </label>
-                            <div class="col-xl-10 p-0">
-                                <select class="form-select is-invalid text-danger" id="combo-product-type"
-                                    aria-describedby="combo-product-type-feedback" required>
-                                    <option selected disabled value="">Choose...</option>
-                                    <option>...</option>
+                            <div class="col-xl-10 p-0" id="LoaiThucPham">
+                                <select class="form-select " required>
+                                    <option selected disabled value="">Chọn phân loại</option>
+                                    <option value="Đồ ăn">Đồ ăn</option>
+                                    <option value="Nước uống">Nước uống</option>
                                 </select>
-                                <div id="combo-product-type-feedback" class="invalid-feedback">
-                                    Please select a valid state.
+                                <div class="invalid-feedback">
+
                                 </div>
                             </div>
                         </div>
@@ -429,11 +300,10 @@ refetchAjax();
                             <label for="product-price" class="col-xl-2">
                                 Giá tiền
                             </label>
-                            <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="product-price"
-                                    aria-describedby="product-price-feedback" required>
-                                <div id="product-price-feedback" class="invalid-feedback">
-                                    Please choose a username.
+                            <div class="input-group has-validation col-xl-10 p-0" id="GiaThucPham">
+                                <input type="text" class="form-control " required>
+                                <div class="invalid-feedback">
+
                                 </div>
                             </div>
                         </div>
@@ -442,14 +312,17 @@ refetchAjax();
                             <label for="combo-product-status" class="col-xl-2">
                                 Trạng thái
                             </label>
-                            <div class="col-xl-10 p-0">
-                                <select class="form-select is-invalid text-danger" id="validationServer04"
-                                    aria-describedby="validationServer04Feedback" required>
-                                    <option selected disabled value="">Choose...</option>
-                                    <option>...</option>
+                            <div class="col-xl-10 p-0" id="TrangThai">
+                                <select class="form-select " required>
+                                    <option selected disabled value="">Chọn trạng thái...</option>
+                                    <?php foreach ($statuses as $status): ?>
+                                        <option value="<?= $status['MaTrangThai'] ?>">
+                                            <?= $status['Ten'] ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
-                                <div id="validationServer04Feedback" class="invalid-feedback">
-                                    Please select a valid state.
+                                <div class="invalid-feedback">
+                                    sdfsd
                                 </div>
                             </div>
                         </div>
@@ -457,14 +330,17 @@ refetchAjax();
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btn-clear-ticket-detail">
-                        Cancel
+                        Đóng
                     </button>
-                    <button type="button" class="btn btn-primary" id="btn-save-ticket-detail">
-                        Save
+                    <button type="submit" class="btn btn-primary" id="btn-save">
+                        <span>
+                            Thêm sản phẩm
+                        </span>
+                        <span hidden class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
