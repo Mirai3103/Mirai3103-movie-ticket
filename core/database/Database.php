@@ -69,6 +69,9 @@ class Database
     }
     private static function getSqlValue($value)
     {
+        if (is_null($value)) {
+            return 'NULL';
+        }
         if (is_string($value)) {
             // prevent sql injection
             $value = static::$mysqli->real_escape_string($value);

@@ -6,43 +6,6 @@ use App\Services\PhimService;
 ?>
 <?php
 
-//   public static function getTatCaPhim($query = [])
-//     {
-//         $queryBuilder = new QueryBuilder();
-//         $keyword = getArrayValueSafe($query, 'tu-khoa');
-//         $statuses = getArrayValueSafe($query, 'trang-thais');
-//         $ngayPhatHanhTu = getArrayValueSafe($query, 'ngay-phat-hanh-tu');
-//         $ngayPhatHanhDen = getArrayValueSafe($query, 'ngay-phat-hanh-den');
-//         $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
-//         $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 10);
-//         $offset = ($page - 1) * $limit;
-//         $queryBuilder->select(['Phim.*'])
-//             ->from('Phim')
-//             ->where('1', '=', '1');
-//         if (!isNullOrEmptyString($keyword)) {
-//             $queryBuilder->and();
-//             $queryBuilder->startGroup();
-//             $queryBuilder->where('TenPhim', 'LIKE', "%$keyword%");
-//             $queryBuilder->orWhere('DaoDien', 'LIKE', "%$keyword%");
-//             $queryBuilder->orWhere('NgonNgu', 'LIKE', "%$keyword%");
-//             $queryBuilder->endGroup();
-//         }
-//         if (!isNullOrEmptyArray($statuses)) {
-//             $queryBuilder->and();
-//             $queryBuilder->where('TrangThai', 'IN', $statuses);
-//         }
-//         if (!isNullOrEmptyString($ngayPhatHanhTu)) {
-//             $queryBuilder->andWhere('NgayPhatHanh', '>=', $ngayPhatHanhTu);
-//         }
-//         if (!isNullOrEmptyString($ngayPhatHanhDen)) {
-//             $queryBuilder->andWhere('NgayPhatHanh', '<=', $ngayPhatHanhDen);
-//         }
-//         $total = $queryBuilder->count();
-//         $queryBuilder->limit($limit, $offset);
-//         $phims = $queryBuilder->get();
-//         Request::setQueryCount($total);
-//         return $phims;
-//     }
 ?>
 <script>
 const trangthais = <?= json_encode($phimStatuses) ?>;
@@ -67,9 +30,69 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
             $nextTick(()=>{
                 refresh();
             })
-        }
+        },
+        async canDelete(id){
+            let response = await axios.get(`/api/phim/${id}/can-delete`);
+            return response.data.data.canDelete;
+        },
+        async onConfirmDelete(id){
+            let res = await axios.delete(`/api/phim/${id}/xoa`);
+            if(res.data.status==200){
+                toast('Xóa thành công',{
+                    position: 'bottom-center',
+                    type: 'success',
+                })
+                this.data = this.data.filter(movie=>movie.MaPhim!=id);
+            }else{
+                toast('Xóa thất bại',{
+                    position: 'bottom-center',
+                    type: 'danger',
+                });
+            }
+        },
+       async onToggleHidden(id){
+    
+             const  res = await axios.patch(`/api/phim/${id}/toggle-hidden`);
+            if(res.data.status==200){
+                toast('Thay đổi trạng thái thành công',{
+                    position: 'bottom-center',
+                    type: 'success',
+                });
+                const newStatus = res.data.data.status;
+                this.refresh();
+            }else{
+                toast('Thay đổi trạng thái thất bại',{
+                    position: 'bottom-center',
+                    type: 'danger',
+                });
 
+            }
+        }
     }" class="movie container-fluid shadow">
+        <dialog id="delete_modal" class="tw-modal">
+            <div class="tw-modal-box">
+                <h3 class="tw-font-bold tw-text-lg">
+                    Cảnh báo
+                </h3>
+                <p class="tw-py-4 tw-text-lg">
+                    Bạn có chắc chắn muốn xoá suất chiếu #<span class='tw-font-bold' x-text="selected?.MaPhim"></span>
+                    không?
+                </p>
+
+                <div class="modal-action">
+                    <form method="dialog" class='tw-flex tw-justify-end tw-gap-x-1'>
+                        <button class="tw-btn tw-px-4">
+                            Huỷ
+                        </button>
+                        <button x-on:click="
+                        onConfirmDelete(selected?.MaPhim);
+                        " class="tw-btn tw-btn-error tw-px-4 tw-text-white">
+                            Xoá
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </dialog>
         <!-- thanh phan loai phim -->
         <div class="border-bottom mb-4">
             <div>
@@ -77,10 +100,10 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                     :class="{'button-nav-active': query['trang-thai']==undefined}"
                     x-on:click="query['trang-thai']=undefined;onApllyFilter()" onclick="optionOfList(this)">
                 <?php foreach ($phimStatuses as $status): ?>
-                    <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                        :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
-                        x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
-                        onclick="optionOfList(this)">
+                <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
+                    :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
+                    x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
+                    onclick="optionOfList(this)">
                 <?php endforeach; ?>
             </div>
         </div>
@@ -185,10 +208,10 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                         class="selectpicker !tw-w-full">
 
                                         <?php foreach (PhimService::$MOVIE_TAGS as $key => $value): ?>
-                                            <option value="<?= $key ?>">
-                                                <?= $key ?> -
-                                                <?= $value ?>
-                                            </option>
+                                        <option value="<?= $key ?>">
+                                            <?= $key ?> -
+                                            <?= $value ?>
+                                        </option>
                                         <?php endforeach; ?>
 
                                     </select>
@@ -208,9 +231,9 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                     <select x-model="query['the-loais']" data-selected-text-format="count" multiple
                                         class="selectpicker !tw-w-full">
                                         <?php foreach ($categories as $category): ?>
-                                            <option value="<?= $category['MaTheLoai'] ?>">
-                                                <?= $category['TenTheLoai'] ?>
-                                            </option>
+                                        <option value="<?= $category['MaTheLoai'] ?>">
+                                            <?= $category['TenTheLoai'] ?>
+                                        </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -261,12 +284,32 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                         </th>
                         <th scope="col">Tag</th>
                         <th scope="col" x-on:click="createOrderFn('ThoiLuong')">
-                            Thời lượng
+                            <div class="col-name">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
+                                    width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 9l4 -4l4 4m-4 -4v14" />
+                                    <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+                                </svg>
+                                Thời lượng
+                            </div>
                         </th>
                         <th scope="col">
                             Định dạng
                         </th>
-                        <th scope="col">Trailer</th>
+                        <th scope="col" x-on:click="createOrderFn('NgayPhatHanh')">
+                            <div class="col-name">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
+                                    width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M3 9l4 -4l4 4m-4 -4v14" />
+                                    <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+                                </svg>
+                                Phát hành
+                            </div>
+                        </th>
 
                         <th scope="col">Trạng thái</th>
                         <th scope="col"></th>
@@ -306,16 +349,18 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                 <span x-text="movie.DinhDang"></span>
                             </td>
                             <td>
-                                <span x-text="movie.TrangThai"></span>
+                                <span x-text="dayjs(movie.NgayPhatHanh).format('DD/MM/YYYY')"></span>
                             </td>
                             <td>
-                                <a class="tw-text-blue-500 " "href=" movie.Trailer" target="_blank">Xem
-                                    Trailer</a>
+                                <span x-text="trangthais.find(status=>status.MaTrangThai==movie.TrangThai).Ten">
+                                </span>
                             </td>
+
                             <td>
                                 <div class="dropdown">
-                                    <button type="button" class="btn btn-light btn-icon rounded-circle"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button x-on:click="selected=movie" type="button"
+                                        class="btn btn-light btn-icon rounded-circle" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                             stroke-width="1.5" stroke="currentColor" class="icon">
                                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -324,7 +369,8 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <div class="dropdown-item">
+                                            <a :href="'/admin/phim/'+movie.MaPhim+'/sua'"
+                                                class="dropdown-item tw-text-yellow-500 hover:tw-text-yellow-500">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path
@@ -333,23 +379,47 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                                         d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                                                 </svg>
                                                 <span class="px-xl-3 ">Sửa</span>
-                                            </div>
+                                            </a>
                                         </li>
                                         <li>
                                             <div class="dropdown-item ">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="currentColor"
+                                                    class="icon icon-tabler icons-tabler-filled icon-tabler-circle-x">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                     <path
-                                                        d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                                        d="M17 3.34a10 10 0 1 1 -14.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 14.995 -8.336zm-6.489 5.8a1 1 0 0 0 -1.218 1.567l1.292 1.293l-1.292 1.293l-.083 .094a1 1 0 0 0 1.497 1.32l1.293 -1.292l1.293 1.292l.094 .083a1 1 0 0 0 1.32 -1.497l-1.292 -1.293l1.292 -1.293l.083 -.094a1 1 0 0 0 -1.497 -1.32l-1.293 1.292l-1.293 -1.292l-.094 -.083z" />
                                                 </svg>
-                                                <span class="px-xl-3 ">
-                                                    Đừng chiếu
+                                                <span class="px-xl-3 " x-on:click="onToggleHidden(movie.MaPhim)">
+                                                    <template x-if="movie.TrangThai==3">
+                                                        <span>
+                                                            Tiếp tục chiếu
+
+                                                        </span>
+                                                    </template>
+                                                    <template x-if="movie.TrangThai!=3">
+                                                        <span>
+                                                            Ngừng chiếu
+
+                                                        </span>
+                                                    </template>
                                                 </span>
                                             </div>
                                         </li>
 
                                         <li>
-                                            <div class="dropdown-item ">
+                                            <div x-on:click="if(await canDelete(movie.MaPhim)){
+                                                 window['delete_modal'].showModal();
+                                            }else 
+                                            {
+                                                toast('Không thể xóa phim này',{
+                                                    position: 'bottom-center',
+                                                    type: 'danger',
+                                                    description: 'Phim này đã có xuất chiếu'
+                                                });
+                                            }
+                                            
+                                            " class="dropdown-item tw-text-red-500 hover:tw-text-red-500">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                                     <path

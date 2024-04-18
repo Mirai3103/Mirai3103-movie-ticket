@@ -3,6 +3,8 @@
 use App\Models\JsonResponse;
 
 global $scripts;
+global $inlineScripts;
+$inlineScripts = [];
 $scripts = [];
 global $title;
 $title = "";
@@ -25,6 +27,11 @@ function scripts(array $list)
     }
 }
 
+function inlineScript(string $script)
+{
+    global $inlineScripts;
+    $inlineScripts[] = $script;
+}
 
 /**
  *

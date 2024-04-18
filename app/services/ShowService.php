@@ -41,6 +41,13 @@ class ShowService
     //             'sap-xep': sortBy,
     //             'thu-tu': sort
     //         }
+
+    public static function isMovieHasAnyShow($movieId)
+    {
+        $sql = "SELECT * FROM SuatChieu WHERE MaPhim = ? LIMIT 1";
+        $result = Database::queryOne($sql, [$movieId]);
+        return isNullOrEmptyArray($result) ? false : true;
+    }
     public static function advanceSearch($queryInput)
     {
         $keyword = getArrayValueSafe($queryInput, 'tu-khoa');

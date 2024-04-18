@@ -1,14 +1,11 @@
 <?php
 
-use App\Models\JsonDataErrorRespose;
+use App\Core\Logger;
 use App\Models\JsonResponse;
 use App\Services\CategoryService;
-use App\Services\CinemaService;
 use App\Services\PhimService;
-use App\Services\RoomService;
 use App\Services\ShowService;
 use App\Services\StatusService;
-use Core\Attributes\Controller;
 use Core\Attributes\Route;
 
 class MovieController
@@ -51,9 +48,9 @@ class MovieController
         $data = request_body();
         $result = PhimService::createMovie($data);
         if ($result) {
-            return JsonResponse::ok([
+            return json(JsonResponse::ok([
                 "MaPhim" => $result
-            ]);
+            ]));
         } else {
             return json(JsonResponse::error("Thêm phim thất bại"));
         }
@@ -72,11 +69,38 @@ class MovieController
         $data = request_body();
         $result = PhimService::updateMovie($id, $data);
         if ($result) {
-            return JsonResponse::ok();
+            return json(JsonResponse::ok());
         } else {
             return json(JsonResponse::error("Cập nhật phim thất bại"));
         }
     }
 
+    #[Route(path: '/api/phim/{id}/can-delete', method: 'GET')]
+    public static function checkCanDelete($id)
+    {
+        $result = ShowService::isMovieHasAnyShow($id);
+        return json(JsonResponse::ok([
+            "canDelete" => !$result
+        ]));
+    }
+    #[Route(path: '/api/phim/{id}/xoa', method: 'DELETE')]
+    public static function delete($id)
+    {
+        $result = PhimService::deleteMovie($id);
+        if ($result) {
+            return json(JsonResponse::ok());
+        } else {
+            return json(JsonResponse::error("Xóa phim thất bại"));
+        }
+    }
+    #[Route(path: '/api/phim/{id}/toggle-hidden', method: 'PATCH')]
+    public static function toggleHide($id)
+    {
+        $result = PhimService::toggleHide($id);
 
+        return json(JsonResponse::ok([
+            'status' => $result
+        ]));
+
+    }
 }

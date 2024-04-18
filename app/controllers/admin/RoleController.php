@@ -36,9 +36,9 @@ class RoleController
             "MoTa" => $data['description']
         ]);
         if ($result) {
-            return JsonResponse::ok([
+            return json(JsonResponse::ok([
                 "MaNhomQuyen" => $result
-            ]);
+            ]));
         } else {
             return json(JsonResponse::error("Thêm nhóm quyền thất bại"));
         }
@@ -61,7 +61,7 @@ class RoleController
             "TenNhomQuyen" => $data['tennhomquyen'],
             "MoTa" => $data['description']
         ]);
-        return JsonResponse::ok();
+        return json(JsonResponse::ok());
 
     }
 

@@ -46,6 +46,14 @@ class PhimService
         }
         return $result;
     }
+    public static function toggleHide($id)
+    {
+        $movie = self::getPhimById($id);
+        $status = $movie['TrangThai'] == TrangThaiPhim::NgungChieu->value ? null : TrangThaiPhim::NgungChieu->value;
+        Database::update("Phim", ['TrangThai' => $status], "MaPhim = $id");
+
+        return $status;
+    }
     public static function getPhimDangChieu($page = 1, $limit = 20)
     {
         $query = "SELECT * FROM Phim WHERE TrangThai = ? LIMIT ? , ?;";
@@ -184,6 +192,18 @@ class PhimService
                 'MaTheLoai' => $theLoai
             ]);
         }
+        $result = true;
+        return $result;
+    }
+    public static function deleteMovie($id)
+    {
+        $isHasAnyShow = ShowService::isMovieHasAnyShow($id);
+        if ($isHasAnyShow) {
+            return false;
+        }
+        $result = null;
+        self::removeAllCategoriesOfMovie($id);
+        Database::delete("Phim", "MaPhim = $id");
         $result = true;
         return $result;
     }

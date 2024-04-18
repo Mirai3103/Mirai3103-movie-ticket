@@ -8,6 +8,11 @@
     foreach ($scripts as $script) {
         echo "<script src='{$script}'></script>";
     }
+
+    global $inlineScripts;
+    foreach ($inlineScripts as $script) {
+        echo "<script>{$script}</script>";
+    }
     ?>
 
     </body>

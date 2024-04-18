@@ -1,12 +1,14 @@
 <?php
 use App\Services\PhimService;
 
-title("Quản lý phim");
+title("Cập nhật phim");
 require ('app/views/admin/header.php');
 ?>
 
 <link rel="stylesheet" href="/public/tiendat/infoMovie.css">
-<script>
+<?php
+$theloaiIds = json_encode(array_map(fn($el) => $el['MaTheLoai'], $phim['TheLoais']));
+inlineScript("
 const validationRule = {
     TenPhim: {
         required: {
@@ -20,31 +22,36 @@ const validationRule = {
         maxLength: {
             value: 255,
             message: 'Tên phim phải nhỏ hơn 255 ký tự'
-        }
+        },
+        default: '$phim[TenPhim]'
     },
     NgayPhatHanh: {
         required: {
             value: true,
             message: 'Ngày phát hành không được để trống'
-        }
+        },
+        default: dayjs('$phim[NgayPhatHanh]').format('YYYY-MM-DD')
     },
     DinhDang: {
         required: {
             value: true,
             message: 'Định dạng không được để trống'
-        }
+        },
+        default: '$phim[DinhDang]'
     },
     HanCheDoTuoi: {
         required: {
             value: true,
             message: 'Hạn chế độ tuổi không được để trống'
-        }
+        },
+        default: '$phim[HanCheDoTuoi]'
     },
     HinhAnh: {
         required: {
             value: true,
             message: 'Hình ảnh không được để trống'
-        }
+        },
+        default: '$phim[HinhAnh]'
     },
     ThoiLuong: {
         required: {
@@ -54,48 +61,55 @@ const validationRule = {
         min: {
             value: 0,
             message: 'Thời lượng phải lớn hơn 0'
-        }
+        },
+        default: $phim[ThoiLuong]
     },
     NgonNgu: {
         required: {
             value: true,
             message: 'Ngôn ngữ không được để trống'
-        }
+        },
+        default: '$phim[NgonNgu]'
     },
     DaoDien: {
         required: {
             value: true,
             message: 'Đạo diễn không được để trống'
-        }
+        },
+        default: '$phim[DaoDien]'
     },
     TinhTrang: {
         required: {
             value: true,
             message: 'Tình trạng không được để trống'
-        }
+        },
+        default: $phim[TrangThai]
     },
     Trailer: {
         required: {
             value: true,
             message: 'Trailer không được để trống'
-        }
+        },
+        default: '$phim[Trailer]'
     },
     MoTa: {
         required: {
             value: true,
             message: 'Mô tả không được để trống'
-        }
+        },
+        default: '$phim[MoTa]'
     },
     TheLoais: {
-        default: [],
+        default: $theloaiIds
     }
 }
 
 function getTheLoaiText() {
-    return [...document.querySelectorAll("input[name='TheLoais']:checked")].map((el) => el.getAttribute('data-display'))
+    return [...document.querySelectorAll(\"input[name='TheLoais']:checked\")].map((el) => el.getAttribute('data-display'))
         .join(', ');
 }
-</script>
+");
+?>
 <div x-data="formValidator(validationRule)" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;"
     class="wrapper p-5">
     <div x-data="{
@@ -136,17 +150,17 @@ function getTheLoaiText() {
             MoTa: this.data.MoTa,
             TheLoais: this.data.TheLoais.map((el) => parseInt(el))
         };
-       const res = await axios.post('', payload,{
+       const res = await axios.put('', payload,{
             validateStatus:()=>true
         });
         if(res.status === 200) {
-            toast('Thêm phim thành công', {
+            toast('Cập nhật phim thành công', {
                 position: 'bottom-center',
                 type: 'success'
             });
-            window.location.href = '/admin/phim';
+            window.history.back();
         } else {
-            toast('Thêm phim thất bại', {
+            toast('Cập nhật phim thất bại', {
                 position: 'bottom-center',
                 type: 'danger',
                 description: res.data.message
@@ -167,6 +181,9 @@ function getTheLoaiText() {
             hinhAnhUploadLoading = false;
         });
     }
+  });
+  $nextTick(() => {
+    theLoaiText = getTheLoaiText();
   });
   $watch('data.TheLoais', (value) => {
     theLoaiText = getTheLoaiText();
@@ -248,9 +265,9 @@ function getTheLoaiText() {
                         <option value="">
                             Chọn phân loại phim
                         </option>
-                        <template x-for="([key, value], index) in Object.entries(movieTags)">
-                            <option :value="key" x-text="key+' - '+value"></option>
-                        </template>
+                        <?php foreach (PhimService::$MOVIE_TAGS as $key => $value): ?>
+                            <option value="<?= $key ?>"><?= $key ?> - <?= $value ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
