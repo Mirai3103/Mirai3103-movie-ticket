@@ -3815,6 +3815,10 @@ details.tw-collapse summary::-webkit-details-marker {
   min-width: 15rem;
 }
 
+.tw-min-w-72 {
+  min-width: 18rem;
+}
+
 .tw-min-w-\[200px\] {
   min-width: 200px;
 }
