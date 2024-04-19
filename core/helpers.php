@@ -157,7 +157,8 @@ function onForbidden()
     }
     // set 403 status code
     http_response_code(403);
-    return redirect('/403');
+    echo "403 Forbidden";
+    die();
 }
 
 function needLogin()

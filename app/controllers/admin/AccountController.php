@@ -4,6 +4,11 @@ use Core\Attributes\Route;
 
 class AccountController
 {
+    #[Route(path: '/admin', method: 'GET')]
+    public static function home()
+    {
+        return view('admin/index');
+    }
     #[Route(path: '/admin/tai-khoan', method: 'GET')]
     public static function index()
     {
