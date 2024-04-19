@@ -18,7 +18,7 @@ class RoleService
     public static function getRoleById($id)
     {
         $role = Database::queryOne("SELECT * FROM NhomQuyen WHERE MaNhomQuyen = ?", [$id]);
-        $role['Quyen'] = PermissionService::getPermissionByRole($id);
+        $role['Quyen'] = PermissionService::getPermissionByRole($id) ?? [];
         return $role;
     }
     public static function addRole($role)

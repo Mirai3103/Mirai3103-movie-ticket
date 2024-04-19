@@ -64,7 +64,6 @@ class OrderService
             'id' => $tempId
         ];
         $_SESSION['bookingData'] = $bookingData;
-        Logger::info(print_r($bookingData, true));
         return JsonResponse::ok($bookingData);
     }
 
@@ -102,7 +101,6 @@ class OrderService
             'TrangThai' => $TrangThai
         ]);
         $danhSachVe = array_map(fn($item) => $item['MaGhe'], $data['DanhSachVe']);
-        Logger::info(print_r($danhSachVe, true));
         foreach ($danhSachVe as $maGhe) {
             Database::execute("UPDATE Ve SET MaHoaDon = ? , TrangThai = ? WHERE MaGhe = ? AND MaSuatChieu = ?", [$uid, TrangThaiVe::DaDat->value, $maGhe, $data['MaXuatChieu']]);
         }

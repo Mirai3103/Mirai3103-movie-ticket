@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 use App\Core\Logger;
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
+use App\Models\Permission;
 
 enum AccountType: int
 {
@@ -96,8 +97,21 @@ class UserService
         }
         return new JsonResponse(200, "Đăng ký thành công");
     }
+
+
     private static function setSession($user)
     {
+        if (isset($user['TaiKhoan']['MaNhomQuyen'])) {
+            $role = RoleService::getRoleById($user['TaiKhoan']['MaNhomQuyen']);
+            $permissions = array_map(function ($permission) {
+                $rawPermission = $permission['TenQuyen'];
+                $permission = Permission::from($rawPermission);
+                return $permission;
+            }, $role['Quyen']);
+            $user['permissions'] = $permissions;
+
+        }
+        Logger::info(print_r($user, true));
         $_SESSION['user'] = $user;
     }
     private static function rememberLogin($user)
@@ -120,20 +134,24 @@ class UserService
         unset($_SESSION['user']);
         setcookie("remember", "", time() - 3600, '/');
     }
+
+    private static function getUserById($id)
+    {
+        $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
+        $user = Database::queryOne($query, [$id]);
+        return $user;
+    }
     public static function login($username, $password, $rememberMe = false)
     {
 
-        $query = "SELECT MaTaiKhoan, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE TenDangNhap = ? AND MatKhau = ?;";
+        $query = "SELECT MaTaiKhoan,MaNguoiDung, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE TenDangNhap = ? AND MatKhau = ?;";
         $account = Database::queryOne($query, [$username, $password]);
         if (!$account) {
             return new JsonResponse(401, "Sai tên đăng nhập hoặc mật khẩu");
         }
-        $userInfor = self::getUserByEmail($username);
+        $userInfor = self::getUserById($account['MaNguoiDung']);
         $userInfor['TaiKhoan'] = $account;
-        if (isset($account['MaNhomQuyen'])) {
-            $role = RoleService::getRoleById($account['MaNhomQuyen']);
-            $userInfor['NhomQuyen'] = $role;
-        }
+
         self::setSession($userInfor);
         if ($rememberMe) {
             self::rememberLogin($userInfor);
@@ -164,6 +182,7 @@ class UserService
                     $query = "SELECT MaTaiKhoan, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE MaNguoiDung = ?;";
                     $account = Database::queryOne($query, [$userId]);
                     $user['TaiKhoan'] = $account;
+
                     self::setSession($user);
                 }
             }

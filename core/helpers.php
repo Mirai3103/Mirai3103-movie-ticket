@@ -61,6 +61,7 @@ function ajax($name, $data = [])
 function redirect($path)
 {
     header("Location: /{$path}");
+    die();
 }
 use Hidehalo\Nanoid\Client;
 use Hidehalo\Nanoid\GeneratorInterface;
@@ -146,8 +147,17 @@ function onUnauthorized()
     if (isAjaxRequest()) {
         return json(new JsonResponse(401, "Unauthorized"), 401);
     }
-
-    return redirect('login' + '?returnUrl=' + $_SERVER['REQUEST_URI']);
+    // http_response_code(401);
+    return redirect('dang-nhap' . '?returnUrl=' . $_SERVER['REQUEST_URI']);
+}
+function onForbidden()
+{
+    if (isAjaxRequest()) {
+        return json(new JsonResponse(403, "Forbidden"), 403);
+    }
+    // set 403 status code
+    http_response_code(403);
+    return redirect('/403');
 }
 
 function needLogin()
@@ -160,26 +170,25 @@ function needLogin()
 function needEmployee()
 {
     needLogin();
-    if ($_SESSION['user']['is_employee'] === false) {
-        return onUnauthorized();
+    if ($_SESSION['user']['TaiKhoan']['LoaiTaiKhoan'] != 1) {
+        return onForbidden();
     }
 }
 
-function needAnyPermission($permissions)
+function needAnyPermissionOrDie($permissions)
 {
     needEmployee();
     $userPermissions = $_SESSION['user']['permissions'];
-    //[{ TenQuyen, MaQuyen, MoTa}]
     $isHasPermission = false;
     foreach ($permissions as $permission) {
         foreach ($userPermissions as $userPermission) {
-            if ($userPermission['TenQuyen'] === $permission) {
+            if ($userPermission == $permission) {
                 $isHasPermission = true;
                 break;
             }
         }
     }
     if (!$isHasPermission) {
-        return onUnauthorized();
+        return onForbidden();
     }
 }

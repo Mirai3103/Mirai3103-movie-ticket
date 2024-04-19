@@ -200,7 +200,6 @@ class ShowService
         if (!isNullOrEmptyString($sortBy)) {
             $queryBuilder->orderBy($sortBy, $sortDir);
         }
-        Logger::info($queryBuilder->__toString());
 
         $queryBuilder->limit($limit, ($page - 1) * $limit);
         $shows = $queryBuilder->get();

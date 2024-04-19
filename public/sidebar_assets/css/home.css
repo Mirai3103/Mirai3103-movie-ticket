@@ -8,9 +8,23 @@
   --tran-02: all 0.2s ease;
   --tran-03: all 0.3s ease;
   --tran-04: all 0.4s ease;
-  --tran-05: all 0.5s ease;
-}
 
+  --tran-05: all 0.5s ease;
+  --tran-1: all 1s ease;
+}
+.menu-links__item.active {
+  background-color: var(--primary-color);
+  border-radius: 6px;
+  color: var(--sidebar-color);
+  transition: var(--tran-04);
+  cursor: pointer;
+}
+.menu-links__item.active .text {
+  color: var(--sidebar-color);
+}
+.menu-links__item.active i {
+  color: var(--sidebar-color);
+}
 .sidebar {
   /* position: fixed; */
   /* top: 155px; */
@@ -18,13 +32,19 @@
   height: 100vh;
   width: 250px;
   padding: 10px 14px;
-  flex-shrink: 0;
   background-color: var(--sidebar-color);
   transition: var(--tran-05);
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
+
 .sidebar.close {
   width: 88px;
   opacity: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 /* .sidebar.close ~ div.wrapper {
@@ -39,19 +59,20 @@
 .sidebar.close .nav-text {
   opacity: 0;
 }
+
 .sidebar.close .image-logo {
   min-width: 60px;
 }
+
 .sidebar.close .toggle {
   transform: rotate(180deg);
 }
 
 .sidebar.close .menu-bar {
   height: calc(100% - 225px);
+  flex: 1;
 }
-.sidebar {
-  position: relative;
-}
+
 .sidebar .toggle {
   position: absolute;
   top: 35px;
@@ -91,8 +112,47 @@
   align-items: center;
 }
 
+.scrollable-list {
+  max-height: 200px;
+  /* Đặt chiều cao tối đa của danh sách để hiển thị thanh cuộn */
+  overflow-y: auto;
+  /* Hiển thị thanh cuộn dọc khi nội dung vượt quá kích thước */
+  padding: 0;
+  /* Loại bỏ phần đệm mặc định */
+  list-style-type: none;
+  /* Loại bỏ dấu đầu dòng của danh sách */
+}
+
+.scrollable-list.close {
+  overflow-x: hidden;
+}
+
+/* Tùy chỉnh kiểu dáng của thanh cuộn */
+.scrollable-list::-webkit-scrollbar {
+  width: 4px;
+  /* Chiều rộng của thanh cuộn */
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+  background-color: #888;
+  /* Màu của thanh cuộn */
+  border-radius: 4px;
+  /* Bo tròn các góc của thanh cuộn */
+}
+
+.scrollable-list::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+  /* Màu của thanh cuộn khi di chuột qua */
+}
+
 .menu-links {
   padding-left: 0;
+  max-height: 75vh;
+  overflow: auto;
+}
+
+.menu-links::-webkit-scrollbar {
+  display: none;
 }
 
 .menu-links__item a {
@@ -104,6 +164,31 @@
   font-weight: 500;
   color: var(--text-color);
 }
+
+/*DROPDOWN */
+.animation-dropdown {
+  opacity: 0;
+  height: 0;
+  transition: var(--tran-05);
+}
+
+.icon-drop-down {
+  position: relative;
+  rotate: 90deg;
+  margin-left: 50px;
+}
+
+.icon-drop-down.rotate {
+  rotate: 0deg;
+  margin-bottom: 5px;
+}
+
+.open.animation-dropdown {
+  opacity: 1;
+  height: 170px;
+}
+
+/* END DROPDOWN */
 
 .toggle-color-bg-wrapper .text {
   margin-left: 60px;
@@ -117,6 +202,14 @@
   color: var(--sidebar-color);
   transition: var(--tran-04);
   cursor: pointer;
+}
+
+.menu-links__item:hover a i {
+  color: var(--sidebar-color);
+}
+
+.menu-links__item:hover .show {
+  color: var(--sidebar-color);
 }
 
 .menu-links__item:hover span {
@@ -133,7 +226,6 @@
 }
 
 .image-logo {
-  background-color: var(--primary-color);
   height: 50px;
   border-radius: 10px;
   display: flex;
@@ -209,20 +301,25 @@ body.dark {
   --toggle-color: #fff;
   --text-color: #ccc;
 }
+
 body.dark .toggle-color-bg__switch:before {
   left: 24px;
 }
+
 body.dark .toggle-color-bg-wrapper {
   background-color: var(--primary-color);
 }
+
 body.dark .text,
 body.dark .nav-text,
 body.dark .menu-links__item-icon {
   color: var(--text-color);
 }
+
 body.dark .icon-sun {
   opacity: 0;
 }
+
 body.dark .icon-moon {
   opacity: 1;
   color: var(--text-color);
@@ -251,11 +348,13 @@ body {
   border-top-left-radius: 15px;
   border-bottom-left-radius: 15px;
 }
+
 .contact-firstcol h4 {
   line-height: 40px;
   font-weight: 400;
   margin-top: 20px;
 }
+
 .contact-firstcol img {
   max-width: 100px;
 }
@@ -270,12 +369,15 @@ body {
   padding: 20px;
   border-radius: 10px;
 }
+
 .my-form .form-group ~ .form-group {
   margin-top: 20px;
 }
+
 .my-form .control-label {
   font-weight: 500;
 }
+
 .my-form .form-control {
   border-color: #d4d4d4;
   min-height: 45px;

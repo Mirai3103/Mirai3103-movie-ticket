@@ -43,12 +43,14 @@ class Database
 
     public static function query(string $sql, array $params)
     {
+        Logger::info($sql, print_r($params, true));
         $statement = static::$mysqli->prepare($sql);
         $statement->execute($params);
         return $statement->get_result()->fetch_all(MYSQLI_ASSOC);
     }
     public static function queryOne(string $sql, array $params)
     {
+        Logger::info($sql, print_r($params, true));
         $statement = static::$mysqli->prepare($sql);
         $statement->execute($params);
         return $statement->get_result()->fetch_assoc();

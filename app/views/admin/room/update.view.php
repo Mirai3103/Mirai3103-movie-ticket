@@ -134,17 +134,25 @@ formValidator(validatorRule);
                     };
                     const res = await axios.post('', updateRoomPayload,{validateStatus: () => true})
                     if (res.status !=200) {
-                        toast('Tạo phòng chiếu thất bại', {
+                        toast('Cập nhật phòng chiếu thất bại', {
                             position: 'bottom-center',
                             type: 'error'
                         });
                         return;
-                    };
+                    }else{
+                        toast('Cập nhật phòng chiếu thành công', {
+                            position: 'bottom-center',
+                            type: 'success'
+                        });
+                    }
                     const MaPhongChieu = <?= $room['MaPhongChieu'] ?>;
                     const [
                         inputSeats,
                         deleteSeats
                     ] = this.createInputSeats(MaPhongChieu)
+                    if (inputSeats.length === 0 && deleteSeats.length === 0) {
+                        return;
+                    }
                     const res1 = await axios.put('/api/ghe/cap-nhat-nhieu', {
                         MaPhongChieu: MaPhongChieu,
                         inputSeats: inputSeats,
@@ -157,7 +165,12 @@ formValidator(validatorRule);
                         });
                         window.location.reload()
                         return;
-                    };
+                    }else{
+                        toast('Cập nhật ghế thành công', {
+                            position: 'bottom-center',
+                            type: 'success'
+                        });
+                    }
                   
                 }
             }
@@ -273,7 +286,7 @@ formValidator(validatorRule);
                         :class="{'is-invalid': errors?.TrangThai && errors?.TrangThai.length > 0}" required>
                         <option value="" disabled selected hidden>Chọn trạng thái</option>
                         <?php foreach ($statuses as $status): ?>
-                        <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
+                            <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
                         <?php endforeach; ?>
 
                     </select>

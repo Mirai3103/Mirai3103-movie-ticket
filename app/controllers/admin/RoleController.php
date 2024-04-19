@@ -55,8 +55,7 @@ class RoleController
     {
         $data = request_body();
         RoleService::updateRole([
-            "Quyen" => $data['permissions
-            '],
+            "Quyen" => $data['permissions'],
             "MaNhomQuyen" => $id,
             "TenNhomQuyen" => $data['tennhomquyen'],
             "MoTa" => $data['description']

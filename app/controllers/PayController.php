@@ -38,7 +38,6 @@ class PayController
     {
         $bookingData = $_SESSION['bookingData'];
         $_SESSION['bookingData'] = null;
-        Logger::info(print_r($bookingData, true));
         $show = ShowService::getShowInfoById($bookingData['MaXuatChieu']);
         $tickets = TicketService::getTicketOfSeats(array_map(fn($item) => $item['MaGhe'], $bookingData['DanhSachVe']), $bookingData['MaXuatChieu']);
         $seats = SeatService::getSeatByIds(array_map(fn($item) => $item['MaGhe'], $bookingData['DanhSachVe']));

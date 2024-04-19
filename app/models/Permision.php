@@ -72,4 +72,6 @@ enum Permission: string
     case READ_VE = "read:ve";
     case UPDATE_VE = "update:ve";
     case DELETE_VE = "delete:ve";
+    case THONG_KE = "thongke";
+    case CONFIG_WEBSITE = "configwebsite";
 }

@@ -367,3 +367,52 @@ function showEditModal(id) {
     },
   });
 }
+let selectedId = null;
+function showDeleteModal(id) {
+  selectedId = id;
+  $("#delete-modal .modal-title").text("Xóa sản phẩm #" + id);
+  $("#btn-delete").attr("data-id", id);
+  $("#delete-modal").modal("show");
+}
+
+$("#btn-delete").click(function () {
+  const id = selectedId;
+  $.ajax({
+    url: "/api/san-pham/" + id + "/delete",
+    type: "POST",
+    success: function (res) {
+      toast("Thành công", {
+        position: "bottom-center",
+        type: "success",
+      });
+      refetchAjax();
+      $("#delete-modal").modal("hide");
+    },
+    error: function (error) {
+      toast("Thất bại", {
+        position: "bottom-center",
+        type: "danger",
+      });
+    },
+  });
+});
+
+function onRecoverProduct(id) {
+  $.ajax({
+    url: "/api/san-pham/" + id + "/delete",
+    type: "POST",
+    success: function (res) {
+      toast("Khôi phục thành công", {
+        position: "bottom-center",
+        type: "success",
+      });
+      refetchAjax();
+    },
+    error: function (error) {
+      toast("Khôi phục thất bại", {
+        position: "bottom-center",
+        type: "danger",
+      });
+    },
+  });
+}

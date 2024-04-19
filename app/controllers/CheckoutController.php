@@ -24,7 +24,6 @@ class CheckoutController
 
 
         $result = OrderService::startCheckout($data);
-        Logger::info(json($result));
 
         return json($result);
     }
@@ -92,7 +91,6 @@ class CheckoutController
             }
         }
         $totalPrice = $bookingData['TongTien'];
-        Logger::info("Total price: $totalPrice");
         $displayText = "Thanh toán vé xem phim";
         $paymentStrategy = getPaymentStrategy($payment_method);
         $id = $_SESSION['bookingData']['id'];

@@ -119,7 +119,6 @@ class RoomService
         $total = $queryBuilder->count();
 
         $queryBuilder->orderBy('MaPhongChieu', 'ASC');
-        Logger::info($queryBuilder->__toString());
         Request::setQueryCount($total);
         $queryBuilder->limit($limit, ($page - 1) * $limit);
         $rooms = $queryBuilder->get();

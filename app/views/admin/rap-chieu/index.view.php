@@ -23,9 +23,13 @@ require('app/views/admin/header.php')
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end mx-2">
                     <div class="dropdown">
                         <button class="btn border-0 fw-medium" data-bs-toggle="dropdown" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter-filled" width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter-filled"
+                                width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path d="M20 3h-16a1 1 0 0 0 -1 1v2.227l.008 .223a3 3 0 0 0 .772 1.795l4.22 4.641v8.114a1 1 0 0 0 1.316 .949l6 -2l.108 -.043a1 1 0 0 0 .576 -.906v-6.586l4.121 -4.12a3 3 0 0 0 .879 -2.123v-2.171a1 1 0 0 0 -1 -1z" stroke-width="0" fill="currentColor" />
+                                <path
+                                    d="M20 3h-16a1 1 0 0 0 -1 1v2.227l.008 .223a3 3 0 0 0 .772 1.795l4.22 4.641v8.114a1 1 0 0 0 1.316 .949l6 -2l.108 -.043a1 1 0 0 0 .576 -.906v-6.586l4.121 -4.12a3 3 0 0 0 .879 -2.123v-2.171a1 1 0 0 0 -1 -1z"
+                                    stroke-width="0" fill="currentColor" />
                             </svg>
                             Filters
                         </button>
@@ -93,7 +97,8 @@ require('app/views/admin/header.php')
                 </div>
 
                 <div>
-                    <button type="button" class="btn btn-secondary" id="btn-create" data-bs-toggle="modal" data-bs-target="#cinema-detail-modal" type="button">Thêm mới
+                    <button type="button" class="btn btn-secondary" id="btn-create" data-bs-toggle="modal"
+                        data-bs-target="#cinema-detail-modal" type="button">Thêm mới
                     </button>
                 </div>
             </div>
@@ -107,7 +112,9 @@ require('app/views/admin/header.php')
                     <tr>
                         <th scope="col">
                             <div class="col-name">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort" width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
+                                    width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M3 9l4 -4l4 4m-4 -4v14" />
                                     <path d="M21 15l-4 4l-4 -4m4 4v-14" />
@@ -117,7 +124,9 @@ require('app/views/admin/header.php')
                         </th>
                         <th scope="col">
                             <div class="col-name">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort" width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
+                                    width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                     <path d="M3 9l4 -4l4 4m-4 -4v14" />
                                     <path d="M21 15l-4 4l-4 -4m4 4v-14" />
@@ -148,7 +157,8 @@ require('app/views/admin/header.php')
                                 </div>
                             </div>
                         </td>
-                        <td class="col-address">271 Nguyễn Trãi, Phường Nguyễn Cư Trinh, Quận 1, Thành Phố Hồ Chí Minh</td>
+                        <td class="col-address">271 Nguyễn Trãi, Phường Nguyễn Cư Trinh, Quận 1, Thành Phố Hồ Chí Minh
+                        </td>
                         <td class="col-stt">Trạng thái rạp</td>
                         <td class="col-des">
                             Cinestar Quốc Thanh
@@ -181,7 +191,7 @@ require('app/views/admin/header.php')
         <!-- hết bảng dữ liệu hóa đơn -->
 
         <!-- thanh phân trang và số dòng hiển thị -->
-        <div class="d-flex justify-content-end column-gap-3">
+        <div class="d-flex justify-content-end column-gap-3 tw-mb-4">
             <div class="d-flex input-group h-50 w-25">
                 <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Hiển thị</label>
                 <select class="form-select rounded" id="inputGroupSelect01">
@@ -218,7 +228,8 @@ require('app/views/admin/header.php')
 
 
     <!-- Type ticket Details Modal -->
-    <div class="modal fade bs-example-modal-lg" id="cinema-detail-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bs-example-modal-lg" id="cinema-detail-modal" tabindex="-1" role="dialog"
+        aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -236,7 +247,8 @@ require('app/views/admin/header.php')
                                 Mã rạp chiếu
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="cinema-id" aria-describedby="cinema-id-feedback" required>
+                                <input type="text" class="form-control is-invalid" id="cinema-id"
+                                    aria-describedby="cinema-id-feedback" required>
                                 <div id="cinema-id-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>
@@ -248,7 +260,8 @@ require('app/views/admin/header.php')
                                 Tên rạp chiếu
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="cinema-name" aria-describedby="cinema-price-feedback" required>
+                                <input type="text" class="form-control is-invalid" id="cinema-name"
+                                    aria-describedby="cinema-price-feedback" required>
                                 <div id="cinema-name-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>
@@ -258,7 +271,8 @@ require('app/views/admin/header.php')
                         <div class="row d-flex mt-2">
                             <label for="product-img" class="col-xl-2">Hình ảnh</label>
                             <div class="has-validation col-xl-10 p-0">
-                                <input type="file" class="form-control is-invalid" aria-label="file example" required id="cinema-img">
+                                <input type="file" class="form-control is-invalid" aria-label="file example" required
+                                    id="cinema-img">
                                 <div class="invalid-feedback d-block">Example invalid form file feedback</div>
                             </div>
                         </div>
@@ -268,7 +282,8 @@ require('app/views/admin/header.php')
                                 Địa chỉ
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid text-danger" id="cinema-address" aria-describedby="cinema-address-feedback" required>
+                                <input type="text" class="form-control is-invalid text-danger" id="cinema-address"
+                                    aria-describedby="cinema-address-feedback" required>
                                 <div id="cinema-address-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>
@@ -280,7 +295,8 @@ require('app/views/admin/header.php')
                                 Trạng thái
                             </label>
                             <div class="col-xl-10 p-0">
-                                <select class="form-select is-invalid text-danger" id="validationServer04" aria-describedby="validationServer04Feedback" required>
+                                <select class="form-select is-invalid text-danger" id="validationServer04"
+                                    aria-describedby="validationServer04Feedback" required>
                                     <option selected disabled value="">Choose...</option>
                                     <option>...</option>
                                 </select>
@@ -295,7 +311,8 @@ require('app/views/admin/header.php')
                                 Mô tả
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <textarea id="cinema-des" required class="form-control is-invalid" aria-describedby="cinema-des-feedback"></textarea>
+                                <textarea id="cinema-des" required class="form-control is-invalid"
+                                    aria-describedby="cinema-des-feedback"></textarea>
                                 <div id="cinema-des-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>

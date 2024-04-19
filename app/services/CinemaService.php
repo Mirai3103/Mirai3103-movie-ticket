@@ -41,7 +41,6 @@ class CinemaService
             $queryBuilder->and();
             $queryBuilder->where('TrangThai', 'IN', $statuses);
         }
-        Logger::info($queryBuilder->__toString());
         $total = $queryBuilder->count();
         $queryBuilder->limit($limit, $offset);
         $cinemas = $queryBuilder->get();

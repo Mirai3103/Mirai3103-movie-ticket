@@ -48,7 +48,6 @@ class ShowController
             'trang-thais' => [TrangThaiPhim::DangChieu->value, TrangThaiPhim::SapChieu->value],
         ]);
         $showStatuses = StatusService::getAllStatus('SuatChieu');
-        Logger::info(count($cinemas));
         return view('admin/show/add', [
             'cinemas' => $cinemas,
             'movies' => $movies,

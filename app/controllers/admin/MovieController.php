@@ -2,6 +2,7 @@
 
 use App\Core\Logger;
 use App\Models\JsonResponse;
+use App\Models\Permission;
 use App\Services\CategoryService;
 use App\Services\PhimService;
 use App\Services\ShowService;
@@ -28,6 +29,7 @@ class MovieController
     #[Route(path: '/admin/phim', method: 'GET')]
     public static function index()
     {
+        needAnyPermissionOrDie([Permission::READ_PHIM]);
         $phimStatuses = StatusService::getAllStatus("Phim");
         $categories = CategoryService::getAllCategories();
         return view(

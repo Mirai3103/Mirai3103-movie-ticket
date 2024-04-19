@@ -87,8 +87,32 @@ class ComboService
         }
         return JsonResponse::error('Cập nhật thất bại', 500);
     }
+    public static function toggleHideFoodnDrink($id)
+    {
+        $exist = Database::queryOne("SELECT MaThucPham FROM ThucPham WHERE MaThucPham=$id AND TrangThai=" . TrangThaiThucPham::An->value, []);
+        if ($exist) {
+            $result = Database::update('ThucPham', ['TrangThai' => TrangThaiThucPham::Hien->value], "MaThucPham=$id");
+        } else {
+            $result = Database::update('ThucPham', ['TrangThai' => TrangThaiThucPham::An->value], "MaThucPham=$id");
+        }
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Ẩn thất bại', 500);
+    }
     public static function deleteFoodnDrink($id)
     {
+        // check if food is in combo or  CT_Combo_ThucPham CT_HoaDon_ThucPham
+        $sql = "SELECT * FROM CT_Combo_ThucPham WHERE MaThucPham=?;";
+        $result = Database::queryOne($sql, [$id]);
+        if (true) {
+            return self::toggleHideFoodnDrink($id);
+        }
+        $sql = "SELECT * FROM CT_HoaDon_ThucPham WHERE MaThucPham=?;";
+        $result = Database::queryOne($sql, [$id]);
+        if ($result) {
+            return self::toggleHideFoodnDrink($id);
+        }
         $result = Database::delete('ThucPham', "MaThucPham=$id");
         if ($result) {
             return JsonResponse::ok();

@@ -36,6 +36,12 @@ class ProductController
         $result = ComboService::updateFoodnDrink($_POST, $id);
         return json($result);
     }
+    #[Route("/api/san-pham/{id}/delete", "POST")]
+    public static function tryDelete($id)
+    {
+        $result = ComboService::deleteFoodnDrink($id);
+        return json($result);
+    }
     #[Route("/ajax/san-pham", "GET")]
     public static function getProducts()
     {

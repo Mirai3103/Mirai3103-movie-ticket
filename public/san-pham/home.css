@@ -244,7 +244,7 @@ body {
   margin: 0px;
   padding: 0px;
   /* font-family: "Poppins", sans-serif; */
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .contact-firstcol {
@@ -354,9 +354,8 @@ body {
 }
 
 .tb-img-product {
-  border-radius: 100%;  
+  border-radius: 100%;
 }
-
 
 .menu-crud {
   padding: 0;
@@ -383,7 +382,6 @@ body {
   border-radius: 14px;
 }
 
-
 .item-crud {
   display: flex;
   text-decoration: none;
@@ -393,11 +391,9 @@ body {
   padding: 4px 0;
 }
 
-
 .item-crud i {
   display: flex;
 }
-
 
 .item-crud span {
   position: relative;
@@ -416,7 +412,7 @@ body {
 .modal-header .close {
   padding: 1rem;
   margin: -1rem -1rem -1rem auto;
-} 
+}
 
 button.close {
   background-color: transparent;
@@ -441,7 +437,6 @@ button.close {
 .input-group {
   width: 83.33333333%;
 }
-
 
 .txt-danger {
   margin-top: 5px;

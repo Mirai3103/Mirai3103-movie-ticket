@@ -4,10 +4,11 @@ use App\Core\Logger;
 use App\Core\Request;
 use App\Services\UserService;
 
-session_start();
 require 'vendor/autoload.php';
 
 require_once 'core/Preload.php';
+session_start();
+
 
 $GLOBALS['config'] = require 'config.php';
 
