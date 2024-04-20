@@ -26,52 +26,76 @@ needEmployee();
 
             ?>
 
-            <ul class="menu-links scrollable">
-                <?php foreach ($menu as $item): ?>
+            <ul class="menu-links scrollable " style=" transition: height 0.3s;">
+                <?php foreach ($menu as $key => $item): ?>
+                <?php if (isset($item['hasChildren'])): ?>
+                <li x-data="
+                        {
+                            open: false,
+                            toggle() {
+                                this.open = !this.open
+                            }
+                        }" x-init="
+                   
+                                const subMenu = document.getElementById('sub-menu-for-<?= $key ?>')
+                                     subMenu.querySelectorAll('li').forEach(item => {
+                                    item.style.display = 'none'
+                                })
+                        $watch('open', value => {
+                            if (value) {
+                                subMenu.querySelectorAll('li').forEach(item => {
+                                    item.style.display = 'block'
+                                })  
+                            } else {
+                                subMenu.querySelectorAll('li').forEach(item => {
+                                    item.style.display = 'none'
+                                })
+                            }
+                             
+                        })" class="menu-links__item" x-on:click="toggle()">
+                    <a class>
+                        <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
+                        <span class="text nav-text">
+                            <?= $item['text'] ?>
+                        </span>
+                        <i class="icon-drop-down fa-solid fa-sort-down"
+                            :style="open ? 'transform: rotate(90deg)' : 'transform: rotate(-90deg)'">
+                        </i>
+                    </a>
+                </li>
+                <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
+
+                    <?php foreach ($item['childrens'] as $child): ?>
                     <li class="menu-links__item">
-                        <a asp-action="index" asp-controller="Category" asp-area="Blog" href="<?= $item['href'] ?>">
-                            <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
+                        <a href="<?= $child['href'] ?>">
+                            <i class="menu-links__item-icon"></i>
 
                             <span class="text nav-text">
-                                <?= $item['text'] ?>
+                                <?= $child['text'] ?>
                             </span>
                         </a>
                     </li>
-                <?php endforeach; ?>
-                <div class="animation-dropdown">
-                    <li class="menu-links__item dropdown__item-cinema">
-                        <a asp-action="index" asp-controller="Category" asp-area="Blog"
-                            href="/admin/thong-ke-rap-chieu">
-                            <i class="menu-links__item-icon"></i>
-                            <span class="text nav-text">Rạp chiếu</span>
-                        </a>
-                    </li>
-
-                    <li class="menu-links__item dropdown__item-movie">
-                        <a asp-action="index" asp-controller="Category" asp-area="Blog" href="/admin/thong-ke-phim">
-                            <i class="menu-links__item-icon"></i>
-                            <span class="text nav-text">Phim</span>
-                        </a>
-                    </li>
-
-                    <li class="menu-links__item dropdown__item-product">
-                        <a asp-action="index" asp-controller="Category" asp-area="Blog" href="/admin/thong-ke-san-pham">
-                            <i class="menu-links__item-icon"></i>
-                            <span class="text nav-text">Sản phẩm</span>
-                        </a>
-                    </li>
+                    <?php endforeach; ?>
                 </div>
 
-                <li class="menu-links__item">
-                    <a class="" asp-action="index" asp-controller="Category" asp-area="Blog"
-                        href="/admin/cai-dat-website">
-                        <i class="fa-solid fa-gear menu-links__item-icon"></i>
-                        <span class="text nav-text">Website</span>
-                    </a>
-                </li>
             </ul>
 
-            <div class="menu-links__item py-2">
+            <?php else: ?>
+
+            <li class="menu-links__item">
+                <a href="<?= $item['href'] ?>">
+                    <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
+
+                    <span class="text nav-text">
+                        <?= $item['text'] ?>
+                    </span>
+                </a>
+            </li>
+            <?php endif; ?>
+            <?php endforeach; ?>
+            </ul>
+
+            <div class="py-2 menu-links__item">
                 <a asp-action="index" asp-controller="Category" asp-area="Blog" href="#">
                     <i class="fa-solid fa-right-from-bracket menu-links__item-icon"></i>
                     <span class="text nav-text">Đăng xuất</span>

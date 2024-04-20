@@ -319,7 +319,8 @@ require ('app/views/admin/header.php');
 
 
 <?php
+script('/public/loai-ve/ticket_details.js');
+
 require ('app/views/admin/footer.php');
 
-script('/public/loai-ve/ticket_details.js')
-    ?>
+?>

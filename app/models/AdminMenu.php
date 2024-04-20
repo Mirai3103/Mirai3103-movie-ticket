@@ -91,25 +91,27 @@ class AdminMenu
             'permissions' => [Permission::READ_NHOMQUYEN, Permission::CREATE_NHOMQUYEN, Permission::UPDATE_NHOMQUYEN, Permission::DELETE_NHOMQUYEN]
         ],
         [
-            'href' => '/admin/thong-ke-rap-chieu',
-            'icon' => '',
-            'text' => 'Rạp chiếu',
-            'parent' => 'Thống kê',
-            'permissions' => [Permission::THONG_KE]
-        ],
-        [
-            'href' => '/admin/thong-ke-phim',
-            'icon' => '',
-            'text' => 'Phim',
-            'parent' => 'Thống kê',
-            'permissions' => [Permission::THONG_KE]
-        ],
-        [
-            'href' => '/admin/thong-ke-san-pham',
-            'icon' => '',
-            'text' => 'Sản phẩm',
-            'parent' => 'Thống kê',
-            'permissions' => [Permission::THONG_KE]
+            'hasChildren' => true,
+            'icon' => 'fa-solid fa-chart-simple',
+            'text' => 'Thống kê',
+            'permissions' => [Permission::THONG_KE],
+            'childrens' => [
+                [
+                    'href' => '/admin/thong-ke/rap-chieu',
+                    'icon' => '',
+                    'text' => 'Rạp chiếu',
+                ],
+                [
+                    'href' => '/admin/thong-ke/phim',
+                    'icon' => '',
+                    'text' => 'Phim',
+                ],
+                [
+                    'href' => '/admin/thong-ke/san-pham',
+                    'icon' => '',
+                    'text' => 'Sản phẩm',
+                ]
+            ],
         ],
         [
             'href' => '/admin/cai-dat-website',

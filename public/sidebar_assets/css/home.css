@@ -165,13 +165,6 @@
   color: var(--text-color);
 }
 
-/*DROPDOWN */
-.animation-dropdown {
-  opacity: 0;
-  height: 0;
-  transition: var(--tran-05);
-}
-
 .icon-drop-down {
   position: relative;
   rotate: 90deg;
@@ -181,11 +174,6 @@
 .icon-drop-down.rotate {
   rotate: 0deg;
   margin-bottom: 5px;
-}
-
-.open.animation-dropdown {
-  opacity: 1;
-  height: 170px;
 }
 
 /* END DROPDOWN */
