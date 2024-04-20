@@ -11,8 +11,8 @@ require('app/views/admin/header.php')
         <div class="row justify-content-between px-5 mt-4">
             <div class="col-6">
                 <div class="input-group">
-                    <input type="text" name id="searchMovie" placeholder="Nhập tên rạp cần tìm" class="form-control">
-                    <button class="btn btn-outline-secondary align-items-center" type="button" id="searchMovie">
+                    <input type="text"  id="searchMovie" placeholder="Nhập tên rạp cần tìm" class="form-control">
+                    <button class="btn btn-outline-secondary align-items-center" type="button" id="searchMovieBtn">
                         <i class="fa-solid fa-magnifying-glass" style="display: flex;"></i>
                     </button>
                 </div>
@@ -20,81 +20,7 @@ require('app/views/admin/header.php')
 
             <!-- filter -->
             <div class="col-6 d-flex flex-nowrap justify-content-end">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mx-2">
-                    <div class="dropdown">
-                        <button class="btn border-0 fw-medium" data-bs-toggle="dropdown" aria-expanded="false">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter-filled"
-                                width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
-                                fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                <path
-                                    d="M20 3h-16a1 1 0 0 0 -1 1v2.227l.008 .223a3 3 0 0 0 .772 1.795l4.22 4.641v8.114a1 1 0 0 0 1.316 .949l6 -2l.108 -.043a1 1 0 0 0 .576 -.906v-6.586l4.121 -4.12a3 3 0 0 0 .879 -2.123v-2.171a1 1 0 0 0 -1 -1z"
-                                    stroke-width="0" fill="currentColor" />
-                            </svg>
-                            Filters
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <div class="d-flex justify-content-between align-items-center px-2 pb-2">
-                                    <div>
-                                        <label class="fw-semibold" for>Lọc</label>
-                                    </div>
-
-                                    <div class="d-flex flex-nowrap">
-                                        <button class="btn btn-light mx-2">Xóa
-                                            lọc</button>
-                                        <button class="btn btn-primary">Áp
-                                            dụng</button>
-                                    </div>
-                                </div>
-
-                            </li>
-
-                            <li>
-                                <hr class="dropdown-divider m-0">
-                            </li>
-
-                            <li>
-                                <form class="d-flex flex-wrap p-2">
-                                    <div class="row">
-                                        <label class="form-label" for>khoảng thời
-                                            gian</label>
-                                    </div>
-
-                                    <div class="row d-flex flex-nowrap">
-                                        <div class="col">
-                                            <input class="form-control" type="date" name id>
-                                        </div>
-                                        <div class="col">
-                                            <input class="form-control" type="date" name id>
-                                        </div>
-                                    </div>
-                                </form>
-                            </li>
-
-                            <li>
-                                <hr class="dropdown-divider m-0">
-                            </li>
-
-                            <li>
-                                <form class="d-flex flex-wrap p-2">
-                                    <div class="row">
-                                        <label class="form-label" for>Khoảng tiền</label>
-                                    </div>
-
-                                    <div class="row d-flex flex-nowrap">
-                                        <div class="col">
-                                            <input class="form-control" type="number" name id>
-                                        </div>
-                                        <div class="col">
-                                            <input class="form-control" type="number" name id>
-                                        </div>
-                                    </div>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                
 
                 <div>
                     <button type="button" class="btn btn-secondary" id="btn-create" data-bs-toggle="modal"
@@ -111,7 +37,9 @@ require('app/views/admin/header.php')
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name"
+                                onclick="onOrderChange('MaRapChieu')">
+                    
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -123,7 +51,9 @@ require('app/views/admin/header.php')
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name"
+                                onclick="onOrderChange('TenRapChieu')"
+                            >
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -139,13 +69,15 @@ require('app/views/admin/header.php')
                                 Địa chỉ
                             </div>
                         </th>
-                        <th scope="col">Trạng thái</th>
-                        <th scope="col">Mô tả</th>
+                        <th scope="col"
+                        onclick="onOrderChange('TrangThai')"
+                        >Trạng thái</th>
+             
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr onclick="window.location.href=''">
+                <tbody id="cinemaList">
+                    <tr >
                         <th scope="row" class="col-id table-plus">1</th>
                         <td class="col-name ps-0">
                             <div class="d-flex align-items-center">
@@ -231,10 +163,10 @@ require('app/views/admin/header.php')
     <div class="modal fade bs-example-modal-lg" id="cinema-detail-modal" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
+            <form class="modal-content" id="cinema-form">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myLargeModalLabel">
-                        Thông tin
+                    <h4 class="modal-title" id="input-cinema-title">
+                       Tạo rạp chiếu mới
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btn-close-cinema">
                         ×
@@ -247,10 +179,10 @@ require('app/views/admin/header.php')
                                 Mã rạp chiếu
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="cinema-id"
-                                    aria-describedby="cinema-id-feedback" required>
-                                <div id="cinema-id-feedback" class="invalid-feedback">
-                                    Please choose a username.
+                                <input disabled type="text" class="form-control " id="cinema-id"
+                                     required>
+                                <div class="invalid-feedback">
+                   
                                 </div>
                             </div>
                         </div>
@@ -260,20 +192,28 @@ require('app/views/admin/header.php')
                                 Tên rạp chiếu
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="cinema-name"
-                                    aria-describedby="cinema-price-feedback" required>
-                                <div id="cinema-name-feedback" class="invalid-feedback">
-                                    Please choose a username.
+                                <input type="text" class="form-control" id="cinema-name"
+                                    required>
+                                <div class="invalid-feedback">
+                             
                                 </div>
                             </div>
                         </div>
 
                         <div class="row d-flex mt-2">
-                            <label for="product-img" class="col-xl-2">Hình ảnh</label>
-                            <div class="has-validation col-xl-10 p-0">
-                                <input type="file" class="form-control is-invalid" aria-label="file example" required
-                                    id="cinema-img">
-                                <div class="invalid-feedback d-block">Example invalid form file feedback</div>
+                            <label class="col-xl-2">Hình
+                                ảnh</label>
+                            <div class="input-group col-xl-10 tw-p-0" >
+                                <input type="url" class="form-control" placeholder="Link hình ảnh"
+                                    aria-label="Recipient's username" aria-describedby="button-addon2" id="cinema-image"
+                                    required>
+                                <label class="btn btn-outline-secondary">Chọn
+                                    <input type="file" hidden accept="image/*" id="cinema-image-file">
+                                    <span hidden class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                </label>
+                                <div id="cinema-image-error" class="invalid-feedback">
+                                </div>
                             </div>
                         </div>
 
@@ -282,26 +222,27 @@ require('app/views/admin/header.php')
                                 Địa chỉ
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid text-danger" id="cinema-address"
-                                    aria-describedby="cinema-address-feedback" required>
-                                <div id="cinema-address-feedback" class="invalid-feedback">
-                                    Please choose a username.
+                                <input type="text" class="form-control" id="cinema-address"
+                                    required>
+                                <div class="invalid-feedback">
+                                 
                                 </div>
                             </div>
                         </div>
 
                         <div class="row d-flex mt-2">
-                            <label for="cinema-product-status" class="col-xl-2">
+                            <label for="cinema-status" class="col-xl-2">
                                 Trạng thái
                             </label>
                             <div class="col-xl-10 p-0">
-                                <select class="form-select is-invalid text-danger" id="validationServer04"
-                                    aria-describedby="validationServer04Feedback" required>
-                                    <option selected disabled value="">Choose...</option>
-                                    <option>...</option>
+                                <select class="form-select " id="cinema-status"
+                                  required>
+                                    <option selected disabled value="">chọn...</option>
+                                    <?php foreach ($cinemaStatuses as $status) : ?>
+                                        <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
+                                    <?php endforeach; ?>
                                 </select>
-                                <div id="validationServer04Feedback" class="invalid-feedback">
-                                    Please select a valid state.
+                                <div class="invalid-feedback">
                                 </div>
                             </div>
                         </div>
@@ -311,10 +252,9 @@ require('app/views/admin/header.php')
                                 Mô tả
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <textarea id="cinema-des" required class="form-control is-invalid"
-                                    aria-describedby="cinema-des-feedback"></textarea>
-                                <div id="cinema-des-feedback" class="invalid-feedback">
-                                    Please choose a username.
+                                <textarea id="cinema-des" required class="form-control "
+                                 ></textarea>
+                                <div class="invalid-feedback">
                                 </div>
                             </div>
                         </div>
@@ -323,13 +263,13 @@ require('app/views/admin/header.php')
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btn-cancel-cinema">
-                        Cancel
+                        Hủy
                     </button>
-                    <button type="button" class="btn btn-primary" id="btn-save-cinema">
-                        Save
+                    <button type="submit" class="btn btn-primary" id="btn-save-cinema">
+                        Lưu
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

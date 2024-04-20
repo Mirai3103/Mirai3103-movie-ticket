@@ -9,8 +9,15 @@ use App\Models\JsonResponse;
 class FileService
 {
     private static $UPLOAD_DIR = '/public/uploads/';
+    private static function createUploadDir(): void
+    {
+        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . self::$UPLOAD_DIR)) {
+            mkdir($_SERVER['DOCUMENT_ROOT'] . self::$UPLOAD_DIR, 0777, true);
+        }
+    }
     public static function upload(mixed $file): JsonResponse
     {
+        self::createUploadDir();
         $name = $file["name"];
         $nameParts = explode(".", $name);
         $ext = end($nameParts);

@@ -6,6 +6,7 @@ use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
 use App\Core\Request;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiRap;
 
 class CinemaService
 {
@@ -19,13 +20,14 @@ class CinemaService
 
     public static function getAllCinemas($query = [])
     {
-        // $cinemas = Database::findAll("RapChieu", ["MaRapChieu", "TenRapChieu"]);
-        // return $cinemas;
+
         $queryBuilder = new QueryBuilder();
         $keyword = getArrayValueSafe($query, 'tu-khoa');
         $statuses = getArrayValueSafe($query, 'trang-thais');
         $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
-        $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 10);
+        $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 100);
+        $order = getArrayValueSafe($query, 'sap-xep','MaRapChieu');
+        $sort = getArrayValueSafe($query, 'thu-tu','ASC');
         $offset = ($page - 1) * $limit;
         $queryBuilder->select(['RapChieu.*'])
             ->from('RapChieu')
@@ -42,6 +44,7 @@ class CinemaService
             $queryBuilder->where('TrangThai', 'IN', $statuses);
         }
         $total = $queryBuilder->count();
+        $queryBuilder->orderBy($order, $sort);
         $queryBuilder->limit($limit, $offset);
         $cinemas = $queryBuilder->get();
         Request::setQueryCount($total);
@@ -89,12 +92,11 @@ class CinemaService
     public static function createNewCinema($data)
     {
         $params = [
-            'MaRapChieu' => $data['MaRapChieu'],
             'TenRapChieu' => $data['TenRapChieu'],
-            'DiaCchi' => $data['DiaChi'],
+            'DiaChi' => $data['DiaChi'],
             'HinhAnh' => $data['HinhAnh'],
             'MoTa' => $data['MoTa'],
-            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+           'TrangThai' => $data['TrangThai'] ?? TrangThaiRap::Hien->value
         ];
         $result = Database::insert('RapChieu', $params);
         if ($result) {
