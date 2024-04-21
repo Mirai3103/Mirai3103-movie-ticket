@@ -60,3 +60,14 @@ enum TrangThaiRap: int
     case An = 22;
     case Hien = 23;
 }
+enum TrangThaiLoaiGhe: int
+{
+    case An = 24;
+    case Hien = 25;
+}
+
+enum LoaiTaiKhoan: int
+{
+    case NhanVien = 1;
+    case KhachHang = 2;
+}

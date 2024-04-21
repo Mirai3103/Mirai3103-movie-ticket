@@ -5,24 +5,24 @@ require ('app/views/admin/header.php');
 
 ?>
 <script>
-const ticketTypes = <?= json_encode($ticketTypes) ?>;
-const ticketTypeStatus = <?= json_encode($ticketTypesStatus) ?>;
+const seatTypes = <?= json_encode($seatTypes) ?>;
+const seatTypeStatus = <?= json_encode($seatTypesStatus) ?>;
 </script>
-<link rel="stylesheet" href="/public/loai-ve/home.css">
+<link rel="stylesheet" href="/public/loai-ghe/home.css">
 
 <div x-data="
 {
-    filteredTicketTypes: ticketTypes,
+    filteredSeatTypes: seatTypes,
     currentOrderDirection: 'asc',
-    currentOrderBy: 'MaLoaiVe',
-    orderBy:function(column='MaLoaiVe') {
+    currentOrderBy: 'MaLoaiGhe',
+    orderBy:function(column='MaLoaiGhe') {
         if (column == this.currentOrderBy) {
             this.currentOrderDirection = this.currentOrderDirection === 'asc' ? 'desc' : 'asc';
         } else {
             this.currentOrderBy = column;
             this.currentOrderDirection = 'asc';
         }
-        this.filteredTicketTypes = this.filteredTicketTypes.sort((a, b) => {
+        this.filteredSeatTypes = this.filteredSeatTypes.sort((a, b) => {
             if (this.currentOrderDirection === 'asc') {
                 return a[column] > b[column] ? 1 : -1;
             } else {
@@ -34,8 +34,8 @@ const ticketTypeStatus = <?= json_encode($ticketTypesStatus) ?>;
 }
 " x-init="
 $watch('keyword', value => {
-    filteredTicketTypes = ticketTypes.filter(ticketType => {
-        return ticketType.TenLoaiVe.toLowerCase().includes(value.toLowerCase());
+    filteredSeatTypes = seatTypes.filter(seatType => {
+        return seatType.TenLoaiGhe.toLowerCase().includes(value.toLowerCase());
     }).sort((a, b) => {
         if (currentOrderDirection === 'asc') {
             return a[currentOrderBy] > b[currentOrderBy] ? 1 : -1;
@@ -64,7 +64,7 @@ $watch('keyword', value => {
 
                 <div>
                     <button type="button" class="btn btn-secondary" id="btn-create" data-bs-toggle="modal"
-                        data-bs-target="#type-ticket-detail-modal" type="button">Thêm mới
+                        data-bs-target="#type-seat-detail-modal" type="button">Thêm mới
                     </button>
                 </div>
             </div>
@@ -103,7 +103,7 @@ $watch('keyword', value => {
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name" x-on:click="orderBy('MaLoaiVe')">
+                            <div class="col-name" x-on:click="orderBy('MaLoaiGhe')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -111,11 +111,11 @@ $watch('keyword', value => {
                                     <path d="M3 9l4 -4l4 4m-4 -4v14" />
                                     <path d="M21 15l-4 4l-4 -4m4 4v-14" />
                                 </svg>
-                                Mã loại vé
+                                Mã loại ghế
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name" x-on:click="orderBy('TenLoaiVe')">
+                            <div class="col-name" x-on:click="orderBy('TenLoaiGhe')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -123,7 +123,7 @@ $watch('keyword', value => {
                                     <path d="M3 9l4 -4l4 4m-4 -4v14" />
                                     <path d="M21 15l-4 4l-4 -4m4 4v-14" />
                                 </svg>
-                                Tên loại vé
+                                Tên loại ghế
                             </div>
                         </th>
                         <th scope="col">
@@ -138,7 +138,7 @@ $watch('keyword', value => {
                                 Phụ thu
                             </div>
                         </th>
-                        <th scope="col">Áp dụng cho ghế </th>
+                        <th scope="col">Số người</th>
                         <th scope="col">
                             Trạng thái
                         </th>
@@ -146,35 +146,36 @@ $watch('keyword', value => {
                     </tr>
                 </thead>
                 <tbody>
-                    <template x-for="ticketType in filteredTicketTypes" :key="ticketType.MaLoaiVe">
+                    <template x-for="seatType in filteredSeatTypes" :key="seatType.MaLoaiGhe">
                         <tr>
                             <th scope="row" class="col-id table-plus">
-                                <span x-text="ticketType.MaLoaiVe">
+                                <span x-text="seatType.MaLoaiGhe">
 
                                 </span>
                             </th>
                             <td class=" ps-0">
                                 <div class="d-flex align-items-center">
                                     <div class="col-name">
-                                        <span x-text="ticketType.TenLoaiVe">
+                                        <span x-text="seatType.TenLoaiGhe">
 
                                         </span>
                                     </div>
                                 </div>
                             </td>
                             <td class="col-price">
-                                <span x-text="toVnd(ticketType.GiaVe)">
+                                <span x-text="toVnd(seatType.GiaVe)">
 
                                 </span>
                             </td>
                             <td class="col-des">
-                                <span x-text="ticketType.Rong+ ' Người'">
+                                <span x-text="seatType.Rong+ ' Người'">
 
                                 </span>
                             </td>
                             <td>
                                 <span
-                                    x-text="ticketTypeStatus.find(status => status.MaTrangThai == ticketType.TrangThai)?.Ten||'Hiện'">
+                                    x-text="seatTypeStatus.find(status => status.MaTrangThai == seatType.TrangThai)?.Ten||'Hiện'">
+
                                 </span>
                             </td>
                             <td class="col-crud">
@@ -191,7 +192,7 @@ $watch('keyword', value => {
                                     <ul class="dropdown-menu">
 
                                         <li>
-                                            <div x-on:click="showEditModal(ticketType.MaLoaiVe)"
+                                            <div x-on:click="showEditModal(seatType.MaLoaiGhe)"
                                                 class="dropdown-item !tw-text-yellow-400">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                     fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -207,9 +208,9 @@ $watch('keyword', value => {
                                         <li>
 
                                             <div class="dropdown-item " x-init="
-                                            console.log(ticketType.TrangThai);
-                                            " :class="{'!tw-text-green-500': ticketType.TrangThai==13, '!tw-text-red-500': ticketType.TrangThai!=13}"
-                                                x-on:click="ticketType.TrangThai!=13 ? showDeleteModal(ticketType.MaLoaiVe) : onRecoverLoaiVe(ticketType.MaLoaiVe)">
+                                            console.log(seatType.TrangThai);
+                                            " :class="{'!tw-text-green-500': seatType.TrangThai==13, '!tw-text-red-500': seatType.TrangThai!=13}"
+                                                x-on:click="seatType.TrangThai!=13 ? showDeleteModal(seatType.MaLoaiGhe) : onRecoverLoaiGhe(seatType.MaLoaiGhe)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                                     fill="currentColor" class="tw-w-6 tw-h-6">
                                                     <path
@@ -219,7 +220,7 @@ $watch('keyword', value => {
                                                         clip-rule="evenodd" />
                                                 </svg>
                                                 <span class="px-xl-3 "
-                                                    x-text="ticketType.TrangThai==13 ? 'Hiện' : 'Xoá/Ẩn'">
+                                                    x-text="seatType.TrangThai==13 ? 'Hiện' : 'Xoá/Ẩn'">
                                                 </span>
                                             </div>
                                         </li>
@@ -239,66 +240,66 @@ $watch('keyword', value => {
     </div>
 
 
-    <!-- Type ticket Details Modal -->
-    <div class="modal fade bs-example-modal-lg" id="type-ticket-detail-modal" tabindex="-1" role="dialog"
+    <!-- Type seat Details Modal -->
+    <div class="modal fade bs-example-modal-lg" id="type-seat-detail-modal" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <form class="modal-content" id="type-ticket-detail-form">
+            <form class="modal-content" id="type-seat-detail-form">
                 <div class="modal-header">
                     <h4 class="modal-title" id="modal-title">
                         Thông tin
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
-                        id="btn-close-type-ticket-detail">
+                        id="btn-close-type-seat-detail">
                         ×
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="create-type-ticket container bg-white">
+                    <div class="create-type-seat container bg-white">
                         <div class="row d-flex mt-2">
-                            <label for="type-ticket-id" class="col-xl-2">
-                                Mã loại vé
+                            <label for="type-seat-id" class="col-xl-2">
+                                Mã loại ghế
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input disabled type="text" class="form-control " id="type-ticket-id"
-                                    aria-describedby="type-ticket-id-feedback" required>
-                                <div id="type-ticket-id-feedback" class="invalid-feedback">
+                                <input disabled type="text" class="form-control " id="type-seat-id"
+                                    aria-describedby="type-seat-id-feedback" required>
+                                <div id="type-seat-id-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>
                             </div>
                         </div>
 
                         <div class="row d-flex mt-2">
-                            <label for="type-ticket-name" class="col-xl-2">
-                                Tên loại vé
+                            <label for="type-seat-name" class="col-xl-2">
+                                Tên loại ghế
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control " id="type-ticket-name"
-                                    aria-describedby="type-ticket-price-feedback" required>
-                                <div id="type-ticket-name-feedback" class="invalid-feedback">
+                                <input type="text" class="form-control " id="type-seat-name"
+                                    aria-describedby="type-seat-price-feedback" required>
+                                <div id="type-seat-name-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>
                             </div>
                         </div>
 
                         <div class="row d-flex mt-2">
-                            <label for="type-ticket-price" class="col-xl-2">
-                                Giá tiền
+                            <label for="type-seat-price" class="col-xl-2">
+                                Phụ thu
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="number" class="form-control " id="type-ticket-price"
-                                    aria-describedby="type-ticket-price-feedback" required>
-                                <div id="type-ticket-price-feedback" class="invalid-feedback">
+                                <input type="number" class="form-control " id="type-seat-price"
+                                    aria-describedby="type-seat-price-feedback" required>
+                                <div id="type-seat-price-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>
                             </div>
                         </div>
                         <div class="row d-flex mt-2">
                             <label for="cinema-status" class="col-xl-2">
-                                Ghế áp dụng
+                                Số người
                             </label>
                             <div class="col-xl-10 p-0">
-                                <select class="form-select " id="type-ticket-seat" required>
+                                <select class="form-select " id="type-seat-seat" required>
                                     <option selected disabled value="">chọn...</option>
                                     <option value="1">Ghế đơn </option>
                                     <option value="2">Ghế đôi</option>
@@ -311,13 +312,25 @@ $watch('keyword', value => {
                             </div>
                         </div>
                         <div class="row d-flex mt-2">
-                            <label for="type-ticket-des" class="col-xl-2">
+                            <label for="type-seat-color" class="col-xl-2">
+                                Màu hiển thị
+                            </label>
+                            <div class="input-group  has-validation col-xl-10 p-0">
+                                <input type="color" class="form-control form-control-color" id="type-seat-color"
+                                    required>
+                                <div id="type-seat-price-feedback" class="invalid-feedback">
+                                    Please choose a username.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row d-flex mt-2">
+                            <label for="type-seat-des" class="col-xl-2">
                                 Mô tả
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <textarea id="type-ticket-des" required class="form-control "
-                                    aria-describedby="type-ticket-des-feedback"></textarea>
-                                <div id="type-ticket-des-feedback" class="invalid-feedback">
+                                <textarea id="type-seat-des" class="form-control "
+                                    aria-describedby="type-seat-des-feedback"></textarea>
+                                <div id="type-seat-des-feedback" class="invalid-feedback">
                                     Please choose a username.
                                 </div>
                             </div>
@@ -326,10 +339,10 @@ $watch('keyword', value => {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btn-cancel-type-ticket">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btn-cancel-type-seat">
                         Hủy
                     </button>
-                    <button type="submit" class="btn btn-primary" id="btn-save-type-ticket">
+                    <button type="submit" class="btn btn-primary" id="btn-save-type-seat">
                         Lưu
                     </button>
                 </div>
@@ -341,7 +354,7 @@ $watch('keyword', value => {
 
 
 <?php
-script('/public/loai-ve/ticket_details.js');
+script('/public/loai-ghe/seat_details.js');
 
 require ('app/views/admin/footer.php');
 

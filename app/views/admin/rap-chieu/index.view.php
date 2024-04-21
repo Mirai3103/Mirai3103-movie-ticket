@@ -1,7 +1,7 @@
 <?php
 title("Quản lý rạp chiếu");
-require('app/views/admin/header.php')
-?>
+require ('app/views/admin/header.php')
+    ?>
 
 <link rel="stylesheet" href="/public/rap-chieu/home.css">
 
@@ -11,7 +11,7 @@ require('app/views/admin/header.php')
         <div class="row justify-content-between px-5 mt-4">
             <div class="col-6">
                 <div class="input-group">
-                    <input type="text"  id="searchMovie" placeholder="Nhập tên rạp cần tìm" class="form-control">
+                    <input type="text" id="searchMovie" placeholder="Nhập tên rạp cần tìm" class="form-control">
                     <button class="btn btn-outline-secondary align-items-center" type="button" id="searchMovieBtn">
                         <i class="fa-solid fa-magnifying-glass" style="display: flex;"></i>
                     </button>
@@ -20,7 +20,7 @@ require('app/views/admin/header.php')
 
             <!-- filter -->
             <div class="col-6 d-flex flex-nowrap justify-content-end">
-                
+
 
                 <div>
                     <button type="button" class="btn btn-secondary" id="btn-create" data-bs-toggle="modal"
@@ -37,9 +37,8 @@ require('app/views/admin/header.php')
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name"
-                                onclick="onOrderChange('MaRapChieu')">
-                    
+                            <div class="col-name" onclick="onOrderChange('MaRapChieu')">
+
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -51,9 +50,7 @@ require('app/views/admin/header.php')
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name"
-                                onclick="onOrderChange('TenRapChieu')"
-                            >
+                            <div class="col-name" onclick="onOrderChange('TenRapChieu')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -69,15 +66,13 @@ require('app/views/admin/header.php')
                                 Địa chỉ
                             </div>
                         </th>
-                        <th scope="col"
-                        onclick="onOrderChange('TrangThai')"
-                        >Trạng thái</th>
-             
+                        <th scope="col" onclick="onOrderChange('TrangThai')">Trạng thái</th>
+
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody id="cinemaList">
-                    <tr >
+                    <tr>
                         <th scope="row" class="col-id table-plus">1</th>
                         <td class="col-name ps-0">
                             <div class="d-flex align-items-center">
@@ -158,7 +153,36 @@ require('app/views/admin/header.php')
         <!-- hết thanh phân trang và số dòng hiển thị -->
     </div>
 
-
+    <div class="modal" tabindex="-1" role="dialog" id="delete-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Bạn có chắc chắn muốn xóa rạp chiếu này không?
+                    </p>
+                    <p>
+                        Rạp đã có phòng sẽ bị ẩn thay vì xóa
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="btn-delete">
+                        Xóa
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="
+                    $('#delete-modal').modal('hide');
+                    ">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Type ticket Details Modal -->
     <div class="modal fade bs-example-modal-lg" id="cinema-detail-modal" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -166,7 +190,7 @@ require('app/views/admin/header.php')
             <form class="modal-content" id="cinema-form">
                 <div class="modal-header">
                     <h4 class="modal-title" id="input-cinema-title">
-                       Tạo rạp chiếu mới
+                        Tạo rạp chiếu mới
                     </h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="btn-close-cinema">
                         ×
@@ -179,10 +203,9 @@ require('app/views/admin/header.php')
                                 Mã rạp chiếu
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input disabled type="text" class="form-control " id="cinema-id"
-                                     required>
+                                <input disabled type="text" class="form-control " id="cinema-id" required>
                                 <div class="invalid-feedback">
-                   
+
                                 </div>
                             </div>
                         </div>
@@ -192,10 +215,9 @@ require('app/views/admin/header.php')
                                 Tên rạp chiếu
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control" id="cinema-name"
-                                    required>
+                                <input type="text" class="form-control" id="cinema-name" required>
                                 <div class="invalid-feedback">
-                             
+
                                 </div>
                             </div>
                         </div>
@@ -203,7 +225,7 @@ require('app/views/admin/header.php')
                         <div class="row d-flex mt-2">
                             <label class="col-xl-2">Hình
                                 ảnh</label>
-                            <div class="input-group col-xl-10 tw-p-0" >
+                            <div class="input-group col-xl-10 tw-p-0">
                                 <input type="url" class="form-control" placeholder="Link hình ảnh"
                                     aria-label="Recipient's username" aria-describedby="button-addon2" id="cinema-image"
                                     required>
@@ -222,10 +244,9 @@ require('app/views/admin/header.php')
                                 Địa chỉ
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control" id="cinema-address"
-                                    required>
+                                <input type="text" class="form-control" id="cinema-address" required>
                                 <div class="invalid-feedback">
-                                 
+
                                 </div>
                             </div>
                         </div>
@@ -235,10 +256,9 @@ require('app/views/admin/header.php')
                                 Trạng thái
                             </label>
                             <div class="col-xl-10 p-0">
-                                <select class="form-select " id="cinema-status"
-                                  required>
+                                <select class="form-select " id="cinema-status" required>
                                     <option selected disabled value="">chọn...</option>
-                                    <?php foreach ($cinemaStatuses as $status) : ?>
+                                    <?php foreach ($cinemaStatuses as $status): ?>
                                         <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
                                     <?php endforeach; ?>
                                 </select>
@@ -252,8 +272,7 @@ require('app/views/admin/header.php')
                                 Mô tả
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <textarea id="cinema-des" required class="form-control "
-                                 ></textarea>
+                                <textarea id="cinema-des" required class="form-control "></textarea>
                                 <div class="invalid-feedback">
                                 </div>
                             </div>
@@ -277,5 +296,5 @@ require('app/views/admin/header.php')
 
 <?php
 script('/public/rap-chieu/cinema_details.js');
-require('app/views/admin/footer.php');
+require ('app/views/admin/footer.php');
 ?>

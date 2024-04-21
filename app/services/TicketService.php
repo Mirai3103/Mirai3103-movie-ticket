@@ -3,13 +3,19 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiLoaiVe;
 use App\Models\TrangThaiVe;
 
 class TicketService
 {
 
+    public static function getTicketTypeById($id)
+    {
+        return Database::queryOne("SELECT * FROM LoaiVe WHERE MaLoaiVe = ?", [$id]);
+    }
     public static function isSeatLocked($seatId, $showId)
     {
+
         $ticket = Database::queryOne("SELECT * FROM Ve WHERE MaGhe = ? AND MaSuatChieu = ?", [$seatId, $showId]);
         // KhoaDen	type = timestamp	
         $trangThai = $ticket['TrangThai'];
@@ -85,12 +91,12 @@ class TicketService
     public static function createNewTicketType($data)
     {
         $params = [
-            'MaLoaiVe' => $data['MaLoaiVe'],
             'TenLoaiVe' => $data['TenLoaiVe'],
             'GiaVe' => $data['GiaVe'],
             'MoTa' => $data['MoTa'],
-            //   'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value,
-            'Rong' => $data['Rong']
+            'TrangThai' => $data['TrangThai'] ?? TrangThaiLoaiVe::DangHoatDong->value,
+            'Rong' => $data['Rong'],
+            'Mau' => $data['Mau']
         ];
         $result = Database::insert('LoaiVe', $params);
         if ($result) {
@@ -105,8 +111,8 @@ class TicketService
             'TenLoaiVe' => $data['TenLoaiVe'],
             'GiaVe' => $data['GiaVe'],
             'MoTa' => $data['MoTa'],
-            //      'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value,
-            'Rong' => $data['Rong']
+            'Rong' => $data['Rong'],
+            'Mau' => $data['Mau']
         ];
         $result = Database::update('LoaiVe', $params, "MaLoaiVe=$id");
         if ($result) {
@@ -123,6 +129,28 @@ class TicketService
         }
         return JsonResponse::error('Xóa thất bại', 500);
     }
+
+    public static function toggleHideTicketType($id)
+    {
+        $ticketType = Database::queryOne("SELECT * FROM LoaiVe WHERE MaLoaiVe = ?", [$id]);
+        $trangThai = $ticketType['TrangThai'];
+        if ($trangThai == TrangThaiLoaiVe::DangHoatDong->value) {
+            $countTickets = Database::queryOne("SELECT COUNT(*) as count FROM Ve WHERE MaLoaiVe = ?", [$id]);
+            if ($countTickets['count'] > 0) {
+                $trangThai = TrangThaiLoaiVe::An->value;
+            } else {
+                return self::deleteTicketType($id);
+            }
+        } else {
+            $trangThai = TrangThaiLoaiVe::DangHoatDong->value;
+        }
+        $result = Database::update('LoaiVe', ['TrangThai' => $trangThai], "MaLoaiVe=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+
     public static function createEmptyTickets($showId)
     {
         $show = ShowService::getShowById($showId);

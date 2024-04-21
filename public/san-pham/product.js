@@ -280,6 +280,8 @@ $("#form-input-product").submit(function (e) {
   if (modalState == "edit") {
     url = "/api/san-pham/" + $("#MaThucPham").val().trim();
   }
+  disableAllButton();
+
   $.ajax({
     url: url,
     type: "POST",
@@ -306,6 +308,7 @@ $("#form-input-product").submit(function (e) {
       $("#btn-save").prop("disabled", false);
       $("#btn-save span").show();
       $("#btn-save .spinner-border").hide();
+      enableAllButton();
     },
   });
 });

@@ -1,75 +1,74 @@
 // button close Modal
-var modal = document.getElementById("type-ticket-detail-modal");
-var txtIdTypeTicket = document.getElementById("type-ticket-id");
-var txtNameTypeTicket = document.getElementById("type-ticket-name");
-var txtPriceTypeTicket = document.getElementById("type-ticket-price");
-var txtDesTypeTicket = document.getElementById("type-ticket-des");
+var modal = document.getElementById("type-seat-detail-modal");
+var txtIdTypeSeat = document.getElementById("type-seat-id");
+var txtNameTypeSeat = document.getElementById("type-seat-name");
+var txtPriceTypeSeat = document.getElementById("type-seat-price");
+var txtDesTypeSeat = document.getElementById("type-seat-des");
+const colorInput = document.getElementById("type-seat-color");
 
-// Button đóng modal loại vé
-var btnCloseTypeTicketDetail = document.getElementById(
-  "btn-close-type-ticket-detail"
+var btnCloseTypeSeatDetail = document.getElementById(
+  "btn-close-type-seat-detail"
 );
-btnCloseTypeTicketDetail.addEventListener("click", function () {
+btnCloseTypeSeatDetail.addEventListener("click", function () {
   if (modal) {
-    txtIdTypeTicket.value = "";
-    txtNameTypeTicket.value = "";
-    txtPriceTypeTicket.value = "";
-    txtDesTypeTicket.value = "";
     $(modal).modal("hide");
   }
 });
-
+$(modal).on("hidden.bs.modal", function () {
+  $("#type-seat-detail-form").trigger("reset");
+  $("#type-seat-detail-form .is-invalid").removeClass("is-invalid");
+});
 // Button cancel loại vé
-var btnCancelTypeTicketDetail = document.getElementById(
-  "btn-cancel-type-ticket"
-);
-btnCancelTypeTicketDetail.addEventListener("click", function () {
-  txtIdTypeTicket.value = "";
-  txtNameTypeTicket.value = "";
-  txtPriceTypeTicket.value = "";
-  txtDesTypeTicket.value = "";
+var btnCancelTypeSeatDetail = document.getElementById("btn-cancel-type-seat");
+btnCancelTypeSeatDetail.addEventListener("click", function () {
   $(modal).modal("hide");
 });
 
 // Button save loại vé
-var btnSaveTypeTicketDetail = document.getElementById("btn-save-type-ticket");
-btnSaveTypeTicketDetail.addEventListener("click", function () {});
+var btnSaveTypeSeatDetail = document.getElementById("btn-save-type-seat");
+btnSaveTypeSeatDetail.addEventListener("click", function () {});
 
 function validateForm() {
   let isValid = true;
 
-  if (Number($("#type-ticket-price").val()) < 0) {
-    $("#type-ticket-price").addClass("is-invalid");
-    $("#type-ticket-price-feedback").text("Giá vé phải lớn hơn 0");
-    $("#type-ticket-price").one("input", function () {
-      $("#type-ticket-price").removeClass("is-invalid");
+  if (Number($("#type-seat-price").val()) <= 0) {
+    $("#type-seat-price").addClass("is-invalid");
+    $("#type-seat-price-feedback").text("Giá vé phải lớn hơn 0");
+    $("#type-seat-price").one("input", function () {
+      $("#type-seat-price").removeClass("is-invalid");
     });
     isValid = false;
   }
 
   return isValid;
 }
-$("#type-ticket-detail-form").on("submit", function (e) {
+$("#type-seat-detail-form").on("submit", function (e) {
   e.preventDefault();
-
   if (!validateForm()) {
     return;
   }
-  const id = txtIdTypeTicket.value;
-  const name = txtNameTypeTicket.value;
-  const price = txtPriceTypeTicket.value;
-  const des = txtDesTypeTicket.value;
-  const rong = $("#type-ticket-seat").val();
-  let url = "/ajax/loai-ve";
+  const id = txtIdTypeSeat.value;
+  const name = txtNameTypeSeat.value;
+  const price = txtPriceTypeSeat.value;
+  const des = txtDesTypeSeat.value;
+  const rong = $("#type-seat-seat").val();
+  let url = "/ajax/loai-ghe";
   if (id) {
-    url = `/ajax/loai-ve/${id}/sua`;
+    url = `/ajax/loai-ghe/${id}/sua`;
   }
   const formData = new FormData();
-  formData.append("TenLoaiVe", name);
+  formData.append("TenLoaiGhe", name);
   formData.append("GiaVe", price);
   formData.append("MoTa", des);
   formData.append("Rong", rong);
-
+  formData.append("Mau", colorInput.value);
+  console.log({
+    TenLoaiGhe: name,
+    GiaVe: price,
+    MoTa: des,
+    Rong: rong,
+    Mau: colorInput.value,
+  });
   toast("Đang xử lý", {
     position: "bottom-center",
     type: "info",
@@ -105,16 +104,17 @@ $("#type-ticket-detail-form").on("submit", function (e) {
 
 function showEditModal(id) {
   $.ajax({
-    url: `/api/loai-ve/${id}`,
+    url: `/api/loai-ghe/${id}`,
     type: "GET",
     success: function (data) {
-      const typeTicket = data;
-      console.log(typeTicket);
-      txtIdTypeTicket.value = id;
-      txtNameTypeTicket.value = typeTicket.TenLoaiVe;
-      txtPriceTypeTicket.value = typeTicket.GiaVe;
-      txtDesTypeTicket.value = typeTicket.MoTa;
-      $("#type-ticket-seat").val(typeTicket.Rong);
+      const typeSeat = data;
+      console.log(typeSeat);
+      txtIdTypeSeat.value = id;
+      txtNameTypeSeat.value = typeSeat.TenLoaiGhe;
+      txtPriceTypeSeat.value = typeSeat.GiaVe;
+      txtDesTypeSeat.value = typeSeat.MoTa;
+      colorInput.value = typeSeat.Mau;
+      $("#type-seat-seat").val(typeSeat.Rong);
       $(modal).modal("show");
     },
     error: function (error) {
@@ -134,9 +134,9 @@ function showDeleteModal(id) {
   $("#delete-modal .modal-title").text("Xóa loại vé #" + id);
 }
 
-function onRecoverLoaiVe(id) {
+function onRecoverLoaiGhe(id) {
   $.ajax({
-    url: `/ajax/loai-ve/${id}/toggleHienThi`,
+    url: `/ajax/loai-ghe/${id}/toggleHienThi`,
     type: "POST",
     success: function (data) {
       refetchAjax();
@@ -157,7 +157,7 @@ function onRecoverLoaiVe(id) {
 
 $("#btn-delete").on("click", function () {
   $.ajax({
-    url: `/ajax/loai-ve/${currentSelectedId}/toggleHienThi`,
+    url: `/ajax/loai-ghe/${currentSelectedId}/toggleHienThi`,
     type: "POST",
     success: function (data) {
       refetchAjax();

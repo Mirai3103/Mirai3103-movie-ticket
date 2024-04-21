@@ -27,6 +27,16 @@ class CinemaController
 
         return json(JsonResponse::ok($results));
     }
+    #[Route("/api/rap/{id}", "GET")]
+    public static function getCinemaById($id)
+    {
+        $result = CinemaService::getCinemaById($id);
+        if ($result == null) {
+            return json(JsonResponse::error("Cinema not found", 404));
+        }
+        return json(JsonResponse::ok($result));
+    }
+
     #[Route("/api/phong-chieu/ids/rap", "POST")]
     public static function getCinemasByRoomIds()
     {
@@ -36,17 +46,19 @@ class CinemaController
         $results = CinemaService::getCinemasByRoomIds(request_body()["roomIds"]);
         return json(JsonResponse::ok($results));
     }
-    #[Route("/admin/rap-chieu","GET")]
-    public static function quanLyRap(){
+    #[Route("/admin/rap-chieu", "GET")]
+    public static function quanLyRap()
+    {
         $cinemaStatuses = StatusService::getAllStatus('RapChieu');
-        return view("admin/rap-chieu/index",[
+        return view("admin/rap-chieu/index", [
 
             'cinemaStatuses' => $cinemaStatuses
         ]);
     }
 
-    #[Route("/ajax/rap-chieu","GET")]
-    public static function getTableRowAjax(){
+    #[Route("/ajax/rap-chieu", "GET")]
+    public static function getTableRowAjax()
+    {
         $results = CinemaService::getAllCinemas($_GET);
         $cinemaStatuses = StatusService::getAllStatus('RapChieu');
         return ajax("admin/rap-chieu/table-row", [
@@ -54,9 +66,22 @@ class CinemaController
             'cinemaStatuses' => $cinemaStatuses
         ]);
     }
-    #[Route("/ajax/rap-chieu","POST")]
-    public static function createCinema(){
+    #[Route("/ajax/rap-chieu", "POST")]
+    public static function createCinema()
+    {
         $result = CinemaService::createNewCinema($_POST);
-            return json($result);
+        return json($result);
+    }
+    #[Route("/ajax/rap-chieu/{id}/sua", "POST")]
+    public static function editCinema($id)
+    {
+        $result = CinemaService::updateCinema($_POST, $id);
+        return json($result);
+    }
+    #[Route("/ajax/rap-chieu/{id}/xoa", "POST")]
+    public static function toggleHideCinema($id)
+    {
+        $result = CinemaService::toggleHideCinema($id);
+        return json($result);
     }
 }

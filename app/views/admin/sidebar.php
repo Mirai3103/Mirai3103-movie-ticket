@@ -1,5 +1,18 @@
 <?php
 needEmployee();
+
+function isActive($path)
+{
+    $currentPath = $_SERVER['REQUEST_URI'];
+    //currentPath includes path
+    if (!isset($path))
+        return '';
+    if (strpos($currentPath, $path) !== false) {
+        return 'active';
+    } else {
+        return '';
+    }
+}
 ?>
 <nav style="position: relative" class="sidebar">
     <header class="d-flex">
@@ -36,7 +49,6 @@ needEmployee();
                                 this.open = !this.open
                             }
                         }" x-init="
-                   
                                 const subMenu = document.getElementById('sub-menu-for-<?= $key ?>')
                                      subMenu.querySelectorAll('li').forEach(item => {
                                     item.style.display = 'none'
@@ -52,7 +64,7 @@ needEmployee();
                                 })
                             }
                              
-                        })" class="menu-links__item" x-on:click="toggle()">
+                        })" class="menu-links__item  " x-on:click="toggle()">
                     <a class>
                         <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
                         <span class="text nav-text">
@@ -66,7 +78,7 @@ needEmployee();
                 <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
 
                     <?php foreach ($item['childrens'] as $child): ?>
-                    <li class="menu-links__item">
+                    <li class="menu-links__item <?= isActive($child['href']) ?>">
                         <a href="<?= $child['href'] ?>">
                             <i class="menu-links__item-icon"></i>
 
@@ -82,7 +94,7 @@ needEmployee();
 
             <?php else: ?>
 
-            <li class="menu-links__item">
+            <li class="menu-links__item <?= isActive($item['href']) ?>">
                 <a href="<?= $item['href'] ?>">
                     <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
 

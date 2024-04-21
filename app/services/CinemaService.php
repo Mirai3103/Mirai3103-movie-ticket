@@ -26,8 +26,8 @@ class CinemaService
         $statuses = getArrayValueSafe($query, 'trang-thais');
         $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
         $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 100);
-        $order = getArrayValueSafe($query, 'sap-xep','MaRapChieu');
-        $sort = getArrayValueSafe($query, 'thu-tu','ASC');
+        $order = getArrayValueSafe($query, 'sap-xep', 'MaRapChieu');
+        $sort = getArrayValueSafe($query, 'thu-tu', 'ASC');
         $offset = ($page - 1) * $limit;
         $queryBuilder->select(['RapChieu.*'])
             ->from('RapChieu')
@@ -96,7 +96,7 @@ class CinemaService
             'DiaChi' => $data['DiaChi'],
             'HinhAnh' => $data['HinhAnh'],
             'MoTa' => $data['MoTa'],
-           'TrangThai' => $data['TrangThai'] ?? TrangThaiRap::Hien->value
+            'TrangThai' => $data['TrangThai'] ?? TrangThaiRap::Hien->value
         ];
         $result = Database::insert('RapChieu', $params);
         if ($result) {
@@ -109,10 +109,10 @@ class CinemaService
     {
         $params = [
             'TenRapChieu' => $data['TenRapChieu'],
-            'DiaCchi' => $data['DiaChi'],
+            'DiaChi' => $data['DiaChi'],
             'HinhAnh' => $data['HinhAnh'],
             'MoTa' => $data['MoTa'],
-            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
+            'TrangThai' => $data['TrangThai']
         ];
         $result = Database::update('RapChieu', $params, "MaRapChieu=$id");
         if ($result) {
@@ -120,7 +120,28 @@ class CinemaService
         }
         return JsonResponse::error('Cập nhật thất bại', 500);
     }
-
+    public static function toggleHideCinema($id)
+    {
+        // kiểm tra xem có phải đang ẩn hay không
+        $sql = "SELECT TrangThai FROM RapChieu WHERE MaRapChieu = ?";
+        $status = Database::queryOne($sql, [$id]);
+        if ($status['TrangThai'] == TrangThaiRap::An->value) {
+            $result = Database::update('RapChieu', ['TrangThai' => TrangThaiRap::Hien->value], "MaRapChieu=$id");
+        } else {
+            // kiểm tra xem có xoá được hay không
+            $sql = "SELECT COUNT(*) as count FROM PhongChieu WHERE MaRapChieu = ?";
+            $count = Database::queryOne($sql, [$id]);
+            if ($count['count'] > 0) {
+                $result = Database::update('RapChieu', ['TrangThai' => TrangThaiRap::An->value], "MaRapChieu=$id");
+            } else {
+                return self::deleteCinema($id);
+            }
+        }
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
     public static function deleteCinema($id)
     {
         $result = Database::delete('RapChieu', "MaRapChieu=$id");

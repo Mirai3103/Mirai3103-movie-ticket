@@ -118,3 +118,56 @@ window.addEventListener("DOMContentLoaded", () => {
   Alpine.start();
   $(".selectpicker").selectpicker();
 });
+function useDisableAllInput() {
+  let inputThatDisabled = [];
+  function disableAllButton() {
+    // get all button that not disabled
+    inputThatDisabled.push(document.querySelectorAll("button:not([disabled])"));
+    inputThatDisabled.push(document.querySelectorAll("input:not([disabled])"));
+    inputThatDisabled.push(document.querySelectorAll("select:not([disabled])"));
+    inputThatDisabled.push(
+      document.querySelectorAll("textarea:not([disabled])")
+    );
+    inputThatDisabled.forEach((inputs) => {
+      inputs.forEach((input) => {
+        input.disabled = true;
+      });
+    });
+  }
+  function enableAllButton() {
+    inputThatDisabled.forEach((inputs) => {
+      inputs.forEach((input) => {
+        input.disabled = false;
+      });
+    });
+    inputThatDisabled = [];
+  }
+  return {
+    disableAllButton,
+    enableAllButton,
+  };
+}
+const { disableAllButton, enableAllButton } = useDisableAllInput();
+window.disableAllButton = disableAllButton;
+window.enableAllButton = enableAllButton;
+
+const {
+  disableAllButton: axiosDisableAllButton,
+  enableAllButton: axiosEnableAllButton,
+} = useDisableAllInput();
+axios.interceptors.request.use(function (config) {
+  if (config.method !== "get") {
+    axiosDisableAllButton();
+  }
+  return config;
+});
+axios.interceptors.response.use(
+  function (response) {
+    axiosDisableAllButton();
+    return response;
+  },
+  function (error) {
+    axiosEnableAllButton();
+    return Promise.reject(error);
+  }
+);
