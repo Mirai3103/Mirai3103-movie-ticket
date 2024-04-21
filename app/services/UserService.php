@@ -28,12 +28,7 @@ class UserService
         return $user;
     }
 
-    public static function getUserAccount($userId)
-    {
-        $query = "SELECT * FROM TaiKhoan WHERE MaNguoiDung = ?;";
-        $account = Database::queryOne($query, [$userId]);
-        return $account;
-    }
+
     public static function getUserOrCreateIfNotExist($data)
     {
         $email = $data['email'];
@@ -61,7 +56,7 @@ class UserService
         $email = $data['email'];
         $existUser = self::getUserByEmail($email);
         if ($existUser) {
-            $account = self::getUserAccount($existUser['MaNguoiDung']);
+            $account = AccountService::getUserAccount($existUser['MaNguoiDung']);
             if (isset($account)) {
                 return new JsonResponse(400, "Email đã tồn tại");
             }
@@ -83,16 +78,14 @@ class UserService
         if (!$id) {
             return new JsonResponse(500, "Đăng ký thất bại");
         }
-        $idTaiKhoan = Database::insert(
-            "TaiKhoan",
-            [
-                "TenDangNhap" => $data['email'],
-                "MatKhau" => $data['password'],
-                "LoaiTaiKhoan" => AccountType::Customer->value,
-                "MaNguoiDung" => $id,
-            ]
-        );
-        if (!$idTaiKhoan) {
+        $res = AccountService::createNewAccount([
+            "TenDangNhap" => $data['email'],
+            "MatKhau" => $data['password'],
+            "TrangThai" => null,
+            "LoaiTaiKhoan" => AccountType::Customer->value,
+            "MaNguoiDung" => $id,
+        ]);
+        if (!$res->isSuccessful()) {
             return new JsonResponse(500, "Đăng ký thất bại");
         }
         return new JsonResponse(200, "Đăng ký thành công");

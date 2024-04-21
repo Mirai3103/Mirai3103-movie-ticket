@@ -82,6 +82,12 @@ class AccountService
         }
         return JsonResponse::error('Cập nhật thất bại', 500);
     }
+    public static function getUserAccount($userId)
+    {
+        $query = "SELECT * FROM TaiKhoan WHERE MaNguoiDung = ?;";
+        $account = Database::queryOne($query, [$userId]);
+        return $account;
+    }
     public static function createNewAccount($data)
     {
         $params = [
