@@ -63,21 +63,7 @@
         </div>
     </div>
 </footer>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/plugin/customParseFormat.min.js"
-    integrity="sha512-FM59hRKwY7JfAluyciYEi3QahhG/wPBo6Yjv6SaPsh061nFDVSukJlpN+4Ow5zgNyuDKkP3deru35PHOEncwsw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
-<script>
-dayjs.locale('vi');
-dayjs.extend(window.dayjs_plugin_customParseFormat);
-const dayOfWeek = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-dayjs.prototype.getDayOfWeek = function() {
-    return dayOfWeek[this.day()];
-}
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-</script>
+<script src='/public/bundle/client.js'></script>
 <?php
 
 
@@ -87,20 +73,11 @@ foreach ($scripts as $script) {
 </script>";
 }
 ?>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js">
-</script>
 
-<script type="module">
-import alpinejs from 'https://cdn.jsdelivr.net/npm/alpinejs@3.13.8/+esm'
 
-window.Alpine = alpinejs
-window.addEventListener('DOMContentLoaded', () => {
-    alpinejs.start()
-})
 </script>
 <!-- from cdn -->
 <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/ripple.js"></script>
-
 
 
 

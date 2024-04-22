@@ -205,9 +205,11 @@ const ageTags = {
             console.log(res.data);
             window.location.href = `/thanh-toan`;
         }).catch(err => {
+            console.log(err.response.data);
             toast('Đã có lỗi xảy ra', {
                 position: 'bottom-center',
-                type: 'danger'
+                type: 'danger',
+                description: err.response.data.message
             });
         })
         
@@ -513,6 +515,10 @@ $watch('selectedSchedule',async (value) => {
                                                     };
                                                     ChieuDai=room.ChieuDai;
                                                     ChieuRong=room.ChieuRong;
+                                                    $nextTick(() => {
+                                                       const elToScroll= document.getElementById('ticket-type-title');
+                                                        elToScroll?.scrollIntoView({behavior: 'smooth'});
+                                                    })
                                                     " class="ctype__item col-2 text-warning fs-6 text-center"
                                                     x-text="dayjs(show.NgayGioChieu).format('HH:mm')">
 
@@ -539,33 +545,33 @@ $watch('selectedSchedule',async (value) => {
             <template x-if="selectedShow !== null">
                 <div class="container px-0">
                     <div class="mv__schedule_ticket justify-content-center text-center mt-5">
-                        <span class="text-center text-warning"> LOẠI VÉ </span>
+                        <span id="ticket-type-title" class="text-center text-warning"> LOẠI VÉ </span>
                     </div>
                     <div class="row d-flex tw-gap-y-3 justify-content-start list-tickets px-2 justify-content-center fw-bold"
                         id="row-ticket">
                         <?php foreach ($ticketTypes as $loaiVe): ?>
 
-                        <div class="col-xl-4 col-lg-4 col-md-4 col-12 mt-xl-0 mt-lg-0 mt-md-0 mt-2">
-                            <div class="ticket__item px-2">
-                                <div class="ticket-detail">
-                                    <span class="ticket-type d-block">
-                                        <?= $loaiVe['TenLoaiVe'] ?>
-                                    </span>
-                                    <span class="ticket-des d-block fs-6">
-                                        <?php
+                            <div class="col-xl-4 col-lg-4 col-md-4 col-12 mt-xl-0 mt-lg-0 mt-md-0 mt-2">
+                                <div class="ticket__item px-2">
+                                    <div class="ticket-detail">
+                                        <span class="ticket-type d-block">
+                                            <?= $loaiVe['TenLoaiVe'] ?>
+                                        </span>
+                                        <span class="ticket-des d-block fs-6">
+                                            <?php
 
 
                                             $rong = $loaiVe['Rong'];
                                             echo getSoNguoiDisplay($rong)
                                                 ?>
-                                    </span>
-                                    <span class="ticket-price fs-6">
-                                        <?= number_format($loaiVe['GiaVe']) ?>đ
-                                    </span>
-                                </div>
+                                        </span>
+                                        <span class="ticket-price fs-6">
+                                            <?= number_format($loaiVe['GiaVe']) ?>đ
+                                        </span>
+                                    </div>
 
-                                <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                    <div class="count-btn count-minus" x-on:click="
+                                    <div class="ticket-count d-flex mt-3 mb-2 justify-content-center align-items-center">
+                                        <div class="count-btn count-minus" x-on:click="
                                         const index = selectedTicketTypes.findIndex(type => type.MaLoaiVe == <?= $loaiVe['MaLoaiVe'] ?>);
                                         if(index !== -1) {
                                             selectedTicketTypes[index].count = Math.max(selectedTicketTypes[index].count - 1, 0);
@@ -584,13 +590,13 @@ $watch('selectedSchedule',async (value) => {
                                             })
                                         }
                                         ">
-                                        <i class="fa-solid fa-minus"></i>
-                                    </div>
-                                    <div class="count-number mx-2">
-                                        <span
-                                            x-text="selectedTicketTypes.find(type => type.MaLoaiVe == <?= $loaiVe['MaLoaiVe'] ?>)?.count ?? 0"></span>
-                                    </div>
-                                    <div class="count-btn count-plus" x-on:click="
+                                            <i class="fa-solid fa-minus"></i>
+                                        </div>
+                                        <div class="count-number mx-2">
+                                            <span
+                                                x-text="selectedTicketTypes.find(type => type.MaLoaiVe == <?= $loaiVe['MaLoaiVe'] ?>)?.count ?? 0"></span>
+                                        </div>
+                                        <div class="count-btn count-plus" x-on:click="
                                         const index = selectedTicketTypes.findIndex(type => type.MaLoaiVe == <?= $loaiVe['MaLoaiVe'] ?>);
                                         if(index !== -1) {
                                             selectedTicketTypes[index].count += 1;
@@ -606,11 +612,11 @@ $watch('selectedSchedule',async (value) => {
                                             })
                                         }
                                         ">
-                                        <i class="fa-solid fa-plus"></i>
+                                            <i class="fa-solid fa-plus"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
                         <?php endforeach; ?>
                     </div>
@@ -683,30 +689,30 @@ $watch('selectedSchedule',async (value) => {
                 <div class="carousel-inner">
 
                     <?php foreach ($combos as $combo): ?>
-                    <div class="carousel-item ">
-                        <div class="food-item">
-                            <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
-                                <img src="<?= $combo['HinhAnh'] ?>" alt="" class="food-item__img">
-                            </div>
-
-                            <div
-                                class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12 tw-justify-between tw-flex tw-flex-col">
-                                <div>
-                                    <span
-                                        class="food-item__name d-block justify-content-center align-items-center text-center">
-                                        <?= $combo['TenCombo'] ?>
-                                    </span>
-                                    <span class="food-item__des d-block tw-line-clamp-2">
-                                        <?= $combo['MoTa'] ?>
-                                    </span>
+                        <div class="carousel-item ">
+                            <div class="food-item">
+                                <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                                    <img src="<?= $combo['HinhAnh'] ?>" alt="" class="food-item__img">
                                 </div>
-                                <div>
-                                    <span class="food-item__price d-block  tw-text-xl">
-                                        <?= number_format($combo['GiaCombo']) ?>đ
-                                    </span>
-                                    <div
-                                        class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                        <div class="count-btn count-minus" x-on:click="
+
+                                <div
+                                    class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12 tw-justify-between tw-flex tw-flex-col">
+                                    <div>
+                                        <span
+                                            class="food-item__name d-block justify-content-center align-items-center text-center">
+                                            <?= $combo['TenCombo'] ?>
+                                        </span>
+                                        <span class="food-item__des d-block tw-line-clamp-2">
+                                            <?= $combo['MoTa'] ?>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="food-item__price d-block  tw-text-xl">
+                                            <?= number_format($combo['GiaCombo']) ?>đ
+                                        </span>
+                                        <div
+                                            class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
+                                            <div class="count-btn count-minus" x-on:click="
                                             const index = selectedCombo.findIndex(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>);
                                             if(index !== -1) {
                                                 selectedCombo[index].count = Math.max(selectedCombo[index].count - 1, 0);
@@ -716,13 +722,13 @@ $watch('selectedSchedule',async (value) => {
                                             }
                                             calFinalPrice()
                                             ">
-                                            <i class="fa-solid fa-minus"></i>
-                                        </div>
-                                        <div class="count-number mx-2"
-                                            x-text="selectedCombo.find(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>)?.count ?? 0">
-                                            0
-                                        </div>
-                                        <div class="count-btn count-plus" x-on:click="
+                                                <i class="fa-solid fa-minus"></i>
+                                            </div>
+                                            <div class="count-number mx-2"
+                                                x-text="selectedCombo.find(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>)?.count ?? 0">
+                                                0
+                                            </div>
+                                            <div class="count-btn count-plus" x-on:click="
                                             const index = selectedCombo.findIndex(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>);
                                             if(index !== -1) {
                                                 selectedCombo[index].count += 1;
@@ -736,40 +742,40 @@ $watch('selectedSchedule',async (value) => {
                                             }
                                             calFinalPrice()
                                             ">
-                                            <i class="fa-solid fa-plus"></i>
+                                                <i class="fa-solid fa-plus"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
 
                     <?php foreach ($foods as $food): ?>
-                    <div class="carousel-item ">
-                        <div class="food-item">
-                            <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
-                                <img src="<?= $food['HinhAnh'] ?>" alt="" class="food-item__img">
-                            </div>
-
-                            <div
-                                class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12 tw-justify-between tw-flex tw-flex-col">
-                                <div>
-                                    <span
-                                        class="food-item__name d-block justify-content-center align-items-center text-center">
-                                        <?= $food['TenThucPham'] ?>
-                                    </span>
-                                    <span class="food-item__des d-block tw-line-clamp-2">
-                                        <?= $food['MoTa'] ?>
-                                    </span>
+                        <div class="carousel-item ">
+                            <div class="food-item">
+                                <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                                    <img src="<?= $food['HinhAnh'] ?>" alt="" class="food-item__img">
                                 </div>
-                                <div>
-                                    <span class="food-item__price d-block tw-font-semibold tw-text-xl tw-mt-auto">
-                                        <?= number_format($food['GiaThucPham']) ?>đ
-                                    </span>
-                                    <div
-                                        class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                        <div class="count-btn count-minus" x-on:click="
+
+                                <div
+                                    class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12 tw-justify-between tw-flex tw-flex-col">
+                                    <div>
+                                        <span
+                                            class="food-item__name d-block justify-content-center align-items-center text-center">
+                                            <?= $food['TenThucPham'] ?>
+                                        </span>
+                                        <span class="food-item__des d-block tw-line-clamp-2">
+                                            <?= $food['MoTa'] ?>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="food-item__price d-block tw-font-semibold tw-text-xl tw-mt-auto">
+                                            <?= number_format($food['GiaThucPham']) ?>đ
+                                        </span>
+                                        <div
+                                            class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
+                                            <div class="count-btn count-minus" x-on:click="
                                     const index = selectedFood.findIndex(food => food.MaThucPham == <?= $food['MaThucPham'] ?>);
                                     if(index !== -1) {
                                         selectedFood[index].count = Math.max(selectedFood[index].count - 1, 0);
@@ -786,13 +792,13 @@ $watch('selectedSchedule',async (value) => {
                                     }
                                     calFinalPrice()
                                     ">
-                                            <i class="fa-solid fa-minus"></i>
-                                        </div>
-                                        <div class="count-number mx-2"
-                                            x-text="selectedFood.find(food => food.MaThucPham == <?= $food['MaThucPham'] ?>)?.count ?? 0">
-                                            0
-                                        </div>
-                                        <div class="count-btn count-plus" x-on:click="
+                                                <i class="fa-solid fa-minus"></i>
+                                            </div>
+                                            <div class="count-number mx-2"
+                                                x-text="selectedFood.find(food => food.MaThucPham == <?= $food['MaThucPham'] ?>)?.count ?? 0">
+                                                0
+                                            </div>
+                                            <div class="count-btn count-plus" x-on:click="
                                         const index = selectedFood.findIndex(food => food.MaThucPham == <?= $food['MaThucPham'] ?>);
                                         if(index !== -1) {
                                             selectedFood[index].count += 1;
@@ -807,13 +813,13 @@ $watch('selectedSchedule',async (value) => {
                                         }
                                         calFinalPrice()
                                         ">
-                                            <i class="fa-solid fa-plus"></i>
+                                                <i class="fa-solid fa-plus"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselFood" data-bs-slide="prev">

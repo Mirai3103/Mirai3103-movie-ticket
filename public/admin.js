@@ -1,6 +1,8 @@
 import Alpine from "alpinejs";
 import $ from "jquery";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 import "dayjs/locale/vi";
 import "./css/tailwind.css";
 dayjs.locale("vi");
@@ -156,6 +158,7 @@ const {
   enableAllButton: axiosEnableAllButton,
 } = useDisableAllInput();
 axios.interceptors.request.use(function (config) {
+  config.headers["X-Requested-With"] = "XMLHttpRequest";
   if (config.method !== "get") {
     axiosDisableAllButton();
   }
