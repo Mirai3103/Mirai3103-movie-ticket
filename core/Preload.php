@@ -25,6 +25,7 @@ Router::load_from_class(AccountController::class);
 Router::load_from_class(ShowController::class);
 Router::load_from_class(FileController::class);
 Router::load_from_class(ProductController::class);
+Router::load_from_class(ComboController::class);
 Router::build();
 function exception_handler(Throwable $exception)
 {

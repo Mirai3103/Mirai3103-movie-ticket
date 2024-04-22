@@ -13,7 +13,11 @@ class QueryBuilder
     {
         $this->mysqli ??= Connection::make($GLOBALS['config']['database']);
     }
-
+    public function selectDistinct($columns)
+    {
+        $this->sql .= " DISTINCT ";
+        return $this->select($columns);
+    }
     public function select($columns)
     {
         if ($columns == "*") {

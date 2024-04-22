@@ -65,7 +65,11 @@ enum TrangThaiLoaiGhe: int
     case An = 24;
     case Hien = 25;
 }
-
+enum TrangThaiCombo: int
+{
+    case An = 26;
+    case DangBan = 27;
+}
 enum LoaiTaiKhoan: int
 {
     case NhanVien = 1;

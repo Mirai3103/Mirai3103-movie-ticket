@@ -6,6 +6,7 @@ use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Request;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiCombo;
 use App\Models\TrangThaiThucPham;
 
 class ComboService
@@ -19,6 +20,7 @@ class ComboService
         $sortBy = ifNullOrEmptyString(getArrayValueSafe($querys, 'sap-xep'), 'MaThucPham');
         $page = ifNullOrEmptyString(getArrayValueSafe($querys, 'trang'), 1);
         $limit = ifNullOrEmptyString(getArrayValueSafe($querys, 'limit'), 100);
+        $trangThais = getArrayValueSafe($querys, 'trang-thais', [TrangThaiThucPham::Hien]);
         $offset = ($page - 1) * $limit;
         $queryBuilder = new QueryBuilder();
         $queryBuilder->select(
@@ -33,6 +35,10 @@ class ComboService
             $queryBuilder->where('TenThucPham', 'LIKE', "%$keyword%");
             $queryBuilder->orWhere('LoaiThucPham', 'LIKE', "%$keyword%");
             $queryBuilder->endGroup();
+        }
+        if (!isNullOrEmptyArray($trangThais)) {
+            $queryBuilder->and();
+            $queryBuilder->where('TrangThai', 'IN', $trangThais);
         }
         if (!isNullOrEmptyString($priceFrom)) {
             $queryBuilder->and();
@@ -102,28 +108,72 @@ class ComboService
     }
     public static function deleteFoodnDrink($id)
     {
-        // check if food is in combo or  CT_Combo_ThucPham CT_HoaDon_ThucPham
         $sql = "SELECT * FROM CT_Combo_ThucPham WHERE MaThucPham=?;";
         $result = Database::queryOne($sql, [$id]);
-        if (true) {
-            return self::toggleHideFoodnDrink($id);
+        if (isset($result)) {
+            self::toggleHideFoodnDrink($id);
         }
         $sql = "SELECT * FROM CT_HoaDon_ThucPham WHERE MaThucPham=?;";
         $result = Database::queryOne($sql, [$id]);
-        if ($result) {
-            return self::toggleHideFoodnDrink($id);
+        if (isset($result)) {
+            self::toggleHideFoodnDrink($id);
         }
         $result = Database::delete('ThucPham', "MaThucPham=$id");
         if ($result) {
             return JsonResponse::ok();
         }
         return JsonResponse::error('Xóa thất bại', 500);
+
     }
 
 
-    public static function getAllCombo()
+    public static function getAllCombo($query = [])
     {
-        return Database::findAll('Combo');
+        $keyword = getArrayValueSafe($query, 'tu-khoa');
+        $priceFrom = getArrayValueSafe($query, 'gia-tu');
+        $priceTo = getArrayValueSafe($query, 'gia-den');
+        $sortDir = ifNullOrEmptyString(getArrayValueSafe($query, 'thu-tu'), 'ASC');
+        $sortBy = ifNullOrEmptyString(getArrayValueSafe($query, 'sap-xep'), 'MaCombo');
+        $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
+        $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 100);
+        $trangThais = getArrayValueSafe($query, 'trang-thais', [TrangThaiCombo::DangBan]);
+        $offset = ($page - 1) * $limit;
+        $thucPhamIds = getArrayValueSafe($query, 'thuc-phams');
+        $queryBuilder = new QueryBuilder();
+
+        $queryBuilder->selectDistinct(
+            [
+                'Combo.*',
+            ]
+        )->from('Combo')
+            ->join('CT_Combo_ThucPham', 'Combo.MaCombo = CT_Combo_ThucPham.MaCombo')
+            ->join('ThucPham', 'CT_Combo_ThucPham.MaThucPham = ThucPham.MaThucPham')
+            ->where('1', '=', '1');
+        if (!isNullOrEmptyArray($trangThais)) {
+            $queryBuilder->andWhere('Combo.TrangThai', 'IN', $trangThais);
+        }
+        if (!isNullOrEmptyString($keyword)) {
+            $queryBuilder->and();
+            $queryBuilder->startGroup();
+            $queryBuilder->where('TenCombo', 'LIKE', "%$keyword%");
+            $queryBuilder->orWhere('MoTa', 'LIKE', "%$keyword%");
+            $queryBuilder->orWhere('ThucPham.TenThucPham', 'LIKE', "%$keyword%");
+            $queryBuilder->endGroup();
+        }
+        if (!isNullOrEmptyString($priceFrom)) {
+            $queryBuilder->andWhere('GiaCombo', '>=', $priceFrom);
+        }
+        if (!isNullOrEmptyString($priceTo)) {
+            $queryBuilder->andWhere('GiaCombo', '<=', $priceTo);
+        }
+        if (!isNullOrEmptyArray($thucPhamIds)) {
+            $queryBuilder->andWhere('CT_Combo_ThucPham.MaThucPham', 'IN', $thucPhamIds);
+        }
+        Request::setQueryCount($queryBuilder->count());
+        $queryBuilder->orderBy($sortBy, $sortDir);
+        $queryBuilder->limit($limit, $offset);
+        $data = $queryBuilder->get();
+        return $data;
     }
     public static function getComboById($id)
     {
