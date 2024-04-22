@@ -1,27 +1,55 @@
-   <div class='tw-flex tw-gap-x-14 tw-flex-col lg:tw-flex-row tw-text-base  sm:tw-text-xl tw-gap-y-8'
+   <div class='tw-flex tw-gap-x-14 tw-flex-col lg:tw-flex-row tw-text-base sm:tw-text-xl tw-gap-y-8'
        x-show="step === 1">
-       <div class='tw-basis-2/5 lg:tw-shrink-0  tw-gap-4 tw-flex tw-flex-col tw-justify-center tw-text-xl'>
+       <div class='tw-basis-2/5 lg:tw-shrink-0 tw-gap-4 tw-flex tw-flex-col tw-justify-center tw-text-xl'>
            <div>
-               <label for="name" class="tw-block  tw-font-bold  tw-text-gray-700">Họ và tên</label>
-               <input x-on:focus="errors.name = ''" x-model="data.name" type="text" name="name" id="name"
-                   class="tw-mt-1  tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
-                   placeholder="Họ và tên">
-               <span x-text="errors.name" class="error_message"></span>
-           </div>
-           <div>
-               <label for="phone" class="tw-block  tw-font-bold  tw-text-gray-700">Số điện thoại</label>
-               <input x-on:focus="errors.phone = ''" x-model="data.phone" type="tel" name="phone" id="phone"
-                   class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
-                   placeholder="Số điện thoại">
-               <span x-text="errors.phone" class="error_message"></span>
-           </div>
-           <div>
-               <label for="email" class="tw-block  tw-font-bold  tw-text-gray-700">Email</label>
-               <input x-on:focus="errors.email = ''" x-model="data.email" type="text" name="email" id="email"
+               <label for="email" class="tw-block tw-font-bold tw-text-gray-700">Email</label>
+               <input x-on:blur="
+                if(!window.validationsUtils.email(data.email)) {
+                    errors.email = 'Email không hợp lệ'
+                    return
+                }
+                const res = await axios.post('/api/nguoi-dung/is-mail-exist', { email: data.email });
+                console.log(res.data)
+                if (res.data.data.isExist && res.data.data.HasAccount) {
+                    errors.email = 'Email này đã có tài khoản, vui lòng đăng nhập'
+                    return
+                }
+                if (res.data.data.isExist) {
+                    data.name = res.data.data.HoTen
+                    data.phone = res.data.data.SoDienThoai
+                    return
+                }
+
+                $refs.phone.disabled = false
+                $refs.name.disabled = false
+                
+               " x-on:focus="
+               errors.email = ''
+               $refs.phone.disabled = true
+                $refs.name.disabled = true
+               " x-model="data.email" type="text" name="email" id="email"
                    class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
                    placeholder="Email">
                <span x-text="errors.email" class="error_message"></span>
            </div>
+           <div>
+               <label for="name" class="tw-block tw-font-bold tw-text-gray-700">Họ và tên</label>
+               <input disabled x-ref="name" x-on:focus="errors.name = ''" x-model="data.name" type="text" name="name"
+                   id="name" class="tw-mt-1 
+                   disabled:tw-bg-gray-200
+                   tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                   placeholder="Họ và tên">
+               <span x-text="errors.name" class="error_message"></span>
+           </div>
+           <div>
+               <label for="phone" class="tw-block tw-font-bold tw-text-gray-700">Số điện thoại</label>
+               <input disabled x-ref="phone" x-on:focus="errors.phone = ''" x-model="data.phone" type="tel" name="phone"
+                   id="phone"
+                   class="tw-mt-1 disabled:tw-bg-gray-200 tw-px-4 tw-w-full tw-py-2 tw-border-[3px]  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                   placeholder="Số điện thoại">
+               <span x-text="errors.phone" class="error_message"></span>
+           </div>
+
            <div class="tw-flex tw-justify-center">
                <button data-ripple-light="true" x-on:click="
                 if (validate()) {
@@ -70,7 +98,7 @@
                        <span class='tw-font-semibold tw-text-secondary'> Phòng chiếu: </span>
                        <?= $show['TenPhongChieu'] ?>
                    </h4>
-                   <div class='tw-flex tw-flex-col tw-mt-3  '>
+                   <div class='tw-flex tw-flex-col tw-mt-3 '>
                        <div class='tw-flex tw-flex-wrap tw-gap-x-4'>
                            <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Loại vé</div>
                            <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Số vé</div>

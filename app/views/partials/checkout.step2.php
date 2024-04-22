@@ -75,7 +75,8 @@
                     return;
                 }
             }
-           
+           console.log(this.data);
+           alert('Tha');
            const res = await axios.post('',this.data);
            if(res.data.isRedirect){
                if(res.data.redirectUrl.startsWith('http')){
@@ -159,16 +160,16 @@
              </div>
          </div>
          <?php if (Request::isAuthenicated()): ?>
-         <div>
-             <label for="discount" class="tw-block  tw-font-bold  tw-text-gray-700">
-                 Mã giảm giá
-             </label>
-             <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount"
-                 class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-3  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
-                 placeholder="Nhập mã giảm giá">
-             <div x-show="errors.discount" x-text="errors.discount"
-                 class="tw-text-red-500 tw-mt-1 tw-italic tw-text-sm"></div>
-         </div>
+             <div>
+                 <label for="discount" class="tw-block  tw-font-bold  tw-text-gray-700">
+                     Mã giảm giá
+                 </label>
+                 <input x-on:focus="errors.discount = ''" x-model="data.discount" type="text" name="discount" id="discount"
+                     class="tw-mt-1 tw-px-4 tw-w-full tw-py-2 tw-border-3  hover:tw-border-[#0c131d]  tw-border-[#1B2D44]"
+                     placeholder="Nhập mã giảm giá">
+                 <div x-show="errors.discount" x-text="errors.discount"
+                     class="tw-text-red-500 tw-mt-1 tw-italic tw-text-sm"></div>
+             </div>
          <?php endif; ?>
          <div class="tw-flex tw-justify-center">
              <button data-ripple-light="true" x-on:click="onSubmit()" x-bind:disabled="isLoading"
@@ -228,23 +229,23 @@
                  <h4 class='tw-mt-2'>
                      <span class='tw-font-semibold tw-text-secondary'>Ghế: </span>
                      <?php foreach ($seats as $seat): ?>
-                     <span><?= $seat['SoGhe'] ?> </span>
+                         <span><?= $seat['SoGhe'] ?> </span>
                      <?php endforeach; ?>
                  </h4>
                  <h4>
                      <span class='tw-font-semibold tw-text-secondary'>Bắp nước: </span>
                      <?php foreach ($foods as $food): ?>
 
-                     <span>
-                         <?= $food['TenThucPham'] ?> X
-                         <?= $bookingData['ThucPhams'][array_search($food['MaThucPham'], array_column($bookingData['ThucPhams'], 'MaThucPham'))]['SoLuong'] ?>
-                     </span>
+                         <span>
+                             <?= $food['TenThucPham'] ?> X
+                             <?= $bookingData['ThucPhams'][array_search($food['MaThucPham'], array_column($bookingData['ThucPhams'], 'MaThucPham'))]['SoLuong'] ?>
+                         </span>
                      <?php endforeach; ?>
                      <?php foreach ($combos as $combo): ?>
-                     <span>
-                         <?= $combo['TenCombo'] ?> X
-                         <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
-                     </span>
+                         <span>
+                             <?= $combo['TenCombo'] ?> X
+                             <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
+                         </span>
                      <?php endforeach; ?>
                  </h4>
              </div>

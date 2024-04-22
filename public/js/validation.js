@@ -21,7 +21,7 @@ const validations = {
   between: (value, [min, max]) => value >= min && value <= max,
   custom: (value, callback) => callback(value),
 };
-
+window.validationsUtils = validations;
 class Validator {
   constructor() {
     this.validationRules = {};

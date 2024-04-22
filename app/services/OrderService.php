@@ -60,7 +60,7 @@ class OrderService
             "ThucPhams" => $data['ThucPhams'],
             "Combos" => $data['Combos'],
             "lockTo" => $lockToTime,
-            'userId' => isset($_SESSION['user']) ? $_SESSION['user']['MaNguoiDung'] : UserService::getUserOrCreateIfNotExist($data),
+            'userId' => isset($_SESSION['user']) ? $_SESSION['user']['MaNguoiDung'] : null,
             'id' => $tempId
         ];
         $_SESSION['bookingData'] = $bookingData;

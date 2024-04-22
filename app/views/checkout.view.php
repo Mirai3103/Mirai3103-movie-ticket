@@ -57,7 +57,9 @@ const ticketGroups = _.groupBy(tickets, 'MaLoaiVe');
         remainingTime--;
         if (remainingTime <= 0) {
             clearInterval(interval);
-            window['timeout_modal'].showModal();
+            alert('Thời gian giữ vé đã hết');
+            window.location.href = '/phim/<?= $show['MaPhim'] ?>';
+            
         }
     }, 1000);
 ">

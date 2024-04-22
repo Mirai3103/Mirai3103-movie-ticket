@@ -153,7 +153,9 @@ function onUnauthorized()
 function onForbidden()
 {
     if (isAjaxRequest()) {
-        return json(new JsonResponse(403, "Forbidden"), 403);
+        return json(new JsonResponse(403, "
+        Bạn không có quyền thực hiện hành động này
+        "), 403);
     }
     // set 403 status code
     http_response_code(403);
@@ -167,7 +169,18 @@ function needLogin()
         return onUnauthorized();
     }
 }
+function needNotEmployee()
+{
+    if (!isset($_SESSION['user'])) {
+        return;
+    }
+    $user = $_SESSION['user'];
 
+    if ($user['TaiKhoan']['LoaiTaiKhoan'] == 1) {
+        return onForbidden();
+    }
+
+}
 function needEmployee()
 {
     needLogin();

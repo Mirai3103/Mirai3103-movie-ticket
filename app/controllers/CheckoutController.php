@@ -11,6 +11,7 @@ use App\Services\PromotionService;
 use App\Services\SeatService;
 use App\Services\ShowService;
 use App\Services\TicketService;
+use App\Services\UserService;
 use Core\Attributes\Controller;
 use Core\Attributes\Route;
 
@@ -20,16 +21,15 @@ class CheckoutController
     #[Route("/api/start-checkout", "POST")]
     public static function startCheckout()
     {
+        needNotEmployee();
         $data = request_body();
-
-
         $result = OrderService::startCheckout($data);
-
         return json($result);
     }
     #[Route("/thanh-toan", "GET")]
     public static function index()
     {
+        needNotEmployee();
         if (!isset($_SESSION['bookingData'])) {
             Logger::error("Booking data not found");
             redirect("");
@@ -63,7 +63,10 @@ class CheckoutController
         $discountCode = getArrayValueSafe($data, 'discount', null);
         $bookingData = $_SESSION['bookingData'];
         $payment_method = PaymentType::tryFrom($data['payment_method']);
-
+        if (!isset($bookingData['userId'])) {
+            $bookingData['userId'] = UserService::getUserOrCreateIfNotExist($data);
+            $_SESSION['bookingData'] = $bookingData;
+        }
         if (is_null($payment_method)) {
             return json(["message" => "Phương thức thanh toán không hợp lệ"], 400);
         }

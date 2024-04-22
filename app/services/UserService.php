@@ -19,8 +19,20 @@ class UserService
     {
         $query = "SELECT * FROM NguoiDung WHERE Email = ?;";
         $user = Database::queryOne($query, [$email]);
-        return $user ? true : false;
+        if (!isset($user)) {
+            return [
+                "isExist" => false
+            ];
+        }
+        $account = AccountService::getUserAccount($user['MaNguoiDung']);
+        return [
+            "isExist" => isset($user) ? true : false,
+            "HoTen" => $user['TenNguoiDung'] ?? '',
+            "SoDienThoai" => $user['SoDienThoai'] ?? '',
+            "HasAccount" => isset($account) ? true : false
+        ];
     }
+
     public static function getUserByEmail($email)
     {
         $query = "SELECT * FROM NguoiDung WHERE Email = ?;";
@@ -31,13 +43,14 @@ class UserService
 
     public static function getUserOrCreateIfNotExist($data)
     {
+        Logger::info(print_r($data, true));
         $email = $data['email'];
         $user = self::getUserByEmail($email);
         if (!$user) {
             $id = Database::insert(
                 "NguoiDung",
                 [
-                    "HoTen" => $data['name'],
+                    "TenNguoiDung" => $data['name'],
                     "Email" => $data['email'],
                     "SoDienThoai" => $data['phone'],
                 ]
@@ -66,7 +79,7 @@ class UserService
             $id = Database::insert(
                 "NguoiDung",
                 [
-                    "HoTen" => $data['name'],
+                    "TenNguoiDung" => $data['name'],
                     "Email" => $data['email'],
                     "SoDienThoai" => $data['phone'],
                     "DiaChi" => $data['address'],
