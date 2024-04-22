@@ -20,7 +20,7 @@ class ComboService
         $sortBy = ifNullOrEmptyString(getArrayValueSafe($querys, 'sap-xep'), 'MaThucPham');
         $page = ifNullOrEmptyString(getArrayValueSafe($querys, 'trang'), 1);
         $limit = ifNullOrEmptyString(getArrayValueSafe($querys, 'limit'), 100);
-        $trangThais = getArrayValueSafe($querys, 'trang-thais', [TrangThaiThucPham::Hien]);
+        $trangThais = getArrayValueSafe($querys, 'trang-thais', [TrangThaiThucPham::Hien->value]);
         $offset = ($page - 1) * $limit;
         $queryBuilder = new QueryBuilder();
         $queryBuilder->select(
@@ -136,7 +136,7 @@ class ComboService
         $sortBy = ifNullOrEmptyString(getArrayValueSafe($query, 'sap-xep'), 'MaCombo');
         $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
         $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 100);
-        $trangThais = getArrayValueSafe($query, 'trang-thais', [TrangThaiCombo::DangBan]);
+        $trangThais = getArrayValueSafe($query, 'trang-thais', [TrangThaiCombo::DangBan->value]);
         $offset = ($page - 1) * $limit;
         $thucPhamIds = getArrayValueSafe($query, 'thuc-phams');
         $queryBuilder = new QueryBuilder();

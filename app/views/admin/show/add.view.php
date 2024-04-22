@@ -116,7 +116,7 @@ formValidator(validatorRule);
             errors = res.data.errors;
             return;
         };
-        window.location.href = '/admin/suat-chieu/'+res.data.data.MaXFuatChieu;
+        window.history.back();
         ">
             <div class="row mb-3">
                 <div class="col">
@@ -126,8 +126,8 @@ formValidator(validatorRule);
                     <select x-model="data.RapChieu" class="form-select" id="rapchieu" required>
                         <option value="">Chọn rạp chiếu</option>
                         <?php foreach ($cinemas as $cinema): ?>
-                        <option value="<?= $cinema['MaRapChieu'] ?>">
-                            <?= $cinema['TenRapChieu'] ?></option>
+                            <option value="<?= $cinema['MaRapChieu'] ?>">
+                                <?= $cinema['TenRapChieu'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -152,9 +152,9 @@ formValidator(validatorRule);
                 <select x-model="data.MaPhim" class="form-select" id="phim" required>
                     <option value="">Chọn phim</option>
                     <?php foreach ($movies as $movie): ?>
-                    <option data-thoi-luong-phim="<?= $movie['ThoiLuong'] ?>" value="<?= $movie['MaPhim'] ?>">
-                        <?= $movie['TenPhim'] ?> - <?= $movie['ThoiLuong'] ?> phút
-                    </option>
+                        <option data-thoi-luong-phim="<?= $movie['ThoiLuong'] ?>" value="<?= $movie['MaPhim'] ?>">
+                            <?= $movie['TenPhim'] ?> - <?= $movie['ThoiLuong'] ?> phút
+                        </option>
                     <?php endforeach; ?>
 
                 </select>
