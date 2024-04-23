@@ -20,34 +20,36 @@ class ComboController
     #[Route("/api/combo", "POST")]
     public static function create()
     {
-        $result = ComboService::createNewFoodnDrink($_POST);
+        $result = ComboService::createNewCombo($_POST);
         return json($result);
     }
-    #[Route("/api/combo/{id}", "GET")]
-    public static function get($id)
+    #[Route("/admin/combo/{id}/sua", "GET")]
+    public static function edit($id)
     {
-        $product = ComboService::getFoodnDrinkById($id);
-        return json(JsonResponse::ok($product));
+        $combo = ComboService::getComboById($id);
+        $statuses = StatusService::getAllStatus('Combo');
+        $thucAn = ComboService::getAllFoodnDrink();
+        return view("admin/combo/edit", ['combo' => $combo, 'statuses' => $statuses, 'foods' => $thucAn]);
     }
 
-    #[Route("/api/combo/{id}", "POST")]
+    #[Route("/api/combo/{id}/sua", "POST")]
     public static function update($id)
     {
-        $result = ComboService::updateFoodnDrink($_POST, $id);
+        $result = ComboService::updateCombo(request_body(), $id);
         return json($result);
     }
-    #[Route("/api/combo/{id}/delete", "POST")]
+    #[Route("/api/combo/{id}/toggle-status", "POST")]
     public static function tryDelete($id)
     {
-        $result = ComboService::deleteFoodnDrink($id);
+        $result = ComboService::deleteCombo($id);
         return json($result);
     }
     #[Route("/ajax/combo", "GET")]
     public static function getProducts()
     {
-        $products = ComboService::getAllFoodnDrink($_GET);
+        $combos = ComboService::getAllCombo($_GET);
         $statuses = StatusService::getAllStatus('Combo');
-        return ajax("admin/combo/table-row", ['products' => $products, 'statuses' => $statuses]);
+        return ajax("admin/combo/table-row", ['combos' => $combos, 'statuses' => $statuses]);
     }
 
 }

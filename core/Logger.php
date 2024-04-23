@@ -5,6 +5,10 @@ namespace App\Core;
 class Logger
 {
     private static $logFile = "app.log";
+    public static function getLogs()
+    {
+        return file_get_contents(self::$logFile);
+    }
     public static function info(...$message)
     {
         self::write("INFO", implode(" ", $message));

@@ -92,7 +92,7 @@ class AccountService
     {
         $params = [
             'TenDangNhap' => $data['TenDangNhap'],
-            'MatKhau' => password_hash($data['MatKhau'], PASSWORD_DEFAULT),
+            'MatKhau' => $data['MatKhau'],
             'TrangThai' => $data['TrangThai'],
             'LoaiTaiKhoan' => $data['LoaiTaiKhoan'],
             'MaNguoiDung' => $data['MaNguoiDung'],

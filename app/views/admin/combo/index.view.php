@@ -1,10 +1,7 @@
 <?php
-title("Quản lý sản phẩm");
+title("Quản lý combo");
 require ('app/views/admin/header.php');
-$fixedCategory = [
-    'Nước uống',
-    'Đồ ăn',
-];
+
 ?>
 
 
@@ -81,9 +78,8 @@ $fixedCategory = [
                 </div>
 
                 <div>
-                    <button type="button" class="btn btn-secondary" id="btn-create" data-bs-toggle="modal"
-                        data-bs-target="#product-detail-modal" type="button">Thêm mới
-                    </button>
+                    <a type="button" class="btn btn-secondary" href="/admin/combo/them-moi" id="btn-create">Thêm mới
+                    </a>
                 </div>
             </div>
         </div>
@@ -118,7 +114,7 @@ $fixedCategory = [
                                 Tên sản phẩm
                             </div>
                         </th>
-                        <th scope="col">Phân loại</th>
+
                         <th scope="col">
                             <div class="col-name" onclick="createSort('GiaThucPham')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
@@ -244,135 +240,9 @@ $fixedCategory = [
         </div>
     </div>
 
-    <!-- Product Details Modal -->
-    <div class="modal fade bs-example-modal-lg" id="product-detail-modal" tabindex="-1" role="dialog"
-        aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <form id="form-input-product" class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="edit-title">
-                        Tạo sản phẩm
-                    </h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
-                        id="btn-close-product-detail">
-                        ×
-                    </button>
-                </div>
-                <div class="modal-body" id="form-input-product">
-                    <div class="create-product container bg-white">
-                        <div class="row d-flex mt-2">
-                            <label for="MaThucPham" class="col-xl-2">
-                                Mã sản phẩm
-                            </label>
-                            <div class="input-group  col-xl-10 p-0">
-                                <input disabled type="text" class="form-control" id="MaThucPham" required>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex mt-2">
-                            <label for="TenThucPham" class="col-xl-2">
-                                Tên sản phẩm
-                            </label>
-                            <div class="input-group has-validation col-xl-10 p-0" id="TenThucPham">
-                                <input type="text" class="form-control " aria-describedby="product-price-feedback"
-                                    required>
-                                <div class="invalid-feedback">
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex mt-2">
-                            <label class="col-xl-2">Hình
-                                ảnh</label>
-                            <div class="input-group col-xl-10 tw-p-0" id="HinhAnh">
-                                <input type="text" class="form-control" placeholder="Link hình ảnh"
-                                    aria-label="Recipient's username" aria-describedby="button-addon2" id="HinhAnh">
-                                <label class="btn btn-outline-secondary">Chọn
-                                    <input type="file" hidden accept="image/*">
-                                    <span hidden class="spinner-border spinner-border-sm" role="status"
-                                        aria-hidden="true"></span>
-                                </label>
-                                <div class="invalid-feedback">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex mt-2">
-                            <label for="product-des" class="col-xl-2">
-                                Mô tả
-                            </label>
-                            <div class="input-group has-validation col-xl-10 p-0" id="MoTa">
-                                <textarea id="product-des" required class="form-control"></textarea>
-                                <div class="invalid-feedback">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row d-flex mt-2">
-                            <label for="combo-product-type" class="col-xl-2">
-                                Phân loại
-                            </label>
-                            <div class="col-xl-10 p-0" id="LoaiThucPham">
-                                <select class="form-select " required>
-                                    <option selected disabled value="">Chọn phân loại</option>
-                                    <option value="Đồ ăn">Đồ ăn</option>
-                                    <option value="Nước uống">Nước uống</option>
-                                </select>
-                                <div class="invalid-feedback">
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex mt-2">
-                            <label for="product-price" class="col-xl-2">
-                                Giá tiền
-                            </label>
-                            <div class="input-group has-validation col-xl-10 p-0" id="GiaThucPham">
-                                <input type="text" class="form-control " required>
-                                <div class="invalid-feedback">
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row d-flex mt-2">
-                            <label for="combo-product-status" class="col-xl-2">
-                                Trạng thái
-                            </label>
-                            <div class="col-xl-10 p-0" id="TrangThai">
-                                <select class="form-select " required>
-                                    <option selected disabled value="">Chọn trạng thái...</option>
-                                    <?php foreach ($statuses as $status): ?>
-                                        <option value="<?= $status['MaTrangThai'] ?>">
-                                            <?= $status['Ten'] ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                                <div class="invalid-feedback">
-                                    sdfsd
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btn-clear-ticket-detail">
-                        Đóng
-                    </button>
-                    <button type="submit" class="btn btn-primary" id="btn-save">
-                        <span>
-                            Thêm sản phẩm
-                        </span>
-                        <span hidden class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
 </div>
 
 <?php
-script('/public/san-pham/product.js');
+script('/public/san-pham/combo.js');
 require ('app/views/admin/footer.php');
 ?>

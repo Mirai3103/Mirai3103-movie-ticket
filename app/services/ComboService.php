@@ -111,12 +111,12 @@ class ComboService
         $sql = "SELECT * FROM CT_Combo_ThucPham WHERE MaThucPham=?;";
         $result = Database::queryOne($sql, [$id]);
         if (isset($result)) {
-            self::toggleHideFoodnDrink($id);
+            return self::toggleHideFoodnDrink($id);
         }
         $sql = "SELECT * FROM CT_HoaDon_ThucPham WHERE MaThucPham=?;";
         $result = Database::queryOne($sql, [$id]);
         if (isset($result)) {
-            self::toggleHideFoodnDrink($id);
+            return self::toggleHideFoodnDrink($id);
         }
         $result = Database::delete('ThucPham', "MaThucPham=$id");
         if ($result) {
@@ -156,7 +156,6 @@ class ComboService
             $queryBuilder->and();
             $queryBuilder->startGroup();
             $queryBuilder->where('TenCombo', 'LIKE', "%$keyword%");
-            $queryBuilder->orWhere('MoTa', 'LIKE', "%$keyword%");
             $queryBuilder->orWhere('ThucPham.TenThucPham', 'LIKE', "%$keyword%");
             $queryBuilder->endGroup();
         }
@@ -262,13 +261,44 @@ class ComboService
             'MoTa' => $data['MoTa']
         ];
 
-        $result = Database::insert('Combo', $data);
+        $result = Database::insert('Combo', $params);
+        if (!$result) {
+            return JsonResponse::error('Thêm mới combo thất bại', 500);
+        }
+        $foods = $data['ThucPhams'];
+        $comboId = $result;
+        self::addFoodsToCombo($comboId, $foods);
         if ($result) {
             return JsonResponse::ok();
         }
         return JsonResponse::error('Thêm mới combo thất bại', 500);
     }
+    public static function removeAllFoodInCombo($id)
+    {
+        $result = Database::delete('CT_Combo_ThucPham', "MaCombo=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Xóa thất bại', 500);
+    }
+    public static function addFoodsToCombo($comboId, $foods)
+    {
+        Database::beginTransaction();
+        foreach ($foods as $food) {
+            $result = Database::insert('CT_Combo_ThucPham', [
+                'MaCombo' => $comboId,
+                'MaThucPham' => $food['MaThucPham'],
+                'SoLuong' => $food['SoLuong']
+            ]);
+            if (!$result) {
+                Database::rollBack();
+                return JsonResponse::error('Thêm thất bại', 500);
+            }
+        }
 
+        Database::commit();
+        return JsonResponse::ok();
+    }
     public static function updateCombo($data, $id)
     {
         $params = [
@@ -277,11 +307,39 @@ class ComboService
             'TrangThai' => $data['TrangThai'],
             'MoTa' => $data['MoTa']
         ];
-        $result = Database::update('Combo', $data, "MaCombo=$id");
+        $result = Database::update('Combo', $params, "MaCombo=$id");
+        self::removeAllFoodInCombo($id);
+        self::addFoodsToCombo($id, $data['ThucPhams']);
         if ($result) {
             return JsonResponse::ok();
         }
         return JsonResponse::error('Cập nhật combo thất bại', 500);
     }
 
+    public static function toggleHideCombo($id)
+    {
+        $exist = Database::queryOne("SELECT MaCombo FROM Combo WHERE MaCombo=$id AND TrangThai=" . TrangThaiCombo::An->value, []);
+        if ($exist) {
+            $result = Database::update('Combo', ['TrangThai' => TrangThaiCombo::DangBan->value], "MaCombo=$id");
+        } else {
+            $result = Database::update('Combo', ['TrangThai' => TrangThaiCombo::An->value], "MaCombo=$id");
+        }
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Ẩn thất bại', 500);
+    }
+    public static function deleteCombo($id)
+    {
+        $sql = "SELECT * FROM CT_HoaDon_Combo WHERE MaCombo=?;";
+        $result = Database::queryOne($sql, [$id]);
+        if (isset($result)) {
+            return self::toggleHideCombo($id);
+        }
+        $result = Database::delete('Combo', "MaCombo=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Xóa thất bại', 500);
+    }
 }

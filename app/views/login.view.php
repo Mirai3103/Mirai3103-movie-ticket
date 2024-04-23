@@ -100,11 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     dateOfBirth:{
                         custom: {
-                            message: 'Ngày sinh không hợp lệ',
+                            message: 'Ít nhất 12 tuổi',
                             value: (value) => {
                                 console.log(value);
                                 const day = dayjs(value);
-                                if (day.isAfter(dayjs().subtract(6, 'year'))) {
+                                if (day.isAfter(dayjs().subtract(12, 'year'))) {
                                     return false;
                                 }
                                 return true;
@@ -117,6 +117,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         },
                         email: {
                             message: 'Email không đúng định dạng'
+                        }
+                    },
+                    phone:{
+                        required: {
+                            message: 'Số điện thoại không được để trống'
+                        },
+                        pattern: {
+                            message: 'Số điện thoại không hợp lệ',
+                            value: /^\d{10,11}$/
                         }
                     },
                     password:{
@@ -160,6 +169,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
 
+                <div class="form-group my-3">
+                    <label for="phone" class="fs-5">Số điện thoại</label>
+                    <input type="text" name="phone" id="phone" class="form-control " x-model="data.phone"
+                        placeholder="Nhập số điện thoại"
+                        :class="{'is-invalid': errors?.phone && errors?.phone.length > 0}" required>
+                    <div class="invalid-feedback" x-show="errors?.phone">
+                        <span x-text="errors?.phone?.join(', ')"></span>
+                    </div>
+                </div>
                 <div class="form-group my-3">
                     <label for="dateOfBirth" class="fs-5">Ngày sinh</label>
                     <input type="date" name="dateOfBirth" id="dateOfBirth" class="form-control "

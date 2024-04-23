@@ -32,41 +32,6 @@ var textDesProduct = document.getElementById("product-des");
 var textPriceProduct = document.getElementById("product-price");
 // var textStatusProduct = document.getElementById('');
 var modal = document.getElementById("product-detail-modal");
-
-// Button đóng Modal
-var btnCloseProductDetail = document.getElementById("btn-close-product-detail");
-btnCloseProductDetail.addEventListener("click", function () {
-  if (modal) {
-    $("#MaThucPham").val("");
-    $("#TenThucPham input").val("");
-    $("#HinhAnh input[type='text']").val("");
-    $("#MoTa textarea").val("");
-    $("#LoaiThucPham select").val("");
-    $("#GiaThucPham input").val("");
-    $("#TrangThai select").val("");
-    $(modal).modal("hide");
-    $("#edit-title").text("Thêm sản phẩm");
-    $("#btn-save").text("Thêm sản phẩm");
-    modalState = "create";
-  }
-});
-
-// Button clear
-var btnClearDes = document.getElementById("btn-clear-ticket-detail");
-btnClearDes.addEventListener("click", function () {
-  $("#MaThucPham").val("");
-  $("#TenThucPham input").val("");
-  $("#HinhAnh input[type='text']").val("");
-  $("#MoTa textarea").val("");
-  $("#LoaiThucPham select").val("");
-  $("#GiaThucPham input").val("");
-  $("#TrangThai select").val("");
-  $(modal).modal("hide");
-  $("#edit-title").text("Thêm sản phẩm");
-  $("#btn-save").text("Thêm sản phẩm");
-  modalState = "create";
-});
-
 let queryObj = queryString.parse(window.location.search, {
   arrayFormat: "bracket",
 });
@@ -140,11 +105,11 @@ function refetchAjax() {
   // gọi ajax để lấy dữ liệu
   $("#table-body").html(loadingRowHtml);
   $.ajax({
-    url: "/ajax/san-pham",
+    url: "/ajax/combo",
     type: "GET",
     data: {
       ...queryObj,
-      "trang-thais": [20, 21],
+      "trang-thais": [27, 26],
     },
     success: function (data, status, request) {
       const total = request.getResponseHeader("x-total-count");

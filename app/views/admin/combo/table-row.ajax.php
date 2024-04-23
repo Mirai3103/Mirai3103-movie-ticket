@@ -1,36 +1,33 @@
  <?php
- use App\Core\Logger;
- use App\Models\TrangThaiThucPham;
+ use App\Models\TrangThaiCombo;
 
  ?>
- <?php foreach ($products as $product): ?>
+ <?php foreach ($combos as $combo): ?>
  <tr>
      <th scope="row" class="col-id table-plus">
-         <?= $product['MaThucPham'] ?>
+         <?= $combo['MaCombo'] ?>
      </th>
      <td class="col-name ps-0">
          <div class="d-flex align-items-center">
              <div class="tb-img-product mr-2 flex-shrink-0">
-                 <img src="<?= $product['HinhAnh'] ?>" alt="" width="40" height="40">
+                 <img src="<?= $combo['HinhAnh'] ?>" alt="" width="40" height="40">
              </div>
              <div>
                  <span class="">
-                     <?= $product['TenThucPham'] ?>
+                     <?= $combo['TenCombo'] ?>
                  </span>
              </div>
          </div>
      </td>
 
-     <td class="col-type">
-         <?= $product['LoaiThucPham'] ?>
-     </td>
+
      <td class="col-price">
-         <?= number_format($product['GiaThucPham']) ?>đ
+         <?= number_format($combo['GiaCombo']) ?>đ
      </td>
      <td class="col-status">
          <?php
              foreach ($statuses as $status) {
-                 if ($status['MaTrangThai'] == $product['TrangThai']) {
+                 if ($status['MaTrangThai'] == $combo['TrangThai']) {
                      echo $status['Ten'];
                      break;
                  }
@@ -50,7 +47,7 @@
              <ul class="dropdown-menu">
 
                  <li>
-                     <div onclick="showEditModal(<?= $product['MaThucPham'] ?>)"
+                     <div onclick="window.location.href = '/admin/combo/<?= $combo['MaCombo'] ?>/sua'"
                          class="dropdown-item !tw-text-yellow-400">
                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                              class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -65,11 +62,11 @@
 
                  <li>
                      <?php
-                         $funcName = $product['TrangThai'] == TrangThaiThucPham::An->value ? 'onRecoverProduct' : 'showDeleteModal';
-                         $isAn = $product['TrangThai'] == TrangThaiThucPham::An->value;
+                         $funcName = $combo['TrangThai'] == TrangThaiCombo::An->value ? 'onRecoverCombo' : 'showDeleteModal';
+                         $isAn = $combo['TrangThai'] == TrangThaiCombo::An->value;
                          ?>
                      <div class="dropdown-item <?= $isAn ? '!tw-text-green-500' : '!tw-text-red-500' ?>"
-                         onclick="<?= $funcName ?>(<?= $product['MaThucPham'] ?>)">
+                         onclick="<?= $funcName ?>(<?= $combo['MaCombo'] ?>)">
                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                              class="tw-w-6 tw-h-6">
                              <path

@@ -1,3 +1,6 @@
+<?php
+needEmployee();
+?>
 <!DOCTYPE html>
 <html lang="vi">
 

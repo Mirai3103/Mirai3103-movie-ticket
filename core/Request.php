@@ -37,5 +37,8 @@ class Request
         self::setHeader("X-Total-Count", $count);
     }
 
-
+    public static function getUser()
+    {
+        return getArrayValueSafe($_SESSION, 'user', null);
+    }
 }

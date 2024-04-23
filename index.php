@@ -15,5 +15,4 @@ $GLOBALS['config'] = require 'config.php';
 UserService::recoverAuth();
 
 
-
 Router::dispatch();

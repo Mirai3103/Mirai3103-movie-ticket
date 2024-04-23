@@ -26,6 +26,7 @@ Router::load_from_class(ShowController::class);
 Router::load_from_class(FileController::class);
 Router::load_from_class(ProductController::class);
 Router::load_from_class(ComboController::class);
+Router::load_from_class(AdminController::class);
 Router::build();
 function exception_handler(Throwable $exception)
 {
@@ -33,6 +34,7 @@ function exception_handler(Throwable $exception)
     error_log($exception->getTraceAsString());
     Logger::error($exception->getMessage());
     Logger::error($exception->getTraceAsString());
+
 }
 
 set_exception_handler('exception_handler');

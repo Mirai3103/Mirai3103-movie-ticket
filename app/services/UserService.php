@@ -83,6 +83,8 @@ class UserService
                     "Email" => $data['email'],
                     "SoDienThoai" => $data['phone'],
                     "DiaChi" => $data['address'],
+                    "NgaySinh" => getArrayValueSafe($data, 'dateOfBirth', null),
+                    "DiemTichLuy" => 0,
                 ]
             );
         } else {

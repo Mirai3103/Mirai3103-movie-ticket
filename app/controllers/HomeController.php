@@ -1,6 +1,7 @@
 <?php
 
 use App\Core\Database\QueryBuilder;
+use App\Core\Request;
 use App\Services\AccountType;
 use App\Services\CategoryService;
 use App\Services\CinemaService;
@@ -32,7 +33,8 @@ class HomeController
     #[Route("/dang-nhap", "GET")]
     public static function login()
     {
-        if (isset($_SESSION['user'])) {
+        if (Request::isAuthenicated()) {
+
             return redirect("trang-chu");
         }
         return view("login");
@@ -80,6 +82,7 @@ class HomeController
     public static function register()
     {
         $body = request_body();
+
         return json(UserService::register($body));
     }
     #[Route("/trang-chu/lich-chieu", "GET")]
