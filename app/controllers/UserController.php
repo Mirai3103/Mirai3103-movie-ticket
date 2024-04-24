@@ -16,6 +16,20 @@ class UserController
         $result = UserService::isMailExist($email);
         return json(JsonResponse::ok($result));
     }
+
+
     // /nguoi-dung/thong-tin Post, Get
     // /api/nguoi-dung/mat-khau Post
+    #[Route("/api/nguoi-dung/lich-su-dat-ve", "GET")]
+    public static function abc()
+    {
+        return view("nguoi-dung/lich-su-dat-ve/index");
+    }
+
+    #[Route("/api/nguoi-dung/thong-tin", "GET")]
+    public static function abd()
+    {
+        return view("nguoi-dung/thong-tin/index");
+    }
+
 }
