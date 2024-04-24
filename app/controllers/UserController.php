@@ -55,6 +55,20 @@ class UserController
     public static function doimatkhaunguoidung() {
         $userId = Request::getUser()['MaNguoiDung'];
         
+        $matKhauCu = $_POST["matKhauCu"];
+        $matKhauMoi = $_POST["matKhauMoi"];
+        $xacThucMatKhauMoi = $_POST["xacThucMatKhauMoi"];
+
+        if ($matKhauMoi !== $xacThucMatKhauMoi) {
+            return json(JsonResponse::error("Mật khẩu không trùng khớp"));
+        }
+
+        $result = UserService::updatePassword($userId, $matKhauCu, $matKhauMoi);
+        if ($result) { 
+            return json(JsonResponse::ok());
+        } else {
+            return json(JsonResponse::error("Thay đổi mật khẩu thất bại"));
+        }
     }
     // /nguoi-dung/thong-tin Post, Get
     // /api/nguoi-dung/mat-khau Post

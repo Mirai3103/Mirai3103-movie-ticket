@@ -167,18 +167,18 @@
                     <form>
                         <div class="mb-3">
                             <label for="matKhauCu" class="form-label">Mật khẩu cũ</label>
-                            <input type="password" class="form-control" id="matKhauCu" aria-describedby="emailHelp" required>
+                            <input type="password" class="form-control" id="matKhauCu" name="matKhauCu" aria-describedby="emailHelp"  required>
                         </div>
 
                         <div class="mb-3">
                             <label for="matKhauMoi" class="form-label">Mật khẩu mới</label>
-                            <input type="password" class="form-control" id="matKhauMoi" aria-describedby="emailHelp" required>
+                            <input type="password" class="form-control" id="matKhauMoi" name="matKhauMoi" aria-describedby="emailHelp" required>
                         </div>
 
                         <div class="mb-3 mb-sm-4 mb-md-3">
                             <label for="xacThucKhauMoi" class="form-label">Xác thực mật
                                 khẩu</label>
-                            <input type="password" class="form-control" id="xacThucKhauMoi" aria-describedby="emailHelp" required>
+                            <input type="password" class="form-control" id="xacThucMatKhauMoi" name="xacThucMatKhauMoi" aria-describedby="emailHelp" required>
                         </div>
 
                         <button type="submit" class="btn submit-btn col-sm-12 col-md-auto">Đổi mật khẩu</button>

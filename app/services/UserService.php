@@ -33,6 +33,20 @@ class UserService
         ];
     }
 
+    public static function updatePassword($userId, $matKhauCu, $matKhauMoi) {
+        $result = null;
+        $query = "SELECT MatKhau FROM TaiKhoan Where MaTaiKhoan = ?;";
+        $currentPassword = Database::queryOne($query, array($userId))["MatKhau"];
+        if (!password_hash($matKhauCu, $currentPassword)) {
+            return $result;
+        }
+
+        $hashedNewPassword = password_hash($matKhauMoi, PASSWORD_DEFAULT);
+        $updateParams = ['MatKhau' => $hashedNewPassword];
+        Database::update('TaiKhoan', $updateParams, $userId);
+        return $result;
+    }
+
     public static function updateUser($userId, $newInfo) {
         $result = null;
         $params = [
