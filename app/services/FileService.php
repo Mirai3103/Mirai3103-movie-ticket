@@ -15,6 +15,37 @@ class FileService
             mkdir($_SERVER['DOCUMENT_ROOT'] . self::$UPLOAD_DIR, 0777, true);
         }
     }
+    private static function isUsed(string $path, string $usedFile): bool
+    {
+        if ($path === $usedFile)
+            return true;
+        if (strlen($path) < strlen($usedFile))
+            return false;
+        return substr($path, -strlen($usedFile)) === $usedFile;
+
+    }
+    public static function removeUnuseFile(array $usedFiles): void
+    {
+
+        $uploadDir = getcwd() . self::$UPLOAD_DIR;
+        $files = scandir($uploadDir);
+        foreach ($files as $file) {
+            if ($file == '.' || $file == '..') {
+                continue;
+            }
+            $path = self::$UPLOAD_DIR . $file;
+            $isUsed = false;
+            foreach ($usedFiles as $usedFile) {
+                if (self::isUsed($path, $usedFile)) {
+                    $isUsed = true;
+                    break;
+                }
+            }
+            if (!$isUsed) {
+                unlink($uploadDir . $file);
+            }
+        }
+    }
     public static function upload(mixed $file): JsonResponse
     {
         self::createUploadDir();
