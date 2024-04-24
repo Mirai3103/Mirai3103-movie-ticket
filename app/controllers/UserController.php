@@ -18,8 +18,7 @@ class UserController
     }
 
 
-    // /nguoi-dung/thong-tin Post, Get
-    // /api/nguoi-dung/mat-khau Post
+
     #[Route("/api/nguoi-dung/lich-su-dat-ve", "GET")]
     public static function abc()
     {
@@ -31,5 +30,7 @@ class UserController
     {
         return view("nguoi-dung/thong-tin/index");
     }
+    // /nguoi-dung/thong-tin Post, Get
+    // /api/nguoi-dung/mat-khau Post
 
 }
