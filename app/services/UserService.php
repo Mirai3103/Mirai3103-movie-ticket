@@ -33,17 +33,24 @@ class UserService
         ];
     }
 
+    public static function updateUser($userId, $newInfo) {
+        $result = null;
+        $params = [
+            "TenNguoiDung" => $newInfo["TenNguoiDung"] ??"",
+            "soDienThoai" => $newInfo["SoDienThoai"] ??"",
+            "email" => $newInfo["Email"] ??"",
+            "diaChi" => $newInfo["DiaChi"] ??"",
+            "ngaySinh" => $newInfo["NgaySinh"] ??"",
+        ];
+        Database::update("NguoiDung", $params, "MaNguoiDung = $userId");
+        $result=true;
+        return $result;
+    }
+    
     public static function getUserInfo($userId) {
         $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
         $user = Database::queryOne($query, [$userId]);
-        return [
-            "TenNguoiDung" => $user["TenNguoiDung"] ??"",
-            "SoDienThoai" => $user["SoDienThoai"] ??"",
-            "Email" => $user["Email"] ??"",
-            "DiaChi" => $user["DiaChi"] ??"",
-            "TrangThai" => $user["TrangThai"] ??"",
-            "NgaySinh" => $user["NgaySinh"] ??""
-        ];
+        return $user;
     }
 
     public static function getUserByEmail($email)

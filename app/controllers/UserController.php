@@ -42,11 +42,19 @@ class UserController
     public static function capnhatnguoidung()
     {
         $userId = Request::getUser()['MaNguoiDung'];
-        $newInfo = request_body() ;
+        $newInfo = request_body();
         $result = UserService::updateUser($userId, $newInfo);
-        return view("nguoi-dung/thong-tin/index", [
-            "userif"=>$user
-        ]);
+        if ($result) {
+            return json(JsonResponse::ok());
+        } else {
+            return json(JsonResponse::error('Cập nhật người dùng thất bại'));
+        }
+    }
+
+    #[Route('/api/nguoi-dung/mat-khau','POST')]
+    public static function doimatkhaunguoidung() {
+        $userId = Request::getUser()['MaNguoiDung'];
+        
     }
     // /nguoi-dung/thong-tin Post, Get
     // /api/nguoi-dung/mat-khau Post
