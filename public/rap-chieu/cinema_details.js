@@ -110,7 +110,7 @@ $("#cinema-image-file").on("change", function () {
     contentType: false,
     processData: false,
     success: function (data) {
-      $("#cinema-image").val(window.location.origin + data.data.path);
+      $("#cinema-image").val(data.data.path);
       toast("Thành công", {
         position: "bottom-center",
         type: "success",

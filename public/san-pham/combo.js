@@ -294,9 +294,7 @@ $("#HinhAnh input[type='file']").change(function (e) {
     contentType: false,
     processData: false,
     success: function (res) {
-      $("#HinhAnh input[type='text']").val(
-        window.location.origin + res.data.path
-      );
+      $("#HinhAnh input[type='text']").val(res.data.path);
     },
     error: function (error) {
       toast("Upload file thất bại", {

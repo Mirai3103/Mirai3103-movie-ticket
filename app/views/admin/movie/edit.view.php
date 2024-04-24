@@ -127,7 +127,7 @@ function getTheLoaiText() {
             validateStatus:()=>true
         });
         if(res.status === 200) {
-            return window.location.origin + res.data.data.path;
+            return  res.data.data.path;
         } else {
             toast('Upload file thất bại', {
                 position: 'bottom-center',

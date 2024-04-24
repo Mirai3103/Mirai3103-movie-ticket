@@ -2,9 +2,11 @@ import Alpine from "alpinejs";
 import $ from "jquery";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-dayjs.extend(customParseFormat);
 import "dayjs/locale/vi";
+
+dayjs.extend(customParseFormat);
 import "./css/tailwind.css";
+"".endsWith("/a/c/d");
 dayjs.locale("vi");
 import axios from "axios";
 import lodash from "lodash";
@@ -70,6 +72,7 @@ Alpine.data("dataTable", ({ initialQuery = {}, endpoint }) => ({
       (_, i) => i + 1
     );
   },
+
   createOrderFn: function (orderBy) {
     if (this.query["sap-xep"] === orderBy) {
       this.query["thu-tu"] = this.query["thu-tu"] === "ASC" ? "DESC" : "ASC";
