@@ -33,6 +33,19 @@ class UserService
         ];
     }
 
+    public static function getUserInfo($userId) {
+        $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
+        $user = Database::queryOne($query, [$userId]);
+        return [
+            "TenNguoiDung" => $user["TenNguoiDung"] ??"",
+            "SoDienThoai" => $user["SoDienThoai"] ??"",
+            "Email" => $user["Email"] ??"",
+            "DiaChi" => $user["DiaChi"] ??"",
+            "TrangThai" => $user["TrangThai"] ??"",
+            "NgaySinh" => $user["NgaySinh"] ??""
+        ];
+    }
+
     public static function getUserByEmail($email)
     {
         $query = "SELECT * FROM NguoiDung WHERE Email = ?;";

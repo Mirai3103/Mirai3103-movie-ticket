@@ -1,5 +1,5 @@
 <?php
-
+// $userif
 ?>
 <link rel="stylesheet" href="/public/nguoi-dung/main.css">
 <div class="acc-page container-fluid p-3 px-sm-0">
@@ -112,7 +112,9 @@
                                 <div class="mb-3">
                                     <label for="hoTenKhachHang" class="form-label">Họ và
                                         tên</label>
-                                    <input type="email" class="form-control" id="hoTenKhachHang" aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" id="hoTenKhachHang"
+                                    value="<?=$userif["TenNguoiDung"]?>"
+                                    aria-describedby="emailHelp" required>
                                 </div>
                             </div>
 
@@ -120,7 +122,9 @@
                                 <div class="mb-3">
                                     <label for="ngaySinh" class="form-label">Ngày
                                         sinh</label>
-                                    <input type="date" class="form-control" id="ngaySinh" aria-describedby="emailHelp" required>
+                                    <input type="date" class="form-control" id="ngaySinh" 
+                                    value="<?=$userif["NgaySinh"]?>"
+                                    aria-describedby="emailHelp" required>
                                 </div>
                             </div>
                         </div>
@@ -130,21 +134,27 @@
                                 <div class="mb-3">
                                     <label for="soDienThoai" class="form-label">Số điện
                                         thoại</label>
-                                    <input type="email" class="form-control" id="soDienThoai" aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" id="soDienThoai"
+                                    value="<?=$userif["SoDienThoai"]?>"
+                                     aria-describedby="emailHelp" required>
                                 </div>
                             </div>
 
                             <div class="col-6 col-sm-12 col-md-6">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" id="email"
+                                    value="<?=$userif["Email"]?>"
+                                     aria-describedby="emailHelp" required>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mb-3 mb-sm-4 mb-md-3">
                             <label for="diaChi" class="form-label">Địa chỉ</label>
-                            <input type="email" class="form-control" id="diaChi" aria-describedby="emailHelp" required>
+                            <input type="email" class="form-control" 
+                            value="<?=$userif["DiaChi"]?>"
+                            id="diaChi" aria-describedby="emailHelp" required>
                         </div>
 
                         <button type="submit" class="btn submit-btn col-sm-12 col-md-auto">Lưu thông
