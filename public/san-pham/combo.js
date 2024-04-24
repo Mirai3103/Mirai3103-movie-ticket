@@ -244,9 +244,9 @@ $("#form-input-product").submit(function (e) {
   $("#btn-save").prop("disabled", true);
   $("#btn-save span").hide();
   $("#btn-save .spinner-border").show();
-  let url = "/api/san-pham";
+  let url = "/api/combo";
   if (modalState == "edit") {
-    url = "/api/san-pham/" + $("#MaThucPham").val().trim();
+    url = "/api/combo/" + $("#MaThucPham").val().trim();
   }
   disableAllButton();
 
@@ -310,7 +310,7 @@ $("#HinhAnh input[type='file']").change(function (e) {
 
 function showEditModal(id) {
   $.ajax({
-    url: "/api/san-pham/" + id,
+    url: "/api/combo/" + id,
     type: "GET",
     success: function (res) {
       $("#edit-title").text("Sửa sản phẩm #" + res.data.MaThucPham);
@@ -339,7 +339,7 @@ function showEditModal(id) {
 let selectedId = null;
 function showDeleteModal(id) {
   selectedId = id;
-  $("#delete-modal .modal-title").text("Xóa sản phẩm #" + id);
+  $("#delete-modal .modal-title").text("Xóa combo #" + id);
   $("#btn-delete").attr("data-id", id);
   $("#delete-modal").modal("show");
 }
@@ -347,7 +347,7 @@ function showDeleteModal(id) {
 $("#btn-delete").click(function () {
   const id = selectedId;
   $.ajax({
-    url: "/api/san-pham/" + id + "/delete",
+    url: "/api/combo/" + id + "/toggle-status",
     type: "POST",
     success: function (res) {
       toast("Thành công", {
@@ -366,9 +366,9 @@ $("#btn-delete").click(function () {
   });
 });
 
-function onRecoverProduct(id) {
+function onRecoverCombo(id) {
   $.ajax({
-    url: "/api/san-pham/" + id + "/delete",
+    url: "/api/combo/" + id + "/toggle-status",
     type: "POST",
     success: function (res) {
       toast("Khôi phục thành công", {

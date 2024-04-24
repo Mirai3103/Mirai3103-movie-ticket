@@ -17,12 +17,7 @@ class ComboController
         $statuses = StatusService::getAllStatus('Combo');
         return view("admin/combo/index", ['statuses' => $statuses]);
     }
-    #[Route("/api/combo", "POST")]
-    public static function create()
-    {
-        $result = ComboService::createNewCombo($_POST);
-        return json($result);
-    }
+
     #[Route("/admin/combo/{id}/sua", "GET")]
     public static function edit($id)
     {
@@ -32,6 +27,26 @@ class ComboController
         return view("admin/combo/edit", ['combo' => $combo, 'statuses' => $statuses, 'foods' => $thucAn]);
     }
 
+    #[Route("/admin/combo/{id}/sua", "POST")]
+    public static function updateView($id)
+    {
+        $result = ComboService::updateCombo(request_body(), $id);
+        return json($result);
+    }
+    #[Route("/admin/combo/them-moi", "GET")]
+    public static function createView()
+    {
+
+        $statuses = StatusService::getAllStatus('Combo');
+        $thucAn = ComboService::getAllFoodnDrink();
+        return view("admin/combo/add", ['statuses' => $statuses, 'foods' => $thucAn]);
+    }
+    #[Route("/admin/combo/them-moi", "POST")]
+    public static function create()
+    {
+        $result = ComboService::createNewCombo(request_body());
+        return json($result);
+    }
     #[Route("/api/combo/{id}/sua", "POST")]
     public static function update($id)
     {

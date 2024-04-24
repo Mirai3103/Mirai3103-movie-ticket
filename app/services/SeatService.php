@@ -42,7 +42,7 @@ class SeatService
         $isSuccess = true;
         for ($i = 0; $i < count($cleanData); $i++) {
             $result = Database::insert('Ghe', $cleanData[$i]);
-            if (!$result) {
+            if (!isset($result)) {
                 $isSuccess = false;
                 Database::rollBack();
                 break;

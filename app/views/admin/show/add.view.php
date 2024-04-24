@@ -48,6 +48,7 @@ formValidator(validatorRule);
             if (!data.NgayGioBatDau) {
                 return;
             }
+           
             const ngayGioBatDau = dayjs(data.NgayGioBatDau);
             console.log(ngayGioBatDau);
             const texxt=ngayGioBatDau.add(Number(value), 'minute').format('YYYY-MM-DDTHH:mm');
@@ -89,7 +90,6 @@ formValidator(validatorRule);
         const maPhim= data.MaPhim;
         let thoiLuongPhim = document.querySelector(`#phim option[value='${maPhim}']`).dataset.thoiLuongPhim;
         thoiLuongPhim = parseInt(thoiLuongPhim);
-  //      2024-04-13T16:12
         const ngayGioBatDau = dayjs(data.NgayGioBatDau, 'YYYY-MM-DDTHH:mm');
         const ngayGioKetThuc = dayjs(data.NgayGioKetThuc, 'YYYY-MM-DDTHH:mm');
 

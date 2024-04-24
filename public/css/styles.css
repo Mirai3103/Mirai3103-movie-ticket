@@ -3475,6 +3475,10 @@ details.tw-collapse summary::-webkit-details-marker {
   margin-bottom: 10rem;
 }
 
+.tw-mb-5 {
+  margin-bottom: 1.25rem;
+}
+
 .tw-mb-6 {
   margin-bottom: 1.5rem;
 }
@@ -4554,6 +4558,11 @@ details.tw-collapse summary::-webkit-details-marker {
   padding-right: 1rem;
 }
 
+.tw-px-7 {
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
+}
+
 .tw-py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -4612,6 +4621,11 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-py-7 {
   padding-top: 1.75rem;
   padding-bottom: 1.75rem;
+}
+
+.tw-px-14 {
+  padding-left: 3.5rem;
+  padding-right: 3.5rem;
 }
 
 .\!tw-pb-2 {
@@ -5359,14 +5373,14 @@ details.tw-collapse summary::-webkit-details-marker {
   border-width: 0px;
 }
 
-.disabled\:tw-bg-gray-50:disabled {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
-}
-
 .disabled\:tw-bg-gray-200:disabled {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.disabled\:tw-bg-gray-50:disabled {
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
 .disabled\:tw-opacity-50:disabled {

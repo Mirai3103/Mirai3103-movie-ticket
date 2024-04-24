@@ -75,7 +75,7 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                     Cảnh báo
                 </h3>
                 <p class="tw-py-4 tw-text-lg">
-                    Bạn có chắc chắn muốn xoá suất chiếu #<span class='tw-font-bold' x-text="selected?.MaPhim"></span>
+                    Bạn có chắc chắn muốn xoá phim #<span class='tw-font-bold' x-text="selected?.MaPhim"></span>
                     không?
                 </p>
 
@@ -86,6 +86,7 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                         </button>
                         <button x-on:click="
                         onConfirmDelete(selected?.MaPhim);
+                        window['delete_modal'].close();
                         " class="tw-btn tw-btn-error tw-px-4 tw-text-white">
                             Xoá
                         </button>
@@ -100,10 +101,10 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                     :class="{'button-nav-active': query['trang-thai']==undefined}"
                     x-on:click="query['trang-thai']=undefined;onApllyFilter()" onclick="optionOfList(this)">
                 <?php foreach ($phimStatuses as $status): ?>
-                <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                    :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
-                    x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
-                    onclick="optionOfList(this)">
+                    <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
+                        :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
+                        x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
+                        onclick="optionOfList(this)">
                 <?php endforeach; ?>
             </div>
         </div>
@@ -208,10 +209,10 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                         class="selectpicker !tw-w-full">
 
                                         <?php foreach (PhimService::$MOVIE_TAGS as $key => $value): ?>
-                                        <option value="<?= $key ?>">
-                                            <?= $key ?> -
-                                            <?= $value ?>
-                                        </option>
+                                            <option value="<?= $key ?>">
+                                                <?= $key ?> -
+                                                <?= $value ?>
+                                            </option>
                                         <?php endforeach; ?>
 
                                     </select>
@@ -231,9 +232,9 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                     <select x-model="query['the-loais']" data-selected-text-format="count" multiple
                                         class="selectpicker !tw-w-full">
                                         <?php foreach ($categories as $category): ?>
-                                        <option value="<?= $category['MaTheLoai'] ?>">
-                                            <?= $category['TenTheLoai'] ?>
-                                        </option>
+                                            <option value="<?= $category['MaTheLoai'] ?>">
+                                                <?= $category['TenTheLoai'] ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>

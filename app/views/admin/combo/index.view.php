@@ -91,7 +91,7 @@ require ('app/views/admin/header.php');
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name" onclick="createSort('MaThucPham')">
+                            <div class="col-name" onclick="createSort('MaCombo')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -103,7 +103,7 @@ require ('app/views/admin/header.php');
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name" onclick="createSort('TenThucPham')">
+                            <div class="col-name" onclick="createSort('TenCombo')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -116,7 +116,7 @@ require ('app/views/admin/header.php');
                         </th>
 
                         <th scope="col">
-                            <div class="col-name" onclick="createSort('GiaThucPham')">
+                            <div class="col-name" onclick="createSort('GiaCombo')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">

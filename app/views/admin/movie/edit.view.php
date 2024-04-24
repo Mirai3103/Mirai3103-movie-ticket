@@ -136,6 +136,12 @@ function getTheLoaiText() {
         }
     },
     onSubmit:async function() {
+        if(!validate()) {
+            return toast('Vui lòng kiểm tra lại thông tin', {
+                position: 'bottom-center',
+                type: 'danger'
+            });
+        }
         const payload = {
             TenPhim: this.data.TenPhim,
             NgayPhatHanh: dayjs(this.data.NgayPhatHanh).format('YYYY-MM-DD'),
@@ -233,7 +239,10 @@ function getTheLoaiText() {
             <div class="mb-3">
                 <label for="tenphim" class="form-label">Tên
                     phim</label>
-                <input type="text" class="form-control" id="TenPhim" x-model="data.TenPhim" required>
+                <input type="text" :class="{'is-invalid':!!errors.TenPhim}" class="form-control" id="TenPhim"
+                    x-model="data.TenPhim" required>
+                <div class="invalid-feedback" x-text="errors.TenPhim"></div>
+
             </div>
 
             <div class="row mb-3">
@@ -266,7 +275,7 @@ function getTheLoaiText() {
                             Chọn phân loại phim
                         </option>
                         <?php foreach (PhimService::$MOVIE_TAGS as $key => $value): ?>
-                            <option value="<?= $key ?>"><?= $key ?> - <?= $value ?></option>
+                        <option value="<?= $key ?>"><?= $key ?> - <?= $value ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -296,64 +305,66 @@ function getTheLoaiText() {
                 <div class="col">
                     <label for="thoiluong" class="form-label">Thời
                         lượng (phút)</label>
-                    <input type="number" class="form-control" id="ThoiLuong" x-model="data.ThoiLuong" required>
-                </div>
-
-                <div class="col">
-                    <label for="ngonngu" class="form-label">Ngôn
-                        ngữ</label>
-                    <input type="text" class="form-control" id="NgonNgu" x-model="data.NgonNgu" required>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col">
-                    <label for="daodien" class="form-label">Đạo
-                        diễn</label>
-                    <input type="text" class="form-control" id="DaoDien" x-model="data.DaoDien" required>
-                </div>
-
-                <div class="col ">
-                    <label for class="form-label">Trạng thái </label>
-                    <select disabled class="form-select" id="TinhTrang" x-model="data.TinhTrang" required>
-                        <?php foreach ($phimStatuses as $status): ?>
-                            <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col ">
-                    <label for="trailer" class="form-label">Trailer</label>
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Link trailer"
-                            aria-label="Recipient's username" aria-describedby="button-addon2" id="Trailer"
-                            x-model="data.Trailer">
-                        <label class="btn btn-outline-secondary" :disabled="trailerUploadLoading">Chọn
-                            <input :disabled="trailerUploadLoading" type="file" hidden accept="video/*" x-on:change="
-                            data.FileTrailer = $event.target.files[0];
-                            ">
-                            <span x-show="trailerUploadLoading" class="spinner-border spinner-border-sm" role="status"
-                                aria-hidden="true"></span>
-                        </label>
+                    <input :class="{'is-invalid':!!errors.ThoiLuong}" type="number" class="form-control" id="ThoiLuong"
+                        x-model="data.ThoiLuong" required>
+                    <div class="invalid-feedback" x-text="errors.ThoiLuong">
                     </div>
 
+                    <div class="col">
+                        <label for="ngonngu" class="form-label">Ngôn
+                            ngữ</label>
+                        <input type="text" class="form-control" id="NgonNgu" x-model="data.NgonNgu" required>
+                    </div>
                 </div>
 
-                <div class="col">
-                    <label for="theloai" class="form-label">Thể
-                        loại</label>
-                    <div class="input-group mb-3">
-                        <input readonly type="text" class="form-control" aria-label="Text input with dropdown button"
-                            readonly x-bind:value="theLoaiText">
-                        <button data-bs-auto-close="outside" class="btn btn-outline-secondary dropdown-toggle"
-                            type="button" data-bs-toggle="dropdown" aria-expanded="false">Thể
-                            loại</button>
-                        <ul class="dropdown-menu dropdown-menu-end tw-max-h-52   tw-overflow-y-auto">
-                            <!-- load dữ liệu thể loại phim -->
-                            <?php foreach ($categories as $category): ?>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="daodien" class="form-label">Đạo
+                            diễn</label>
+                        <input type="text" class="form-control" id="DaoDien" x-model="data.DaoDien" required>
+                    </div>
+
+                    <div class="col ">
+                        <label for class="form-label">Trạng thái </label>
+                        <select disabled class="form-select" id="TinhTrang" x-model="data.TinhTrang" required>
+                            <?php foreach ($phimStatuses as $status): ?>
+                            <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col ">
+                        <label for="trailer" class="form-label">Trailer</label>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Link trailer"
+                                aria-label="Recipient's username" aria-describedby="button-addon2" id="Trailer"
+                                x-model="data.Trailer">
+                            <label class="btn btn-outline-secondary" :disabled="trailerUploadLoading">Chọn
+                                <input :disabled="trailerUploadLoading" type="file" hidden accept="video/*" x-on:change="
+                            data.FileTrailer = $event.target.files[0];
+                            ">
+                                <span x-show="trailerUploadLoading" class="spinner-border spinner-border-sm"
+                                    role="status" aria-hidden="true"></span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="col">
+                        <label for="theloai" class="form-label">Thể
+                            loại</label>
+                        <div class="input-group mb-3">
+                            <input readonly type="text" class="form-control"
+                                aria-label="Text input with dropdown button" readonly x-bind:value="theLoaiText">
+                            <button data-bs-auto-close="outside" class="btn btn-outline-secondary dropdown-toggle"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">Thể
+                                loại</button>
+                            <ul class="dropdown-menu dropdown-menu-end tw-max-h-52   tw-overflow-y-auto">
+                                <!-- load dữ liệu thể loại phim -->
+                                <?php foreach ($categories as $category): ?>
                                 <li>
                                     <div class="dropdown-item">
                                         <label>
@@ -363,21 +374,21 @@ function getTheLoaiText() {
                                             <?= $category['TenTheLoai'] ?></label>
                                     </div>
                                 </li>
-                            <?php endforeach; ?>
-                        </ul>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="mb-3">
-                <label for="description" class="form-label">Mô
-                    tả</label>
-                <textarea class="form-control" id="description" rows="3" x-model="data.MoTa" required></textarea>
-            </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Mô
+                        tả</label>
+                    <textarea class="form-control" id="description" rows="3" x-model="data.MoTa" required></textarea>
+                </div>
 
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-primary" type="submit">Lưu</button>
-            </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button class="btn btn-primary" type="submit">Lưu</button>
+                </div>
         </form>
     </div>
 </div>

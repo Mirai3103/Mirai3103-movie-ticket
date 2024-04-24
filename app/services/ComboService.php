@@ -140,7 +140,7 @@ class ComboService
         $offset = ($page - 1) * $limit;
         $thucPhamIds = getArrayValueSafe($query, 'thuc-phams');
         $queryBuilder = new QueryBuilder();
-
+        $sortBy = 'Combo.' . $sortBy;
         $queryBuilder->selectDistinct(
             [
                 'Combo.*',
@@ -184,6 +184,7 @@ class ComboService
                 'Combo.TenCombo' => 'TenCombo',
                 'Combo.MoTa' => 'MoTa',
                 'Combo.TrangThai' => 'TrangThai',
+                'Combo.HinhAnh' => 'HinhAnh',
                 'CT_Combo_ThucPham.MaThucPham' => 'MaThucPham',
                 'ThucPham.TenThucPham' => 'TenThucPham',
                 'ThucPham.GiaThucPham' => 'GiaThucPham',
@@ -204,6 +205,7 @@ class ComboService
             'TenCombo' => $data[0]['TenCombo'],
             'MoTa' => $data[0]['MoTa'],
             'TrangThai' => $data[0]['TrangThai'],
+            'HinhAnh' => $data[0]['HinhAnh'],
             'ThucPham' => []
         ];
         foreach ($data as $item) {
@@ -253,12 +255,13 @@ class ComboService
 
     public static function createNewCombo($data)
     {
+
         $params = [
-            'MaCombo' => $data['MaCombo'],
             'GiaCombo' => $data['GiaCombo'],
             'TenCombo' => $data['TenCombo'],
-            'TrangThai' => $data['TrangThai'],
-            'MoTa' => $data['MoTa']
+            'TrangThai' => $data['TrangThai'] ?? TrangThaiCombo::DangBan->value,
+            'MoTa' => $data['MoTa'],
+            'HinhAnh' => $data['HinhAnh']
         ];
 
         $result = Database::insert('Combo', $params);
@@ -267,11 +270,8 @@ class ComboService
         }
         $foods = $data['ThucPhams'];
         $comboId = $result;
-        self::addFoodsToCombo($comboId, $foods);
-        if ($result) {
-            return JsonResponse::ok();
-        }
-        return JsonResponse::error('Thêm mới combo thất bại', 500);
+        return self::addFoodsToCombo($comboId, $foods);
+
     }
     public static function removeAllFoodInCombo($id)
     {
@@ -283,6 +283,7 @@ class ComboService
     }
     public static function addFoodsToCombo($comboId, $foods)
     {
+
         Database::beginTransaction();
         foreach ($foods as $food) {
             $result = Database::insert('CT_Combo_ThucPham', [
@@ -290,7 +291,7 @@ class ComboService
                 'MaThucPham' => $food['MaThucPham'],
                 'SoLuong' => $food['SoLuong']
             ]);
-            if (!$result) {
+            if (!isset($result)) {
                 Database::rollBack();
                 return JsonResponse::error('Thêm thất bại', 500);
             }
@@ -305,15 +306,13 @@ class ComboService
             'GiaCombo' => $data['GiaCombo'],
             'TenCombo' => $data['TenCombo'],
             'TrangThai' => $data['TrangThai'],
-            'MoTa' => $data['MoTa']
+            'MoTa' => $data['MoTa'],
+            'HinhAnh' => $data['HinhAnh']
         ];
         $result = Database::update('Combo', $params, "MaCombo=$id");
         self::removeAllFoodInCombo($id);
-        self::addFoodsToCombo($id, $data['ThucPhams']);
-        if ($result) {
-            return JsonResponse::ok();
-        }
-        return JsonResponse::error('Cập nhật combo thất bại', 500);
+        return self::addFoodsToCombo($id, $data['ThucPhams']);
+
     }
 
     public static function toggleHideCombo($id)

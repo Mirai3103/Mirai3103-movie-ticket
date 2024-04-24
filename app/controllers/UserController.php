@@ -16,4 +16,6 @@ class UserController
         $result = UserService::isMailExist($email);
         return json(JsonResponse::ok($result));
     }
+    // /nguoi-dung/thong-tin Post, Get
+    // /api/nguoi-dung/mat-khau Post
 }
