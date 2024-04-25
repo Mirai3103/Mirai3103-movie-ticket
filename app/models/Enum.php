@@ -75,3 +75,14 @@ enum LoaiTaiKhoan: int
     case NhanVien = 1;
     case KhachHang = 2;
 }
+enum TrangThaiTaiKhoan: int
+{
+    case DangBiKhoa = 29;
+    case DangHoatDong = 28;
+}
+
+enum TrangThaiNhomQuyen: int
+{
+    case An = 30;
+    case Hien = 31;
+}

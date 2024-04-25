@@ -1,4 +1,6 @@
 <?php
+use App\Models\TrangThaiNhomQuyen;
+
 title("Quản lý nhóm quyền");
 require ('app/views/admin/header.php');
 
@@ -6,7 +8,11 @@ require ('app/views/admin/header.php');
 
 ?>
 <link rel="stylesheet" href="/public/css/role.css">
-<div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
+<div x-data="
+{
+    selectedId: null,
+}
+" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
     <div class="access container-fluid  shadow">
         <!-- thanh tim kiem va nut them nhom quyen moi -->
         <div class="row justify-content-between px-5 mt-4 mb-3">
@@ -68,7 +74,15 @@ require ('app/views/admin/header.php');
                         <th scope="row"><?= $role['MaNhomQuyen'] ?></th>
                         <td><?= $role['TenNhomQuyen'] ?></td>
                         <td><?= $role['MoTa'] ?></td>
-                        <td><?= $role['TrangThai'] ?></td>
+                        <td>
+                            <?php
+                                if ($role['TrangThai'] == TrangThaiNhomQuyen::An->value)
+                                    echo 'Khóa';
+                                else
+                                    echo 'Đang hoạt động';
+                                ?>
+
+                        </td>
                         <td>
                             <div class="dropdown">
                                 <button type="button" class="btn btn-light btn-icon rounded-circle"
@@ -105,7 +119,37 @@ require ('app/views/admin/header.php');
                                         </a>
                                     </li>
                                     <li>
-                                        <div class="dropdown-item">
+                                        <div x-on:click="
+                                        axios.put('/api/nhom-quyen/' + <?= intval($role['MaNhomQuyen']) ?> + '/trang-thai')
+                                        .then(res => {
+                                            window.location.reload();
+                                        }).catch(err => {
+                                            console.log(err);
+                                        });
+                                        " class="dropdown-item">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="currentColor"
+                                                class="icon icon-tabler icons-tabler-filled icon-tabler-lock">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path
+                                                    d="M12 2a5 5 0 0 1 5 5v3a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-10a3 3 0 0 1 -3 -3v-6a3 3 0 0 1 3 -3v-3a5 5 0 0 1 5 -5m0 12a2 2 0 0 0 -1.995 1.85l-.005 .15a2 2 0 1 0 2 -2m0 -10a3 3 0 0 0 -3 3v3h6v-3a3 3 0 0 0 -3 -3" />
+                                            </svg>
+                                            <span class="px-xl-3 ">
+                                                <?php
+                                                    if ($role['TrangThai'] == TrangThaiNhomQuyen::An->value)
+                                                        echo 'Mở khóa';
+                                                    else
+                                                        echo 'Khóa';
+                                                    ?>
+
+                                            </span>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div x-on:click="
+                                        selectedId = <?= $role['MaNhomQuyen'] ?>;
+                                        window['delete_modal'].showModal();
+                                        " class="dropdown-item">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                 fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                                                 <path
@@ -123,6 +167,34 @@ require ('app/views/admin/header.php');
             </table>
         </div>
     </div>
+    <!-- Open the modal using ID.showModal() method -->
+    <dialog id="delete_modal" class="tw-modal">
+        <div class="tw-modal-box">
+            <h3 class="tw-font-bold tw-text-lg">
+                Xác nhận xóa nhóm quyền
+            </h3>
+            <p class="tw-py-4">
+                Bạn có chắc chắn muốn xóa nhóm quyền #<span x-text="selectedId"></span> không?
+            </p>
+            <div class="tw-modal-action">
+                <form method="dialog">
+
+                    <button class="tw-btn">Huỷ</button>
+                    <button x-on:click="
+                    axios.delete('/api/nhom-quyen/' + selectedId)
+                    .then(res => {
+                        window.location.reload();
+                    }).catch(err => {
+                        console.log(err);
+                    });
+                    " class="tw-btn tw-btn-error tw-text-white">Xoá</button>
+                </form>
+            </div>
+        </div>
+        <form method="tw-dialog" class="tw-modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
 </div>
 
 

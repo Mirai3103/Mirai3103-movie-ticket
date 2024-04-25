@@ -1,20 +1,97 @@
 <?php
+use App\Models\LoaiTaiKhoan;
+
 title("Quản lý tài khoản");
 require ('app/views/admin/header.php');
 ?>
-
+<script>
+const statuses = <?= json_encode($statuses) ?>;
+</script>
 <link rel="stylesheet" href="/public/tiendat/account.css">
 <!-- End sidebar -->
 
-<div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
-    <div class="account container-fluid  shadow">
-        <!-- thanh phan loai phim -->
+<!-- class AccountController
+{
+
+    #[Route(path: '/admin/tai-khoan', method: 'GET')]
+    public static function index()
+    {
+        $statuses = StatusService::getAllStatus('TaiKhoan');
+        return view('admin/account/index', ['statuses' => $statuses]);
+    }
+    #[Route(path: '/api/tai-khoan', method: 'GET')]
+    public static function getAllAccount()
+    {
+        return json(JsonResponse::ok(AccountService::getAllAccount($_GET)));
+    }
+    #[Route(path: '/admin/tai-khoan/them', method: 'GET')]
+    public static function addView()
+    {
+        $employees = AccountService::getAllAccount([
+            'loai-tai-khoan' => LoaiTaiKhoan::NhanVien->value,
+            'limit' => 10000
+        ]);
+        return view('admin/account/add', ['employees' => $employees]);
+    }
+    #[Route(path: '/admin/tai-khoan/them', method: 'POST')]
+    public static function add()
+    {
+        $data = request_body();
+
+        $result = AccountService::createNewAccount($data);
+        return json($result);
+    }
+    #[Route(path: '/api/tai-khoan/{id}/set-password', method: 'PATCH')]
+    public static function setPassword($id)
+    {
+        $data = request_body();
+        return json(AccountService::setPassword($id, $data['password']));
+    }
+    #[Route(path: '/api/tai-khoan/{id}/nhom-quyen', method: 'PATCH')]
+    public static function setRole($id)
+    {
+        $data = request_body();
+        return json(AccountService::setRole($id, $data['role']));
+    }
+    #[Route(path: '/api/tai-khoan/{id}', method: 'DELETE')]
+    public static function delete($id)
+    {
+        return json(AccountService::deleteAccount($id));
+    }
+    #[Route(path: '/admin/tai-khoan/{id}/chuyen-trang-thai', method: 'PATCH')]
+    public static function changeStatus($id)
+    {
+        return json(AccountService::toggleLockAccount($id));
+    }
+} -->
+<div x-data="dataTable({
+    endpoint:'/api/tai-khoan',
+    initialQuery :{
+        'trang': 1,
+        'limit': 50,
+        'loai-tai-khoan': <?= LoaiTaiKhoan::KhachHang->value ?>,
+    }
+})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
+    <div x-data="{
+        onApllyFilter(){
+            console.log(query);
+            refresh();
+        },
+        onClearFilter(){
+            query={};
+            $nextTick(()=>{
+                refresh();
+            })
+        }
+
+    }
+    " class=" account container-fluid shadow">
         <div class="border-bottom mb-4">
             <div>
-                <input type="button" name id="customer" class="btn button button-nav-active fw-semibold"
-                    value="Khách hàng" onclick="optionOfList(this)">
-                <input type="button" name id="staff" class="btn button fw-semibold" value="Nhân viên"
-                    onclick="optionOfList(this)">
+                <input type="button" id="customer" class="btn button button-nav-active fw-semibold" value="Khách hàng"
+                    x-on:click="query['loai-tai-khoan'] = <?= LoaiTaiKhoan::KhachHang->value ?>; onApllyFilter();optionOfList($el)">
+                <input type="button" id="staff" class="btn button fw-semibold" value="Nhân viên"
+                    x-on:click="query['loai-tai-khoan'] = <?= LoaiTaiKhoan::NhanVien->value ?>; onApllyFilter();optionOfList($el)">
             </div>
         </div>
 
@@ -22,27 +99,31 @@ require ('app/views/admin/header.php');
         <div class="row justify-content-between px-5">
             <div class="col-6">
                 <div class="input-group">
-                    <input type="text" name id="searchMovie" placeholder="Nhập thông tin cần tìm" class="form-control">
-                    <button class="btn btn-outline-secondary align-items-center" type="button" id="searchMovie">
+                    <input x-on:keydown.enter="query['tu-khoa'] = $event.target.value; onApllyFilter()" type="text"
+                        placeholder="Nhập thông tin cần tìm" class="form-control">
+                    <button x-on:click="query['tu-khoa'] = $event.target.previousElementSibling.value; onApllyFilter()"
+                        class="btn btn-outline-secondary align-items-center" type="button" id="searchMovie">
                         <i class="fa-solid fa-magnifying-glass" style="display: flex;"></i>
                     </button>
                 </div>
             </div>
+            <template x-if="query['loai-tai-khoan']==<?= LoaiTaiKhoan::NhanVien->value ?>">
 
-            <div class="col-6">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button class="btn btn-primary me-md-2" type="button">Thêm tài khoản</button>
+                <div class="col-6">
+                    <a href="/admin/tai-khoan/them" class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-primary me-md-2" type="button">Thêm tài khoản nhân viên</button>
+                    </a>
                 </div>
-            </div>
-        </div>
 
-        <!-- chua bang phim -->
+            </template>
+
+        </div>
         <div class="row m-3 table-responsive" style="flex: 1;">
             <table class="table table-hover align-middle" style="height: 100%;">
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name" x-on:click="createOrderFn('MaTaiKhoan')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -54,7 +135,7 @@ require ('app/views/admin/header.php');
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name">
+                            <div class="col-name" x-on:click="createOrderFn('TenDangNhap')">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                     width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -65,68 +146,223 @@ require ('app/views/admin/header.php');
                                 Tên đăng nhập
                             </div>
                         </th>
-                        <th scope="col">Mật khẩu</th>
-                        <th scope="col">Trạng thái</th>
+                        <th scope="col" x-on:click="createOrderFn('MaNguoiDung')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
+                                width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M3 9l4 -4l4 4m-4 -4v14" />
+                                <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+                            </svg>
+                            Mã người dùng
+                        </th>
+                        <th scope="col">
+
+                            Tên người dùng
+                        </th>
+                        <th scope="col">
+
+                            Nhóm quyền
+                        </th>
+                        <th scope="col" x-on:click="createOrderFn('TrangThai')">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
+                                width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M3 9l4 -4l4 4m-4 -4v14" />
+                                <path d="M21 15l-4 4l-4 -4m4 4v-14" />
+                            </svg>
+                            Trạng thái
+                        </th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">4</th>
-                        <td>huuhoag1413@outlook.com</td>
-                        <td>123456</td>
-                        <td>NULL</td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button" class="btn btn-light btn-icon rounded-circle"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                                    </svg>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <div class="dropdown-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                                <path
-                                                    d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                            </svg>
-                                            <span class="px-xl-3 ">Xem</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                            </svg>
-                                            <span class="px-xl-3 ">Sửa</span>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-item ">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                                            </svg>
-                                            <span class="px-xl-3 ">Xóa</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
+                    <template x-if="isFetching">
+                        <tr>
+                            <td class="   tw-border-b tw-border-gray-50" colspan="7">
+                                <div class='tw-w-full tw-flex tw-py-32 tw-items-center tw-justify-center'>
+                                    <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                    <template x-for="item in data" :key="item.MaTaiKhoan">
+                        <tr>
+                            <td x-text="item.MaTaiKhoan"></td>
+                            <td x-text="item.TenDangNhap"></td>
+                            <td x-text="item.MaNguoiDung"></td>
+                            <td x-text="item.TenNguoiDung"></td>
+                            <td x-text="item.TenNhomQuyen||'Chưa có'"></td>
+                            <td x-text="statuses.find(status=>status.MaTrangThai==item.TrangThai)?.Ten">
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn btn-light btn-icon rounded-circle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="icon">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
+                                        </svg>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" :href="'/admin/tai-khoan/'+item.MaTaiKhoan+'/sua'">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path
+                                                        d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                                    <path
+                                                        d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                                    <path d="M16 5l3 3" />
+                                                </svg>
+                                                <span class="px-xl-3 ">Sửa người dùng</span>
+                                            </a>
+                                        </li>
+
+                                        <li x-show="query['loai-tai-khoan']==<?= LoaiTaiKhoan::NhanVien->value ?>">
+                                            <div class="dropdown-item" x-on:click="
+                                                selected ={...item};
+                                                $nextTick(()=>{
+                                                    window['setRoleModal'].showModal();
+                                                })
+                                            ">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-accessible">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                                                    <path d="M10 16.5l2 -3l2 3m-2 -3v-2l3 -1m-6 0l3 1" />
+                                                    <circle cx="12" cy="7.5" r=".5" fill="currentColor" />
+                                                </svg>
+                                                <span class="px-xl-3 ">
+                                                    Phân quyền
+                                                </span>
+                                            </div>
+                                        </li>
+                                        <li x-show="query['loai-tai-khoan']==<?= LoaiTaiKhoan::NhanVien->value ?>">
+                                            <div class="dropdown-item" x-on:click="
+                                                selected = {...item};
+                                                $nextTick(()=>{
+                                                    window['setPasswordModal'].showModal();
+                                                })
+                                            ">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="icon icon-tabler icons-tabler-outline icon-tabler-fingerprint">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path d="M18.9 7a8 8 0 0 1 1.1 5v1a6 6 0 0 0 .8 3" />
+                                                    <path d="M8 11a4 4 0 0 1 8 0v1a10 10 0 0 0 2 6" />
+                                                    <path d="M12 11v2a14 14 0 0 0 2.5 8" />
+                                                    <path d="M8 15a18 18 0 0 0 1.8 6" />
+                                                    <path d="M4.9 19a22 22 0 0 1 -.9 -7v-1a8 8 0 0 1 12 -6.95" />
+                                                </svg>
+                                                <span class="px-xl-3 ">
+                                                    Đặt mật khẩu
+                                                </span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="dropdown-item " x-on:click="
+                                                selected = item;
+                                                $nextTick(()=>{
+                                                    window['deleteAccountModal'].showModal();
+                                                })
+                                            ">
+
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                                </svg>
+                                                <span class="px-xl-3 ">Xóa</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="dropdown-item " x-on:click="
+                                            axios.patch(`/api/tai-khoan/${item.MaTaiKhoan}/chuyen-trang-thai`)
+                                            .then(()=>{
+                                                refresh();
+                                                toast('Thay đổi trạng thái thành công',{
+                                                    position: 'bottom-center',
+                                                    type: 'success'
+                                                })
+                                            })
+                                            ">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="currentColor"
+                                                    class="icon icon-tabler icons-tabler-filled icon-tabler-lock">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <path
+                                                        d="M12 2a5 5 0 0 1 5 5v3a3 3 0 0 1 3 3v6a3 3 0 0 1 -3 3h-10a3 3 0 0 1 -3 -3v-6a3 3 0 0 1 3 -3v-3a5 5 0 0 1 5 -5m0 12a2 2 0 0 0 -1.995 1.85l-.005 .15a2 2 0 1 0 2 -2m0 -10a3 3 0 0 0 -3 3v3h6v-3a3 3 0 0 0 -3 -3" />
+                                                </svg>
+                                                <span class="px-xl-3 ">Khoá</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                    </template>
+
                 </tbody>
             </table>
         </div>
+        <dialog id="deleteAccountModal" class=" tw-modal">
+            <div class="tw-modal-box">
+                <h3 class="tw-font-bold tw-text-lg">
+                    Bạn có chắc chắn muốn xóa tài khoản này không?
+                </h3>
+                <p class="tw-py-4">
+                    Bạn sẽ không thể hoàn tác hành động này.
+                </p>
+            </div>
+            <form method="tw-dialog" class="tw-modal-backdrop">
+                <button>close</button>
+                <button class="tw-bg-red-500 tw-text-white tw-p-2 tw-rounded-md" type="button">Xóa</button>
+            </form>
+        </dialog>
+
+        <dialog id="setRoleModal" class=" tw-modal">
+            <div class="tw-modal-box">
+                <h3 class="tw-font-bold tw-text-lg">
+                    Phân quyền cho tài khoản
+                </h3>
+                <div class="tw-py-4">
+                    <select x-model="selected.role" class="form-select">
+                        <option value="">Chọn nhóm quyền</option>
+
+                        <?php foreach ($roles as $role): ?>
+                        <option value="<?= $role['MaNhomQuyen'] ?>">
+                            <?= $role['TenNhomQuyen'] ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="tw-modal-action">
+                    <form method="dialog">
+                        <button class="tw-btn">Huỷ</button>
+                        <button class="tw-btn tw-btn-primary" type="button" x-on:click="axios.patch(`/api/tai-khoan/${selected.MaTaiKhoan}/nhom-quyen`,{role:selected.role})
+                    .then(()=>{
+                        refresh();
+                        toast('Phân quyền thành công',{
+                            position: 'bottom-center',
+                            type: 'success'
+                        })
+                    })">Lưu</button>
+                    </form>
+                </div>
+            </div>
+            <form method="tw-dialog" class="tw-modal-backdrop">
+                <button>close</button>
+
+            </form>
+        </dialog>
 
         <!-- thanh phan trang -->
         <div class="d-flex justify-content-end column-gap-3">

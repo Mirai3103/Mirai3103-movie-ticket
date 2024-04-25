@@ -13,7 +13,8 @@ require ('app/views/admin/header.php');
             <div class="row mb-3">
                 <div class="col">
                     <label for="tendangnhap" class="form-label">Tên đăng nhập</label>
-                    <input type="text" class="form-control" id="tendangnhap" required>
+                    <input value="<?= $account['TenDangNhap'] ?>" type="text" class="form-control" id="tendangnhap"
+                        required>
                 </div>
                 <div class="col tw-flex tw-flex-col">
                     <label for="tendangnhap" class="form-label">
@@ -24,10 +25,11 @@ require ('app/views/admin/header.php');
                         width: 100% !important;
                     }
                     </style>
-                    <select class='form-select'>
+                    <select class='form-select' disabled>
                         <?php foreach ($employees as $nguoidung): ?>
                         <option data-tokens="<?= $nguoidung['TenNguoiDung'] ?> <?= $nguoidung['MaNguoiDung'] ?> "
-                            value="<?= $nguoidung['MaNguoiDung'] ?>">
+                            value="<?= $nguoidung['MaNguoiDung'] ?>" <?php if ($nguoidung['MaNguoiDung'] == $account['MaNguoiDung'])
+                                      echo 'selected' ?>>
                             <?= $nguoidung['MaNguoiDung'] ?> - <?= $nguoidung['TenNguoiDung'] ?>
                         </option>
                         <?php endforeach; ?>

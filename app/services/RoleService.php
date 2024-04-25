@@ -6,15 +6,21 @@ use App\Core\Database\Database;
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
 use App\Models\TrangThaiKhuyenMai;
+use App\Models\TrangThaiNhomQuyen;
 
 class RoleService
 {
 
-    public static function getAllRole()
+    public static function getAllRole($query = [])
     {
-        $roles = Database::findAll("NhomQuyen");
+        $query = "SELECT * FROM NhomQuyen where 1 = 1";
+        $trangThai = getArrayValueSafe($query, 'trang-thai', [TrangThaiNhomQuyen::Hien->value]);
+        $inStatus = implode(",", $trangThai);
+        $query .= " AND TrangThai IN ($inStatus)";
+        $roles = Database::query($query, []);
         return $roles;
     }
+
     public static function getRoleById($id)
     {
         $role = Database::queryOne("SELECT * FROM NhomQuyen WHERE MaNhomQuyen = ?", [$id]);
@@ -26,7 +32,8 @@ class RoleService
         $permissionIds = $role['Quyen'];
         $id = Database::insert("NhomQuyen", [
             'TenNhomQuyen' => $role['TenNhomQuyen'],
-            'MoTa' => $role['MoTa']
+            'MoTa' => $role['MoTa'],
+            'TrangThai' => TrangThaiNhomQuyen::Hien->value
         ]);
         self::addListPermissionToRole($id, $permissionIds);
         return $id;
@@ -57,7 +64,13 @@ class RoleService
     public static function deleteRole($id)
     {
         Database::execute("DELETE FROM NhomQuyen WHERE MaNhomQuyen = ?", [$id]);
-
+    }
+    public static function toggleStatusRole($id)
+    {
+        $role = Database::queryOne("SELECT * FROM NhomQuyen WHERE MaNhomQuyen = ?", [$id]);
+        $newStatus = $role['TrangThai'] == TrangThaiNhomQuyen::Hien->value ? TrangThaiNhomQuyen::An->value : TrangThaiNhomQuyen::Hien->value;
+        Database::update("NhomQuyen", ['TrangThai' => $newStatus], "MaNhomQuyen = $id");
+        return $newStatus;
     }
 
 }

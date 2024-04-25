@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
+use App\Core\Request;
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
 use App\Models\Permission;
+use App\Models\TrangThaiTaiKhoan;
 
 enum AccountType: int
 {
@@ -40,7 +43,61 @@ class UserService
         return $user;
     }
 
-
+    public static function getAllUser($params)
+    {
+        $queryBuilder = new QueryBuilder();
+        $isHasAccount = getArrayValueSafe($params, 'co-tai-khoan', true);
+        $page = getArrayValueSafe($params, 'trang', 1);
+        $pageSize = getArrayValueSafe($params, 'limit', 20);
+        $offset = ($page - 1) * $pageSize;
+        $orderBy = getArrayValueSafe($params, 'sap-xep', 'MaNguoiDung');
+        $orderType = getArrayValueSafe($params, 'thu-tu', 'desc');
+        $keyword = getArrayValueSafe($params, 'tu-khoa', null);
+        $diemTichLuyTu = getArrayValueSafe($params, 'diem-tich-luy-tu', null);
+        $diemTichLuyDen = getArrayValueSafe($params, 'diem-tich-luy-den', null);
+        $queryBuilder->select([
+            'NguoiDung.MaNguoiDung',
+            'NguoiDung.TenNguoiDung',
+            'NguoiDung.Email',
+            'NguoiDung.SoDienThoai',
+            'NguoiDung.DiaChi',
+            'NguoiDung.NgaySinh',
+            'NguoiDung.DiemTichLuy',
+            'TaiKhoan.MaTaiKhoan',
+            'TaiKhoan.LoaiTaiKhoan',
+        ]);
+        $queryBuilder->from('NguoiDung');
+        $queryBuilder->join('TaiKhoan', 'NguoiDung.MaNguoiDung = TaiKhoan.MaNguoiDung', 'left');
+        $queryBuilder->where('1', '=', '1');
+        if ($isHasAccount) {
+            $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is not', null);
+        } else {
+            $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is', null);
+        }
+        error_log($queryBuilder->__toString());
+        if ($keyword) {
+            $queryBuilder->and();
+            $queryBuilder->startGroup();
+            $queryBuilder->where('NguoiDung.TenNguoiDung', 'like', "%$keyword%");
+            $queryBuilder->orWhere('NguoiDung.Email', 'like', "%$keyword%");
+            $queryBuilder->orWhere('NguoiDung.SoDienThoai', 'like', "%$keyword%");
+            $queryBuilder->orWhere('NguoiDung.DiaChi', 'like', "%$keyword%");
+            $queryBuilder->orWhere('NguoiDung.MaNguoiDung', 'like', "%$keyword%");
+            $queryBuilder->endGroup();
+        }
+        if ($diemTichLuyTu) {
+            $queryBuilder->andWhere('NguoiDung.DiemTichLuy', '>=', $diemTichLuyTu);
+        }
+        if ($diemTichLuyDen) {
+            $queryBuilder->andWhere('NguoiDung.DiemTichLuy', '<=', $diemTichLuyDen);
+        }
+        $count = $queryBuilder->count();
+        $queryBuilder->orderBy('NguoiDung.' . $orderBy, $orderType);
+        $queryBuilder->limit($pageSize, $offset);
+        $result = $queryBuilder->get();
+        Request::setQueryCount($count);
+        return $result;
+    }
     public static function getUserOrCreateIfNotExist($data)
     {
         Logger::info(print_r($data, true));
@@ -118,6 +175,8 @@ class UserService
             }, $role['Quyen']);
             $user['permissions'] = $permissions;
 
+        } else {
+            $user['permissions'] = [];
         }
         Logger::info(print_r($user, true));
         $_SESSION['user'] = $user;
@@ -152,10 +211,13 @@ class UserService
     public static function login($username, $password, $rememberMe = false)
     {
 
-        $query = "SELECT MaTaiKhoan,MaNguoiDung, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE TenDangNhap = ? AND MatKhau = ?;";
-        $account = Database::queryOne($query, [$username, $password]);
-        if (!$account) {
+
+        $account = AccountService::login($username, $password);
+        if ($account == false) {
             return new JsonResponse(401, "Sai tên đăng nhập hoặc mật khẩu");
+        }
+        if ($account['TrangThai'] == TrangThaiTaiKhoan::DangBiKhoa->value) {
+            return new JsonResponse(401, "Tài khoản đã bị khóa");
         }
         $userInfor = self::getUserById($account['MaNguoiDung']);
         $userInfor['TaiKhoan'] = $account;

@@ -2,6 +2,7 @@
 
 use App\Models\JsonDataErrorRespose;
 use App\Models\JsonResponse;
+use App\Models\TrangThaiNhomQuyen;
 use App\Services\CinemaService;
 use App\Services\PermissionService;
 use App\Services\PhimService;
@@ -17,7 +18,12 @@ class RoleController
     #[Route("/admin/nhom-quyen", "GET")]
     public static function index()
     {
-        $roles = RoleService::getAllRole();
+        $roles = RoleService::getAllRole([
+            'trang-thais' => [
+                TrangThaiNhomQuyen::Hien->value,
+                TrangThaiNhomQuyen::An->value
+            ]
+        ]);
         return view('admin/role/index', ['roles' => $roles]);
     }
     #[Route("/admin/nhom-quyen/them", "GET")]
@@ -63,6 +69,17 @@ class RoleController
         return json(JsonResponse::ok());
 
     }
+    #[Route("/api/nhom-quyen/{id}", "DELETE")]
+    public static function delete($id)
+    {
+        RoleService::deleteRole($id);
+        return json(JsonResponse::ok());
+    }
 
-
+    #[Route("/api/nhom-quyen/{id}/trang-thai", "PUT")]
+    public static function toggleStatus($id)
+    {
+        RoleService::toggleStatusRole($id);
+        return json(JsonResponse::ok());
+    }
 }

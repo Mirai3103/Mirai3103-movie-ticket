@@ -1,5 +1,5 @@
 <?php
-title("Thêm nhóm quyền");
+title("Sửa nhóm quyền");
 require ('app/views/admin/header.php');
 ?>
 <link rel="stylesheet" href="/public/css/infoAccess.css" />
@@ -98,36 +98,36 @@ require ('app/views/admin/header.php');
                         </th>
                     </tr>
                     <?php foreach ($permissions as $resource => $permission): ?>
-                        <tr>
-                            <?php if (isset($permission['resource_name'])): ?>
+                    <tr>
+                        <?php if (isset($permission['resource_name'])): ?>
 
-                                <td class='tw-font-semibold'><?= $permission['resource_name'] ?></td>
-                                <?php foreach ($permission['actions'] as $action): ?>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input" name="permission" type="checkbox"
-                                                id="<?= $action['MaQuyen'] ?>" value="<?= $action['MaQuyen'] ?>"
-                                                x-model="permissions">
-                                            <label class="form-check-label" for="<?= $action['MaQuyen'] ?>">
-                                                <?= $action['action_name'] ?>
-                                            </label>
-                                        </div>
-                                    </td>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                            <?php if (!isset($permission['resource_name'])): ?>
-                                <td></td>
-                                <td colspan='4'>
-                                    <div class="form-check">
-                                        <input id="<?= $permission['MaQuyen'] ?>" class="form-check-input" name="permission"
-                                            type="checkbox" value="<?= $permission['MaQuyen'] ?>" x-model="permissions">
-                                        <label class="form-check-label" for="<?= $permission['MaQuyen'] ?>">
-                                            <?= $permission['description'] ?>
-                                        </label>
-                                    </div>
-                                </td>
-                            <?php endif; ?>
-                        </tr>
+                        <td class='tw-font-semibold'><?= $permission['resource_name'] ?></td>
+                        <?php foreach ($permission['actions'] as $action): ?>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" name="permission" type="checkbox"
+                                    id="<?= $action['MaQuyen'] ?>" value="<?= $action['MaQuyen'] ?>"
+                                    x-model="permissions">
+                                <label class="form-check-label" for="<?= $action['MaQuyen'] ?>">
+                                    <?= $action['action_name'] ?>
+                                </label>
+                            </div>
+                        </td>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                        <?php if (!isset($permission['resource_name'])): ?>
+                        <td></td>
+                        <td colspan='4'>
+                            <div class="form-check">
+                                <input id="<?= $permission['MaQuyen'] ?>" class="form-check-input" name="permission"
+                                    type="checkbox" value="<?= $permission['MaQuyen'] ?>" x-model="permissions">
+                                <label class="form-check-label" for="<?= $permission['MaQuyen'] ?>">
+                                    <?= $permission['description'] ?>
+                                </label>
+                            </div>
+                        </td>
+                        <?php endif; ?>
+                    </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>

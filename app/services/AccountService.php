@@ -6,9 +6,72 @@ use App\Core\Database\QueryBuilder;
 use App\Core\Request;
 use App\Models\JsonResponse;
 use App\Models\LoaiTaiKhoan;
+use App\Models\TrangThaiTaiKhoan;
 
 class AccountService
 {
+    private static function hashPassword($password)
+    {
+        return password_hash($password, PASSWORD_DEFAULT);
+    }
+    public static function comparePassword($password, $hash)
+    {
+        return password_verify($password, $hash);
+    }
+
+    public static function verifyPassword($password, $hash)
+    {
+        return password_verify($password, $hash);
+    }
+    public static function setRole($id, $data)
+    {
+        $role = $data['role'];
+        $result = Database::update('TaiKhoan', ['MaNhomQuyen' => $role], "MaTaiKhoan=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+    public static function setPassword($id, $data)
+    {
+        $password = self::hashPassword($data['password']);
+        $result = Database::update('TaiKhoan', ['MatKhau' => $password], "MaTaiKhoan=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+
+    public static function toggleLockAccount($id)
+    {
+        $account = Database::queryOne("SELECT * FROM TaiKhoan WHERE MaTaiKhoan = ?", [$id]);
+        $trangThai = $account['TrangThai'];
+        if ($trangThai == TrangThaiTaiKhoan::DangBiKhoa->value) {
+            $trangThai = TrangThaiTaiKhoan::DangHoatDong->value;
+        } else {
+            $trangThai = TrangThaiTaiKhoan::DangBiKhoa->value;
+        }
+        $result = Database::update('TaiKhoan', ['TrangThai' => $trangThai], "MaTaiKhoan=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
+    public static function updateAccount($data, $id)
+    {
+        $params = [
+            'TenDangNhap' => $data['TenDangNhap'],
+            'TrangThai' => $data['TrangThai'],
+            'LoaiTaiKhoan' => $data['LoaiTaiKhoan'],
+            'MaNguoiDung' => $data['MaNguoiDung'],
+            'MaNhomQuyen' => $data['MaNhomQuyen'],
+        ];
+        $result = Database::update('TaiKhoan', $params, "MaTaiKhoan=$id");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật thất bại', 500);
+    }
     public static function getAllAccount($data)
     {
         $keyword = getArrayValueSafe($data, 'tu-khoa');
@@ -18,7 +81,6 @@ class AccountService
         $offset = ($page - 1) * $pageSize;
         $orderBy = getArrayValueSafe($data, 'sap-xep', 'MaTaiKhoan');
         $orderType = getArrayValueSafe($data, 'thu-tu', 'desc');
-
         $queryBuilder = new QueryBuilder();
         $queryBuilder->select([
             'TaiKhoan.MaTaiKhoan',
@@ -27,11 +89,12 @@ class AccountService
             'TaiKhoan.MaNguoiDung',
             'TaiKhoan.TenDangNhap',
             'NguoiDung.TenNguoiDung',
+            'NhomQuyen.TenNhomQuyen',
         ])
             ->from('TaiKhoan')
             ->join('NguoiDung', 'TaiKhoan.MaNguoiDung = NguoiDung.MaNguoiDung')
             ->join('NhomQuyen', 'TaiKhoan.MaNhomQuyen = NhomQuyen.MaNhomQuyen', 'left')
-            ->where('1', '=', '1');
+            ->where('TenDangNhap', '!=', 'admin');
         if ($loaiTaiKhoan) {
             $queryBuilder->andWhere('TaiKhoan.LoaiTaiKhoan', '=', $loaiTaiKhoan);
         }
@@ -62,26 +125,13 @@ class AccountService
             'TaiKhoan.LoaiTaiKhoan',
             'TaiKhoan.MaNguoiDung',
             'TaiKhoan.TenDangNhap',
+            'TaiKhoan.MaNhomQuyen',
         ])
             ->from('TaiKhoan')
             ->where('TaiKhoan.MaTaiKhoan', '=', $id);
         return $queryBuilder->first();
     }
-    public static function updateAccount($data, $id)
-    {
-        $params = [
-            'TenDangNhap' => $data['TenDangNhap'],
-            'TrangThai' => $data['TrangThai'],
-            'LoaiTaiKhoan' => $data['LoaiTaiKhoan'],
-            'MaNguoiDung' => $data['MaNguoiDung'],
-            'MaNhomQuyen' => $data['MaNhomQuyen'],
-        ];
-        $result = Database::update('TaiKhoan', $params, "MaTaiKhoan=$id");
-        if ($result) {
-            return JsonResponse::ok();
-        }
-        return JsonResponse::error('Cập nhật thất bại', 500);
-    }
+
     public static function getUserAccount($userId)
     {
         $query = "SELECT * FROM TaiKhoan WHERE MaNguoiDung = ?;";
@@ -92,7 +142,7 @@ class AccountService
     {
         $params = [
             'TenDangNhap' => $data['TenDangNhap'],
-            'MatKhau' => $data['MatKhau'],
+            'MatKhau' => self::hashPassword($data['MatKhau']),
             'TrangThai' => $data['TrangThai'],
             'LoaiTaiKhoan' => $data['LoaiTaiKhoan'],
             'MaNguoiDung' => $data['MaNguoiDung'],
@@ -106,19 +156,23 @@ class AccountService
         }
         return JsonResponse::error('Tạo tài khoản thất bại', 500);
     }
-    public static function toggleLockAccount($id)
+
+    public static function deleteAccount($id)
     {
-        $account = Database::queryOne("SELECT * FROM TaiKhoan WHERE MaTaiKhoan = ?", [$id]);
-        $trangThai = $account['TrangThai'];
-        if ($trangThai == 1) {
-            $trangThai = 0;
-        } else {
-            $trangThai = 1;
-        }
-        $result = Database::update('TaiKhoan', ['TrangThai' => $trangThai], "MaTaiKhoan=$id");
+        $result = Database::delete('TaiKhoan', "MaTaiKhoan=$id");
         if ($result) {
             return JsonResponse::ok();
         }
-        return JsonResponse::error('Cập nhật thất bại', 500);
+        return JsonResponse::error('Xóa tài khoản thất bại', 500);
+    }
+    public static function login($username, $password)
+    {
+        $account = Database::queryOne("SELECT MaTaiKhoan,MaNguoiDung, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE TenDangNhap = ?", [$username]);
+        if ($account) {
+            if (self::comparePassword($password, $account['MatKhau'])) {
+                return $account;
+            }
+        }
+        return false;
     }
 }

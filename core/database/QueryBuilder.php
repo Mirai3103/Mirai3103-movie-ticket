@@ -60,10 +60,20 @@ class QueryBuilder
             $this->sql .= "$prefix $column $operator $value";
             return $this;
         }
-        $this->sql .= "$prefix $column $operator '$value'";
+        $parsedValue = self::parseValue($value);
+        $this->sql .= "$prefix $column $operator $parsedValue";
         return $this;
     }
-
+    private static function parseValue($value)
+    {
+        if (is_null($value)) {
+            return "NULL";
+        }
+        if (is_string($value)) {
+            return "'$value'";
+        }
+        return $value;
+    }
     public function andWhere($column, $operator, $value)
     {
         $this->and();

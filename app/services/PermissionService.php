@@ -98,7 +98,7 @@ class PermissionService
         "suatchieu" => "Suất chiếu",
         "taikhoan" => "Tài khoản",
         "theloai" => "Thể loại",
-        "thucpham" => "Thức phẩm",
+        "thucpham" => "Thực phẩm",
         "ve" => "Vé"
     ];
     private static $ACTION = [
