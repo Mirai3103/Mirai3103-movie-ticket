@@ -20,7 +20,7 @@ class UserController
 
 
 
-    #[Route("/api/nguoi-dung/lich-su-dat-ve", "GET")]
+    #[Route("/nguoi-dung/lich-su-dat-ve", "GET")]
     public static function abc()
     {
         $userId = Request::getUser()['MaNguoiDung'];
@@ -28,13 +28,13 @@ class UserController
         return view("nguoi-dung/lich-su-dat-ve/index");
     }
 
-    #[Route("/api/nguoi-dung/thong-tin", "GET")]
+    #[Route("/nguoi-dung/thong-tin", "GET")]
     public static function hienThiThongTinNguoiDung()
     {
         $userId = Request::getUser()['MaNguoiDung'];
         $user = UserService::getUserInfo($userId);
         return view("nguoi-dung/thong-tin/index", [
-            "userif"=>$user
+            "userif" => $user
         ]);
     }
 
@@ -51,10 +51,11 @@ class UserController
         }
     }
 
-    #[Route('/api/nguoi-dung/mat-khau','POST')]
-    public static function doimatkhaunguoidung() {
+    #[Route('/api/nguoi-dung/mat-khau', 'POST')]
+    public static function doimatkhaunguoidung()
+    {
         $userId = Request::getUser()['MaNguoiDung'];
-        
+
         $matKhauCu = $_POST["matKhauCu"];
         $matKhauMoi = $_POST["matKhauMoi"];
         $xacThucMatKhauMoi = $_POST["xacThucMatKhauMoi"];
@@ -64,7 +65,7 @@ class UserController
         }
 
         $result = UserService::updatePassword($userId, $matKhauCu, $matKhauMoi);
-        if ($result) { 
+        if ($result) {
             return json(JsonResponse::ok());
         } else {
             return json(JsonResponse::error("Thay đổi mật khẩu thất bại"));
