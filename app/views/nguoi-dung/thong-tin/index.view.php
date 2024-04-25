@@ -1,5 +1,5 @@
 <?php
-
+// $userif
 ?>
 <link rel="stylesheet" href="/public/nguoi-dung/main.css">
 <div class="acc-page container-fluid p-3 px-sm-0">
@@ -112,7 +112,9 @@
                                 <div class="mb-3">
                                     <label for="hoTenKhachHang" class="form-label">Họ và
                                         tên</label>
-                                    <input type="email" class="form-control" id="hoTenKhachHang" aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" id="hoTenKhachHang"
+                                    value="<?=$userif["TenNguoiDung"]?>"
+                                    aria-describedby="emailHelp" required>
                                 </div>
                             </div>
 
@@ -120,7 +122,9 @@
                                 <div class="mb-3">
                                     <label for="ngaySinh" class="form-label">Ngày
                                         sinh</label>
-                                    <input type="date" class="form-control" id="ngaySinh" aria-describedby="emailHelp" required>
+                                    <input type="date" class="form-control" id="ngaySinh" 
+                                    value="<?=$userif["NgaySinh"]?>"
+                                    aria-describedby="emailHelp" required>
                                 </div>
                             </div>
                         </div>
@@ -130,21 +134,27 @@
                                 <div class="mb-3">
                                     <label for="soDienThoai" class="form-label">Số điện
                                         thoại</label>
-                                    <input type="email" class="form-control" id="soDienThoai" aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" id="soDienThoai"
+                                    value="<?=$userif["SoDienThoai"]?>"
+                                     aria-describedby="emailHelp" required>
                                 </div>
                             </div>
 
                             <div class="col-6 col-sm-12 col-md-6">
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" required>
+                                    <input type="email" class="form-control" id="email"
+                                    value="<?=$userif["Email"]?>"
+                                     aria-describedby="emailHelp" required>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mb-3 mb-sm-4 mb-md-3">
                             <label for="diaChi" class="form-label">Địa chỉ</label>
-                            <input type="email" class="form-control" id="diaChi" aria-describedby="emailHelp" required>
+                            <input type="email" class="form-control" 
+                            value="<?=$userif["DiaChi"]?>"
+                            id="diaChi" aria-describedby="emailHelp" required>
                         </div>
 
                         <button type="submit" class="btn submit-btn col-sm-12 col-md-auto">Lưu thông
@@ -157,18 +167,18 @@
                     <form>
                         <div class="mb-3">
                             <label for="matKhauCu" class="form-label">Mật khẩu cũ</label>
-                            <input type="password" class="form-control" id="matKhauCu" aria-describedby="emailHelp" required>
+                            <input type="password" class="form-control" id="matKhauCu" name="matKhauCu" aria-describedby="emailHelp"  required>
                         </div>
 
                         <div class="mb-3">
                             <label for="matKhauMoi" class="form-label">Mật khẩu mới</label>
-                            <input type="password" class="form-control" id="matKhauMoi" aria-describedby="emailHelp" required>
+                            <input type="password" class="form-control" id="matKhauMoi" name="matKhauMoi" aria-describedby="emailHelp" required>
                         </div>
 
                         <div class="mb-3 mb-sm-4 mb-md-3">
                             <label for="xacThucKhauMoi" class="form-label">Xác thực mật
                                 khẩu</label>
-                            <input type="password" class="form-control" id="xacThucKhauMoi" aria-describedby="emailHelp" required>
+                            <input type="password" class="form-control" id="xacThucMatKhauMoi" name="xacThucMatKhauMoi" aria-describedby="emailHelp" required>
                         </div>
 
                         <button type="submit" class="btn submit-btn col-sm-12 col-md-auto">Đổi mật khẩu</button>

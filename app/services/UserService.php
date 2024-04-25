@@ -36,6 +36,40 @@ class UserService
         ];
     }
 
+    public static function updatePassword($userId, $matKhauCu, $matKhauMoi) {
+        $result = null;
+        $query = "SELECT MatKhau FROM TaiKhoan Where MaTaiKhoan = ?;";
+        $currentPassword = Database::queryOne($query, array($userId))["MatKhau"];
+        if (!password_hash($matKhauCu, $currentPassword)) {
+            return $result;
+        }
+
+        $hashedNewPassword = password_hash($matKhauMoi, PASSWORD_DEFAULT);
+        $updateParams = ['MatKhau' => $hashedNewPassword];
+        Database::update('TaiKhoan', $updateParams, $userId);
+        return $result;
+    }
+
+    public static function updateUser($userId, $newInfo) {
+        $result = null;
+        $params = [
+            "TenNguoiDung" => $newInfo["TenNguoiDung"] ??"",
+            "soDienThoai" => $newInfo["SoDienThoai"] ??"",
+            "email" => $newInfo["Email"] ??"",
+            "diaChi" => $newInfo["DiaChi"] ??"",
+            "ngaySinh" => $newInfo["NgaySinh"] ??"",
+        ];
+        Database::update("NguoiDung", $params, "MaNguoiDung = $userId");
+        $result=true;
+        return $result;
+    }
+    
+    public static function getUserInfo($userId) {
+        $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
+        $user = Database::queryOne($query, [$userId]);
+        return $user;
+    }
+
     public static function getUserByEmail($email)
     {
         $query = "SELECT * FROM NguoiDung WHERE Email = ?;";
