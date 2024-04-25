@@ -36,7 +36,8 @@ class UserService
         ];
     }
 
-    public static function updatePassword($userId, $matKhauCu, $matKhauMoi) {
+    public static function updatePassword($userId, $matKhauCu, $matKhauMoi)
+    {
         $result = null;
         $query = "SELECT MatKhau FROM TaiKhoan Where MaTaiKhoan = ?;";
         $currentPassword = Database::queryOne($query, array($userId))["MatKhau"];
@@ -50,21 +51,22 @@ class UserService
         return $result;
     }
 
-    public static function updateUser($userId, $newInfo) {
+    public static function updateUser($userId, $newInfo)
+    {
         $result = null;
         $params = [
-            "TenNguoiDung" => $newInfo["TenNguoiDung"] ??"",
-            "soDienThoai" => $newInfo["SoDienThoai"] ??"",
-            "email" => $newInfo["Email"] ??"",
-            "diaChi" => $newInfo["DiaChi"] ??"",
-            "ngaySinh" => $newInfo["NgaySinh"] ??"",
+            "TenNguoiDung" => $newInfo["TenNguoiDung"] ?? "",
+            "SoDienThoai" => $newInfo["SoDienThoai"] ?? "",
+            "Email" => $newInfo["Email"] ?? "",
+            "DiaChi" => $newInfo["DiaChi"] ?? "",
+            "NgaySinh" => $newInfo["NgaySinh"] ?? "",
         ];
-        Database::update("NguoiDung", $params, "MaNguoiDung = $userId");
-        $result=true;
+        $result = Database::update("NguoiDung", $params, "MaNguoiDung = $userId");
         return $result;
     }
-    
-    public static function getUserInfo($userId) {
+
+    public static function getUserInfo($userId)
+    {
         $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
         $user = Database::queryOne($query, [$userId]);
         return $user;

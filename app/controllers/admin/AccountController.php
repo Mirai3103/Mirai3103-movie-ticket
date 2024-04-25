@@ -32,7 +32,8 @@ class AccountController
             'limit' => 10000
         ]);
         $roles = RoleService::getAllRole();
-        return view('admin/account/add', ['employees' => $employees, 'roles' => $roles]);
+        $statuses = StatusService::getAllStatus('TaiKhoan');
+        return view('admin/account/add', ['employees' => $employees, 'roles' => $roles, 'statuses' => $statuses]);
     }
     #[Route(path: '/admin/tai-khoan/them', method: 'POST')]
     public static function add()

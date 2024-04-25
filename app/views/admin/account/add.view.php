@@ -26,10 +26,10 @@ require ('app/views/admin/header.php');
                     </style>
                     <select class='form-select'>
                         <?php foreach ($employees as $nguoidung): ?>
-                        <option data-tokens="<?= $nguoidung['TenNguoiDung'] ?> <?= $nguoidung['MaNguoiDung'] ?> "
-                            value="<?= $nguoidung['MaNguoiDung'] ?>">
-                            <?= $nguoidung['MaNguoiDung'] ?> - <?= $nguoidung['TenNguoiDung'] ?>
-                        </option>
+                            <option data-tokens="<?= $nguoidung['TenNguoiDung'] ?> <?= $nguoidung['MaNguoiDung'] ?> "
+                                value="<?= $nguoidung['MaNguoiDung'] ?>">
+                                <?= $nguoidung['MaNguoiDung'] ?> - <?= $nguoidung['TenNguoiDung'] ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
 
@@ -43,10 +43,9 @@ require ('app/views/admin/header.php');
                     <select class="form-select" name id="phanquyen" required>
 
                         <?php foreach ($roles as $role): ?>
-                        <option value="<?= $role['MaNhomQuyen'] ?>" <?php if ($role['MaNhomQuyen'] == $account['MaNhomQuyen'])
-                                  echo 'selected' ?>>
-                            <?= $role['TenNhomQuyen'] ?>
-                        </option>
+                            <option value="<?= $role['MaNhomQuyen'] ?>">
+                                <?= $role['TenNhomQuyen'] ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -62,9 +61,9 @@ require ('app/views/admin/header.php');
                     <label for="trangthai" class="form-label">Trạng thái</label>
                     <select class="form-select" name id="trangthai" required>
                         <?php foreach ($statuses as $status): ?>
-                        <option value="<?= $status['MaTrangThai'] ?>">
-                            <?= $status['Ten'] ?>
-                        </option>
+                            <option value="<?= $status['MaTrangThai'] ?>">
+                                <?= $status['Ten'] ?>
+                            </option>
                         <?php endforeach; ?>
 
                     </select>

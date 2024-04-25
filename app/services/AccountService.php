@@ -175,4 +175,22 @@ class AccountService
         }
         return false;
     }
+    public static function getAccountByUserId($userId)
+    {
+        $query = "SELECT * FROM TaiKhoan WHERE MaNguoiDung = ?;";
+        $account = Database::queryOne($query, [$userId]);
+        return $account;
+    }
+    public static function updatePassword($userId, $oldPassword, $newPassword)
+    {
+        $account = self::getAccountByUserId($userId);
+        if ($account) {
+            if (self::comparePassword($oldPassword, $account['MatKhau'])) {
+                $newPassword = self::hashPassword($newPassword);
+                $result = Database::update('TaiKhoan', ['MatKhau' => $newPassword], "MaNguoiDung=$userId");
+                return $result;
+            }
+        }
+        return false;
+    }
 }

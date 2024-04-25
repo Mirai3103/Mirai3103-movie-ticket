@@ -3,6 +3,7 @@
 use App\Core\App;
 use App\Core\Request;
 use App\Models\JsonResponse;
+use App\Services\AccountService;
 use App\Services\UserService;
 use Core\Attributes\Controller;
 use Core\Attributes\Route;
@@ -21,7 +22,7 @@ class UserController
 
 
     #[Route("/nguoi-dung/lich-su-dat-ve", "GET")]
-    public static function abc()
+    public static function hienThiLichSuDatVe()
     {
         $userId = Request::getUser()['MaNguoiDung'];
         // $user = UserService::
@@ -64,14 +65,13 @@ class UserController
             return json(JsonResponse::error("Mật khẩu không trùng khớp"));
         }
 
-        $result = UserService::updatePassword($userId, $matKhauCu, $matKhauMoi);
+        $result = AccountService::updatePassword($userId, $matKhauCu, $matKhauMoi);
         if ($result) {
             return json(JsonResponse::ok());
         } else {
             return json(JsonResponse::error("Thay đổi mật khẩu thất bại"));
         }
     }
-    // /nguoi-dung/thong-tin Post, Get
-    // /api/nguoi-dung/mat-khau Post
+
 
 }
