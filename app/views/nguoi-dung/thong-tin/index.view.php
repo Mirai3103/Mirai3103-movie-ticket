@@ -222,8 +222,14 @@ require ('app/views/partials/head.php'); ?>
     </div>
 </div>
 
-
-<?php 
+<?php
+echo '
+    <script>
+        $(document).ready(function() {
+            doiMatKhau("formDoiMatKhau", "/api/nguoi-dung/mat-khau");
+        });
+    </script>
+';
 script('/public/nguoi-dung/thong-tin-nguoi-dung/main.js');
 require ('app/views/partials/footer.php');
 ?>
