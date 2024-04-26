@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\JsonDataErrorRespose;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiNhomQuyen;
+use App\Dtos\JsonDataErrorRespose;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiNhomQuyen;
 use App\Services\CinemaService;
 use App\Services\PermissionService;
 use App\Services\PhimService;

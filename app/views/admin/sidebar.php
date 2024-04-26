@@ -32,7 +32,7 @@ function isActive($path)
     <div class="menu-bar">
         <div class="menu">
             <?php
-            use App\Models\AdminMenu;
+            use App\Dtos\AdminMenu;
 
 
             $menu = AdminMenu::getUserMenu($_SESSION['user']['permissions']);
@@ -41,8 +41,8 @@ function isActive($path)
 
             <ul class="menu-links scrollable " style=" transition: height 0.3s;">
                 <?php foreach ($menu as $key => $item): ?>
-                    <?php if (isset($item['hasChildren'])): ?>
-                        <li x-data="
+                        <?php if (isset($item['hasChildren'])): ?>
+                                <li x-data="
                         {
                             open: false,
                             toggle() {
@@ -65,45 +65,45 @@ function isActive($path)
                             }
                              
                         })" class="menu-links__item  " x-on:click="toggle()">
-                            <a class>
-                                <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
-                                <span class="text nav-text">
-                                    <?= $item['text'] ?>
-                                </span>
-                                <i class="icon-drop-down fa-solid fa-sort-down"
-                                    :style="open ? 'transform: rotate(90deg)' : 'transform: rotate(-90deg)'">
-                                </i>
-                            </a>
-                        </li>
-                        <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
-
-                            <?php foreach ($item['childrens'] as $child): ?>
-                                <li class="menu-links__item <?= isActive($child['href']) ?>">
-                                    <a href="<?= $child['href'] ?>">
-                                        <i class="menu-links__item-icon"></i>
-
+                                    <a class>
+                                        <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
                                         <span class="text nav-text">
-                                            <?= $child['text'] ?>
+                                            <?= $item['text'] ?>
                                         </span>
+                                        <i class="icon-drop-down fa-solid fa-sort-down"
+                                            :style="open ? 'transform: rotate(90deg)' : 'transform: rotate(-90deg)'">
+                                        </i>
                                     </a>
                                 </li>
-                            <?php endforeach; ?>
-                        </div>
+                                <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
 
-                    </ul>
+                                    <?php foreach ($item['childrens'] as $child): ?>
+                                            <li class="menu-links__item <?= isActive($child['href']) ?>">
+                                                <a href="<?= $child['href'] ?>">
+                                                    <i class="menu-links__item-icon"></i>
 
-                <?php else: ?>
+                                                    <span class="text nav-text">
+                                                        <?= $child['text'] ?>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                    <?php endforeach; ?>
+                                </div>
 
-                    <li class="menu-links__item <?= isActive($item['href']) ?>">
-                        <a href="<?= $item['href'] ?>">
-                            <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
+                            </ul>
 
-                            <span class="text nav-text">
-                                <?= $item['text'] ?>
-                            </span>
-                        </a>
-                    </li>
-                <?php endif; ?>
+                    <?php else: ?>
+
+                            <li class="menu-links__item <?= isActive($item['href']) ?>">
+                                <a href="<?= $item['href'] ?>">
+                                    <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
+
+                                    <span class="text nav-text">
+                                        <?= $item['text'] ?>
+                                    </span>
+                                </a>
+                            </li>
+                    <?php endif; ?>
             <?php endforeach; ?>
             </ul>
 

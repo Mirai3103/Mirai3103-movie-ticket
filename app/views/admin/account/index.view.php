@@ -1,5 +1,5 @@
 <?php
-use App\Models\LoaiTaiKhoan;
+use App\Dtos\LoaiTaiKhoan;
 
 title("Quản lý tài khoản");
 require ('app/views/admin/header.php');
@@ -338,9 +338,9 @@ const statuses = <?= json_encode($statuses) ?>;
                         <option value="">Chọn nhóm quyền</option>
 
                         <?php foreach ($roles as $role): ?>
-                        <option value="<?= $role['MaNhomQuyen'] ?>">
-                            <?= $role['TenNhomQuyen'] ?>
-                        </option>
+                            <option value="<?= $role['MaNhomQuyen'] ?>">
+                                <?= $role['TenNhomQuyen'] ?>
+                            </option>
                         <?php endforeach; ?>
                     </select>
                 </div>

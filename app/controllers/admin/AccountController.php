@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\JsonResponse;
-use App\Models\LoaiTaiKhoan;
-use App\Models\TrangThaiTaiKhoan;
+use App\Dtos\JsonResponse;
+use App\Dtos\LoaiTaiKhoan;
+use App\Dtos\TrangThaiTaiKhoan;
 use App\Services\AccountService;
 use App\Services\RoleService;
 use App\Services\StatusService;

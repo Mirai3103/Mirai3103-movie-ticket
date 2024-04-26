@@ -1,7 +1,7 @@
 <?php
 
 use App\Core\Logger;
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 use App\Services\ConfigService;
 use Core\Attributes\Route;
 

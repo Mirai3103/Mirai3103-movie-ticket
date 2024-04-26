@@ -5,8 +5,8 @@ use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
 use App\Core\Request;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiRap;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiRap;
 
 class CinemaService
 {

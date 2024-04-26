@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 use App\Services\CinemaService;
 use App\Services\RoomService;
 use App\Services\SeatService;

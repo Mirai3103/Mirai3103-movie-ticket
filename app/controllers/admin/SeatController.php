@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 use App\Services\SeatService;
 use App\Services\SeatTypeService;
 use App\Services\StatusService;

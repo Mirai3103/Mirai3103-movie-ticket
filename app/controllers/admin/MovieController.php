@@ -1,8 +1,8 @@
 <?php
 
 use App\Core\Logger;
-use App\Models\JsonResponse;
-use App\Models\Permission;
+use App\Dtos\JsonResponse;
+use App\Dtos\Permission;
 use App\Services\CategoryService;
 use App\Services\PhimService;
 use App\Services\ShowService;

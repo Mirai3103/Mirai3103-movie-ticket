@@ -1,6 +1,6 @@
 <?php
 use App\Core\Request;
-use App\Models\LoaiTaiKhoan;
+use App\Dtos\LoaiTaiKhoan;
 
 title("Dday la homr");
 $isKhachHang = Request::getUser()['TaiKhoan']['LoaiTaiKhoan'] == LoaiTaiKhoan::KhachHang->value;
@@ -40,22 +40,22 @@ require ('app/views/partials/head.php'); ?>
                         </span>
                     </div>
                     <?php if ($isKhachHang): ?>
-                        <div class="acc-points text-start">
-                            <div class="mb-2">
-                                <span class="fw-semibold">Tích điểm thành
-                                    viên</span>
-                            </div>
+                            <div class="acc-points text-start">
+                                <div class="mb-2">
+                                    <span class="fw-semibold">Tích điểm thành
+                                        viên</span>
+                                </div>
 
-                            <div class="mb-2 bock-bar">
-                                <div class="curr-bar" style="width: 1.8%;"></div>
-                            </div>
+                                <div class="mb-2 bock-bar">
+                                    <div class="curr-bar" style="width: 1.8%;"></div>
+                                </div>
 
-                            <div>
-                                <span class="fw-semibold">
-                                    <?= $userif["DiemTichLuy"] ?? 0 ?> điểm
-                                </span>
+                                <div>
+                                    <span class="fw-semibold">
+                                        <?= $userif["DiemTichLuy"] ?? 0 ?> điểm
+                                    </span>
+                                </div>
                             </div>
-                        </div>
                     <?php endif; ?>
 
                     <div>
@@ -84,21 +84,21 @@ require ('app/views/partials/head.php'); ?>
                     </div>
 
                     <?php if ($isKhachHang): ?>
-                        <div class="acc-sidebar__items col-sm-6 col-md-12">
-                            <a href="/nguoi-dung/lich-su-dat-ve"
-                                class="d-flex align-items-center justify-content-sm-center justify-content-md-start">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-history"
-                                    width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M12 8l0 4l2 2" />
-                                    <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
-                                </svg>
-                                <span class="px-2 fs-5 fw-semibold">Lịch sử
-                                    mua
-                                    hàng</span>
-                            </a>
-                        </div>
+                            <div class="acc-sidebar__items col-sm-6 col-md-12">
+                                <a href="/nguoi-dung/lich-su-dat-ve"
+                                    class="d-flex align-items-center justify-content-sm-center justify-content-md-start">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-history"
+                                        width="30" height="30" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
+                                        fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M12 8l0 4l2 2" />
+                                        <path d="M3.05 11a9 9 0 1 1 .5 4m-.5 5v-5h5" />
+                                    </svg>
+                                    <span class="px-2 fs-5 fw-semibold">Lịch sử
+                                        mua
+                                        hàng</span>
+                                </a>
+                            </div>
                     <?php endif; ?>
                     <div class="d-sm-none d-md-block">
                         <hr class="my-3">

@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Models\JsonDataErrorRespose;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiKhuyenMai;
-use App\Models\TrangThaiNhomQuyen;
+use App\Dtos\JsonDataErrorRespose;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiKhuyenMai;
+use App\Dtos\TrangThaiNhomQuyen;
 
 class RoleService
 {

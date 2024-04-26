@@ -3,7 +3,7 @@
 use App\Core\App;
 use App\Core\Database\Database;
 use App\Core\Logger;
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 use App\Services\ComboService;
 use App\Services\OrderService;
 use App\Services\Payments\Models\CreatePaymentResponse;

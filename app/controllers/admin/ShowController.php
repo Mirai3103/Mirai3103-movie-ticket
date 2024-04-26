@@ -1,8 +1,8 @@
 <?php
 
 use App\Core\Logger;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiPhim;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiPhim;
 use App\Services\CinemaService;
 use App\Services\PhimService;
 use App\Services\RoomService;

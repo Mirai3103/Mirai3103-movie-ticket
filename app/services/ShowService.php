@@ -5,11 +5,11 @@ use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
 use App\Core\Request;
-use App\Models\JsonDataErrorRespose;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiPhim;
-use App\Models\TrangThaiSuatChieu;
-use App\Models\TrangThaiVe;
+use App\Dtos\JsonDataErrorRespose;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiPhim;
+use App\Dtos\TrangThaiSuatChieu;
+use App\Dtos\TrangThaiVe;
 
 class ShowService
 {

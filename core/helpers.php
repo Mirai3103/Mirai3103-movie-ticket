@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 
 global $scripts;
 global $inlineScripts;

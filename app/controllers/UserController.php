@@ -2,7 +2,7 @@
 
 use App\Core\App;
 use App\Core\Request;
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 use App\Services\AccountService;
 use App\Services\UserService;
 use Core\Attributes\Controller;

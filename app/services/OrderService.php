@@ -3,9 +3,9 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Logger;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiHoaDon;
-use App\Models\TrangThaiVe;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiHoaDon;
+use App\Dtos\TrangThaiVe;
 
 class OrderService
 {

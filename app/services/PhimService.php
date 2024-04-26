@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Request;
-use App\Models\TrangThaiPhim;
+use App\Dtos\TrangThaiPhim;
 
 class PhimService
 {

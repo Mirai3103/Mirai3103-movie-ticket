@@ -1,7 +1,7 @@
 <?php
 
 use App\Core\App;
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 use App\Services\StatusService;
 use Core\Attributes\Controller;
 use Core\Attributes\Route;

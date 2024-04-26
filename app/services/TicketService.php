@@ -2,9 +2,9 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiLoaiVe;
-use App\Models\TrangThaiVe;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiLoaiVe;
+use App\Dtos\TrangThaiVe;
 
 class TicketService
 {

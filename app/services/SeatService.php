@@ -4,11 +4,11 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Models\JsonDataErrorRespose;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiGhe;
-use App\Models\TrangThaiPhong;
-use App\Models\TrangThaiVe;
+use App\Dtos\JsonDataErrorRespose;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiGhe;
+use App\Dtos\TrangThaiPhong;
+use App\Dtos\TrangThaiVe;
 
 class SeatService
 {

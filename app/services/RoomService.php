@@ -6,9 +6,9 @@ use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
 use App\Core\Request;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiPhong;
-use App\Models\TrangThaiVe;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiPhong;
+use App\Dtos\TrangThaiVe;
 
 class RoomService
 {

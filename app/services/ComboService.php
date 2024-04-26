@@ -5,9 +5,9 @@ namespace App\Services;
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Request;
-use App\Models\JsonResponse;
-use App\Models\TrangThaiCombo;
-use App\Models\TrangThaiThucPham;
+use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiCombo;
+use App\Dtos\TrangThaiThucPham;
 
 class ComboService
 {

@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
-use App\Models\JsonDataErrorRespose;
-use App\Models\JsonResponse;
+use App\Dtos\JsonDataErrorRespose;
+use App\Dtos\JsonResponse;
 
 
 // enum Permission: string

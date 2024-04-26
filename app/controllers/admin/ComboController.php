@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\JsonDataErrorRespose;
-use App\Models\JsonResponse;
+use App\Dtos\JsonDataErrorRespose;
+use App\Dtos\JsonResponse;
 use App\Services\CinemaService;
 use App\Services\ComboService;
 use App\Services\RoomService;

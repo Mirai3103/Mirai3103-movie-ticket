@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
-use App\Models\JsonResponse;
+use App\Dtos\JsonResponse;
 
 class FileService
 {
