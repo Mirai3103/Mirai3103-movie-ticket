@@ -3815,6 +3815,10 @@ details.tw-collapse summary::-webkit-details-marker {
   width: max-content;
 }
 
+.tw-min-w-12 {
+  min-width: 3rem;
+}
+
 .tw-min-w-60 {
   min-width: 15rem;
 }
@@ -3830,6 +3834,10 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-min-w-max {
   min-width: -moz-max-content;
   min-width: max-content;
+}
+
+.tw-min-w-80 {
+  min-width: 20rem;
 }
 
 .tw-max-w-10 {
@@ -4440,6 +4448,11 @@ details.tw-collapse summary::-webkit-details-marker {
 .tw-bg-purple-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(107 33 168 / var(--tw-bg-opacity));
+}
+
+.tw-bg-red-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
 }
 
 .tw-bg-secondary {

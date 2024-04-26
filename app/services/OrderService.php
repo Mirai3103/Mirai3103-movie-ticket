@@ -122,4 +122,14 @@ class OrderService
         }
         return $uid;
     }
+
+    public static function isUserOrdered($MaNguoiDung)
+    {
+        $sql = "SELECT * FROM HoaDon WHERE MaNguoiDung = ? ";
+        $order = Database::queryOne($sql, [$MaNguoiDung]);
+        if (isset($order)) {
+            return true;
+        }
+        return false;
+    }
 }

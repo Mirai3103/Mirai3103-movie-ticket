@@ -160,7 +160,7 @@ const statuses = <?= json_encode($statuses) ?>;
 
                             Tên người dùng
                         </th>
-                        <th scope="col">
+                        <th scope="col" x-show="query['loai-tai-khoan']==<?= LoaiTaiKhoan::NhanVien->value ?>">
 
                             Nhóm quyền
                         </th>
@@ -193,7 +193,8 @@ const statuses = <?= json_encode($statuses) ?>;
                             <td x-text="item.TenDangNhap"></td>
                             <td x-text="item.MaNguoiDung"></td>
                             <td x-text="item.TenNguoiDung"></td>
-                            <td x-text="item.TenNhomQuyen||'Chưa có'"></td>
+                            <td x-show="query['loai-tai-khoan']==<?= LoaiTaiKhoan::NhanVien->value ?>"
+                                x-text="item.TenNhomQuyen||'Chưa có'"></td>
                             <td x-text="statuses.find(status=>status.MaTrangThai==item.TrangThai)?.Ten">
                             </td>
                             <td>

@@ -27,6 +27,8 @@ Router::load_from_class(FileController::class);
 Router::load_from_class(ProductController::class);
 Router::load_from_class(ComboController::class);
 Router::load_from_class(AdminController::class);
+Router::load_from_class(UserManagerController::class);
+Router::load_from_class(FilmCategoryController::class);
 Router::build();
 function exception_handler(Throwable $exception)
 {

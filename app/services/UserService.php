@@ -64,7 +64,26 @@ class UserService
         $result = Database::update("NguoiDung", $params, "MaNguoiDung = $userId");
         return $result;
     }
+    public static function plusPoint($userId, $point)
+    {
+        $query = "UPDATE NguoiDung SET DiemTichLuy = DiemTichLuy + ? WHERE MaNguoiDung = ?;";
+        $result = Database::execute($query, [$point, $userId]);
+        return $result;
+    }
 
+    public static function delete($userId)
+    {
+
+        $isUserOrdered = OrderService::isUserOrdered($userId);
+        if ($isUserOrdered) {
+            return new JsonResponse(400, "Người dùng đã đặt vé không thể xóa");
+        }
+        $result = Database::delete("NguoiDung", "MaNguoiDung = $userId");
+        if (!$result) {
+            return new JsonResponse(500, "Xóa thất bại");
+        }
+        return new JsonResponse(200, "Xóa thành công");
+    }
     public static function getUserInfo($userId)
     {
         $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
@@ -91,6 +110,7 @@ class UserService
         $keyword = getArrayValueSafe($params, 'tu-khoa', null);
         $diemTichLuyTu = getArrayValueSafe($params, 'diem-tich-luy-tu', null);
         $diemTichLuyDen = getArrayValueSafe($params, 'diem-tich-luy-den', null);
+        $loaiTaiKhoan = getArrayValueSafe($params, 'loai-tai-khoan', null);
         $queryBuilder->select([
             'NguoiDung.MaNguoiDung',
             'NguoiDung.TenNguoiDung',
@@ -111,7 +131,7 @@ class UserService
             $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is', null);
         }
         error_log($queryBuilder->__toString());
-        if ($keyword) {
+        if ($keyword != null) {
             $queryBuilder->and();
             $queryBuilder->startGroup();
             $queryBuilder->where('NguoiDung.TenNguoiDung', 'like', "%$keyword%");
@@ -126,6 +146,9 @@ class UserService
         }
         if ($diemTichLuyDen) {
             $queryBuilder->andWhere('NguoiDung.DiemTichLuy', '<=', $diemTichLuyDen);
+        }
+        if ($loaiTaiKhoan) {
+            $queryBuilder->andWhere('TaiKhoan.LoaiTaiKhoan', $loaiTaiKhoan == 'NULL' ? 'is' : '=', $loaiTaiKhoan);
         }
         $count = $queryBuilder->count();
         $queryBuilder->orderBy('NguoiDung.' . $orderBy, $orderType);

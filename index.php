@@ -1,7 +1,6 @@
 <?php
 
-use App\Core\Logger;
-use App\Core\Request;
+
 use App\Services\UserService;
 
 require 'vendor/autoload.php';
