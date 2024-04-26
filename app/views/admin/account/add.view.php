@@ -5,7 +5,7 @@ require ('app/views/admin/header.php');
 
 <link rel="stylesheet" href="/public/tiendat/infoAccount.css">
 
-<div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
+<div x-data="{}" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
     <div class="info-account container-fluid p-4 shadow">
 
         <h4 class="mt-4 tw-text-xl tw-font-bold">THÔNG TIN TÀI KHOẢN</h4>
@@ -26,10 +26,10 @@ require ('app/views/admin/header.php');
                     </style>
                     <select class='form-select'>
                         <?php foreach ($employees as $nguoidung): ?>
-                            <option data-tokens="<?= $nguoidung['TenNguoiDung'] ?> <?= $nguoidung['MaNguoiDung'] ?> "
-                                value="<?= $nguoidung['MaNguoiDung'] ?>">
-                                <?= $nguoidung['MaNguoiDung'] ?> - <?= $nguoidung['TenNguoiDung'] ?>
-                            </option>
+                        <option data-tokens="<?= $nguoidung['TenNguoiDung'] ?> <?= $nguoidung['MaNguoiDung'] ?> "
+                            value="<?= $nguoidung['MaNguoiDung'] ?>">
+                            <?= $nguoidung['MaNguoiDung'] ?> - <?= $nguoidung['TenNguoiDung'] ?>
+                        </option>
                         <?php endforeach; ?>
                     </select>
 
@@ -43,9 +43,9 @@ require ('app/views/admin/header.php');
                     <select class="form-select" name id="phanquyen" required>
 
                         <?php foreach ($roles as $role): ?>
-                            <option value="<?= $role['MaNhomQuyen'] ?>">
-                                <?= $role['TenNhomQuyen'] ?>
-                            </option>
+                        <option value="<?= $role['MaNhomQuyen'] ?>">
+                            <?= $role['TenNhomQuyen'] ?>
+                        </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -61,9 +61,9 @@ require ('app/views/admin/header.php');
                     <label for="trangthai" class="form-label">Trạng thái</label>
                     <select class="form-select" name id="trangthai" required>
                         <?php foreach ($statuses as $status): ?>
-                            <option value="<?= $status['MaTrangThai'] ?>">
-                                <?= $status['Ten'] ?>
-                            </option>
+                        <option value="<?= $status['MaTrangThai'] ?>">
+                            <?= $status['Ten'] ?>
+                        </option>
                         <?php endforeach; ?>
 
                     </select>
