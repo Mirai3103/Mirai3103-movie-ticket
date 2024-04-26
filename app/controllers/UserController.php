@@ -72,6 +72,4 @@ class UserController
             return json(JsonResponse::error("Thay đổi mật khẩu thất bại"));
         }
     }
-
-
 }

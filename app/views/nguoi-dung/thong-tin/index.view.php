@@ -192,7 +192,7 @@ require ('app/views/partials/head.php'); ?>
 
                 <div class="p-4 bg-white rounded shadow">
                     <div class="mb-3 fs-2 fw-bold">Đổi mật khẩu</div>
-                    <form>
+                    <form id="form-dmk">
                         <div class="mb-3">
                             <label for="matKhauCu" class="form-label">Mật khẩu cũ</label>
                             <input type="password" class="form-control" id="matKhauCu" name="matKhauCu"
@@ -223,4 +223,7 @@ require ('app/views/partials/head.php'); ?>
 </div>
 
 
-<?php require ('app/views/partials/footer.php'); ?>
+<?php 
+script('/public/nguoi-dung/thong-tin-nguoi-dung/main.js');
+require ('app/views/partials/footer.php');
+?>
