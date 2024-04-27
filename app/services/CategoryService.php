@@ -2,15 +2,30 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Database\QueryBuilder;
 use App\Dtos\JsonResponse;
 
 class CategoryService
 {
-    public static function getAllCategories()
+    public static function getAllCategories($query = [])
     {
-        $sql = "SELECT * FROM TheLoai";
-        $categories = Database::query($sql, []);
+        $queryBuilder = new QueryBuilder();
+        $keywords = getArrayValueSafe($query, 'tu-khoa');
+        $page = getArrayValueSafe($query, 'trang', 1);
+        $limit = getArrayValueSafe($query, 'limit', 10000);
+        $offset = ($page - 1) * $limit;
+        $orderBy = getArrayValueSafe($query, 'sap-xep', 'MaTheLoai');
+        $orderType = getArrayValueSafe($query, 'thu-tu', 'desc');
+        $queryBuilder->select(['*'])
+            ->from('TheLoai');
+        if ($keywords) {
+            $queryBuilder->where('TenTheLoai', 'like', "%$keywords%");
+        }
+        $queryBuilder->orderBy($orderBy, $orderType);
+        $queryBuilder->limit($limit, $offset);
+        $categories = $queryBuilder->get();
         return $categories;
+
     }
 
     public static function getCategoriesByMovieId($id)
@@ -24,9 +39,7 @@ class CategoryService
     public static function createNewCategory($data)
     {
         $params = [
-            'MaTheLoai' => $data['MaTheLoai'],
             'TenTheLoai' => $data['TenTheLoai'],
-            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
         ];
         $result = Database::insert('TheLoai', $params);
         if ($result) {
@@ -40,7 +53,6 @@ class CategoryService
     {
         $params = [
             'TenTheLoai' => $data['TenTheLoai'],
-            // 'TrangThai' => $data['TrangThai'] ?? TrangThai::DangHoatDong->value
         ];
         $result = Database::update('TheLoai', $params, "MaTheLoai=$id");
         if ($result) {
