@@ -48,6 +48,12 @@ Alpine.data("dataTable", ({ initialQuery = {}, endpoint }) => ({
       ...this.query,
       ...query,
     };
+    this.$watch("query.limit", () => {
+      this.refresh({
+        resetPage: true,
+      });
+    });
+
     this.$nextTick(() => {
       this.refresh();
     });

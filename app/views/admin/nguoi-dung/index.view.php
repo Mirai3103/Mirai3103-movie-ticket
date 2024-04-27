@@ -287,8 +287,7 @@ require ('app/views/admin/header.php');
         <!-- thanh phan trang -->
         <div class="d-flex justify-content-end column-gap-3">
             <div class="d-flex input-group h-50 w-25">
-                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Rows per
-                    page</label>
+                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
                 <select class="rounded form-select" id="inputGroupSelect01">
                     <option value="20">20</option>
                     <option value="30">30</option>

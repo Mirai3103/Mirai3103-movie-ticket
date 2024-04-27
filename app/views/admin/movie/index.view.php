@@ -101,10 +101,10 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                     :class="{'button-nav-active': query['trang-thai']==undefined}"
                     x-on:click="query['trang-thai']=undefined;onApllyFilter()" onclick="optionOfList(this)">
                 <?php foreach ($phimStatuses as $status): ?>
-                    <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                        :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
-                        x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
-                        onclick="optionOfList(this)">
+                        <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
+                            :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
+                            x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';onApllyFilter()"
+                            onclick="optionOfList(this)">
                 <?php endforeach; ?>
             </div>
         </div>
@@ -209,10 +209,10 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                         class="selectpicker !tw-w-full">
 
                                         <?php foreach (PhimService::$MOVIE_TAGS as $key => $value): ?>
-                                            <option value="<?= $key ?>">
-                                                <?= $key ?> -
-                                                <?= $value ?>
-                                            </option>
+                                                <option value="<?= $key ?>">
+                                                    <?= $key ?> -
+                                                    <?= $value ?>
+                                                </option>
                                         <?php endforeach; ?>
 
                                     </select>
@@ -232,9 +232,9 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
                                     <select x-model="query['the-loais']" data-selected-text-format="count" multiple
                                         class="selectpicker !tw-w-full">
                                         <?php foreach ($categories as $category): ?>
-                                            <option value="<?= $category['MaTheLoai'] ?>">
-                                                <?= $category['TenTheLoai'] ?>
-                                            </option>
+                                                <option value="<?= $category['MaTheLoai'] ?>">
+                                                    <?= $category['TenTheLoai'] ?>
+                                                </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -443,8 +443,7 @@ const trangthais = <?= json_encode($phimStatuses) ?>;
         <!-- thanh phan trang -->
         <div class="d-flex justify-content-end column-gap-3 tw-mb-3">
             <div class="d-flex input-group h-50 w-25">
-                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Rows per
-                    page</label>
+                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Hiển thị</label>
                 <select x-model="query['limit']" x-on:change="
                 $nextTick(()=>{
                     refresh({

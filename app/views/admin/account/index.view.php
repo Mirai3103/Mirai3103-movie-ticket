@@ -8,62 +8,6 @@ require ('app/views/admin/header.php');
 const statuses = <?= json_encode($statuses) ?>;
 </script>
 <link rel="stylesheet" href="/public/tiendat/account.css">
-<!-- End sidebar -->
-
-<!-- class AccountController
-{
-
-    #[Route(path: '/admin/tai-khoan', method: 'GET')]
-    public static function index()
-    {
-        $statuses = StatusService::getAllStatus('TaiKhoan');
-        return view('admin/account/index', ['statuses' => $statuses]);
-    }
-    #[Route(path: '/api/tai-khoan', method: 'GET')]
-    public static function getAllAccount()
-    {
-        return json(JsonResponse::ok(AccountService::getAllAccount($_GET)));
-    }
-    #[Route(path: '/admin/tai-khoan/them', method: 'GET')]
-    public static function addView()
-    {
-        $employees = AccountService::getAllAccount([
-            'loai-tai-khoan' => LoaiTaiKhoan::NhanVien->value,
-            'limit' => 10000
-        ]);
-        return view('admin/account/add', ['employees' => $employees]);
-    }
-    #[Route(path: '/admin/tai-khoan/them', method: 'POST')]
-    public static function add()
-    {
-        $data = request_body();
-
-        $result = AccountService::createNewAccount($data);
-        return json($result);
-    }
-    #[Route(path: '/api/tai-khoan/{id}/set-password', method: 'PATCH')]
-    public static function setPassword($id)
-    {
-        $data = request_body();
-        return json(AccountService::setPassword($id, $data['password']));
-    }
-    #[Route(path: '/api/tai-khoan/{id}/nhom-quyen', method: 'PATCH')]
-    public static function setRole($id)
-    {
-        $data = request_body();
-        return json(AccountService::setRole($id, $data['role']));
-    }
-    #[Route(path: '/api/tai-khoan/{id}', method: 'DELETE')]
-    public static function delete($id)
-    {
-        return json(AccountService::deleteAccount($id));
-    }
-    #[Route(path: '/admin/tai-khoan/{id}/chuyen-trang-thai', method: 'PATCH')]
-    public static function changeStatus($id)
-    {
-        return json(AccountService::toggleLockAccount($id));
-    }
-} -->
 <div x-data="dataTable({
     endpoint:'/api/tai-khoan',
     initialQuery :{
@@ -71,7 +15,7 @@ const statuses = <?= json_encode($statuses) ?>;
         'limit': 50,
         'loai-tai-khoan': <?= LoaiTaiKhoan::KhachHang->value ?>,
     }
-})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
+})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
     <div x-data="{
         onApllyFilter(){
             console.log(query);
@@ -85,8 +29,8 @@ const statuses = <?= json_encode($statuses) ?>;
         }
 
     }
-    " class=" account container-fluid shadow">
-        <div class="border-bottom mb-4">
+    " class="shadow account container-fluid">
+        <div class="mb-4 border-bottom">
             <div>
                 <input type="button" id="customer" class="btn button button-nav-active fw-semibold" value="Khách hàng"
                     x-on:click="query['loai-tai-khoan'] = <?= LoaiTaiKhoan::KhachHang->value ?>; onApllyFilter();optionOfList($el)">
@@ -96,7 +40,7 @@ const statuses = <?= json_encode($statuses) ?>;
         </div>
 
         <!-- thanh tim kiem va nut them phim moi -->
-        <div class="row justify-content-between px-5">
+        <div class="px-5 row justify-content-between">
             <div class="col-6">
                 <div class="input-group">
                     <input x-on:keydown.enter="query['tu-khoa'] = $event.target.value; onApllyFilter()" type="text"
@@ -110,7 +54,7 @@ const statuses = <?= json_encode($statuses) ?>;
             <template x-if="query['loai-tai-khoan']==<?= LoaiTaiKhoan::NhanVien->value ?>">
 
                 <div class="col-6">
-                    <a href="/admin/tai-khoan/them" class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="/admin/tai-khoan/them" class="gap-2 d-grid d-md-flex justify-content-md-end">
                         <button class="btn btn-primary me-md-2" type="button">Thêm tài khoản nhân viên</button>
                     </a>
                 </div>
@@ -118,8 +62,8 @@ const statuses = <?= json_encode($statuses) ?>;
             </template>
 
         </div>
-        <div class="row m-3 table-responsive" style="flex: 1;">
-            <table class="table table-hover align-middle" style="height: 100%;">
+        <div class="m-3 row table-responsive" style="flex: 1;">
+            <table class="table align-middle table-hover" style="height: 100%;">
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
@@ -180,7 +124,7 @@ const statuses = <?= json_encode($statuses) ?>;
                 <tbody>
                     <template x-if="isFetching">
                         <tr>
-                            <td class="   tw-border-b tw-border-gray-50" colspan="7">
+                            <td class=" tw-border-b tw-border-gray-50" colspan="7">
                                 <div class='tw-w-full tw-flex tw-py-32 tw-items-center tw-justify-center'>
                                     <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
                                 </div>
@@ -339,9 +283,9 @@ const statuses = <?= json_encode($statuses) ?>;
                         <option value="">Chọn nhóm quyền</option>
 
                         <?php foreach ($roles as $role): ?>
-                            <option value="<?= $role['MaNhomQuyen'] ?>">
-                                <?= $role['TenNhomQuyen'] ?>
-                            </option>
+                                                    <option value="<?= $role['MaNhomQuyen'] ?>">
+                                                        <?= $role['TenNhomQuyen'] ?>
+                                                    </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -367,30 +311,44 @@ const statuses = <?= json_encode($statuses) ?>;
 
         <!-- thanh phan trang -->
         <div class="d-flex justify-content-end column-gap-3">
-            <div class="d-flex input-group h-50 w-25">
-                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Rows per
-                    page</label>
-                <select class="form-select rounded" id="inputGroupSelect01">
-                    <option value="1">5</option>
-                    <option value="2">10</option>
-                    <option value="3">15</option>
-                    <option value="3">20</option>
+            <div class="d-flex input-group h-50 w-25 tw-mb-3">
+                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
+                <select x-model="query['limit']"
+                class="rounded form-select" id="inputGroupSelect01">
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
                 </select>
             </div>
 
             <div>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
-                        <li class="page-item">
+                        <li x-on:click="
+                        if(query['trang']>1){
+                            query['trang']--;
+                            refresh();
+                        }
+                        " class="page-item">
                             <a class="page-link" href="#" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <template x-for="item in getArrayPages()" :key="item">
+                            <li x-on:click="query['trang']=item;refresh()" class="page-item"
+                                :class="{'active': query['trang']==item}">
+                                <a class="page-link" href="#" x-text="item"></a>
+                            </li>
+                        </template>
                         <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
+                            <a x-on:click="
+                                let totalPages = Math.ceil(totalItems/query['limit']);
+                                if(query['trang']<totalPages){
+                                    query['trang']++;
+                                    refresh();
+                                }
+                                " class="page-link" href="#" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>
                         </li>

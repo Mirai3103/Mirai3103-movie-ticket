@@ -44,7 +44,7 @@ const trangthais = <?= json_encode($showStatuses) ?>;
         'trang': 1,
         'limit': 50,
     }
-})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
+})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
     <div x-data="{
         onApllyFilter(){
             console.log(query);
@@ -57,7 +57,7 @@ const trangthais = <?= json_encode($showStatuses) ?>;
             })
         }
 
-    }" class="showtime container-fluid  shadow">
+    }" class="shadow showtime container-fluid">
         <dialog id="delete_modal" class="tw-modal">
             <div class="tw-modal-box">
                 <h3 class="tw-font-bold tw-text-lg">
@@ -97,23 +97,23 @@ const trangthais = <?= json_encode($showStatuses) ?>;
             </div>
         </dialog>
         <!-- thanh phân loại phim -->
-        <div class="border-bottom mb-4">
+        <div class="mb-4 border-bottom">
             <div>
                 <input type="button" class="btn button fw-semibold" value="Tất cả"
                     :class="{'button-nav-active': query['trang-thai']==undefined}"
                     x-on:click="query['trang-thai']=undefined;refresh()" onclick="optionOfList(this)">
                 <?php foreach ($showStatuses as $status): ?>
-                <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                    :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
-                    x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';refresh()"
-                    onclick="optionOfList(this)">
+                        <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
+                            :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
+                            x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';refresh()"
+                            onclick="optionOfList(this)">
                 <?php endforeach; ?>
             </div>
         </div>
         <!-- hết thanh phân loại phim -->
 
         <!-- thanh tìm kiếm và nút thêm phim mới -->
-        <div class="row justify-content-between px-5">
+        <div class="px-5 row justify-content-between">
             <div class="col-6 tw-flex tw-items-center">
                 <div class="input-group">
                     <input x-model.debounce.500ms="query['tu-khoa']" type="text" name id="searchMovie"
@@ -125,9 +125,9 @@ const trangthais = <?= json_encode($showStatuses) ?>;
 
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mx-2 tw-shrink-0">
+                <div class="gap-2 mx-2 d-grid d-md-flex justify-content-md-end tw-shrink-0">
                     <div class="dropdown">
-                        <button data-bs-auto-close="outside" class="btn border-0 fw-medium " data-bs-toggle="dropdown"
+                        <button data-bs-auto-close="outside" class="border-0 btn fw-medium " data-bs-toggle="dropdown"
                             aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter-filled"
                                 width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
@@ -141,13 +141,13 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <div class="d-flex justify-content-between align-items-center px-2 pb-2">
+                                <div class="px-2 pb-2 d-flex justify-content-between align-items-center">
                                     <div>
                                         <label class="fw-semibold" for>Lọc</label>
                                     </div>
 
                                     <div class="d-flex flex-nowrap">
-                                        <button x-on:click="onClearFilter()" class="btn btn-light mx-2">Xóa
+                                        <button x-on:click="onClearFilter()" class="mx-2 btn btn-light">Xóa
                                             lọc</button>
                                         <button x-on:click="onApllyFilter()" class="btn btn-primary">Áp
                                             dụng</button>
@@ -157,11 +157,11 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                             </li>
 
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
                             <li>
-                                <form class="d-flex flex-wrap p-2">
+                                <form class="flex-wrap p-2 d-flex">
                                     <div class="row">
                                         <label class="form-label" for>Khoảng thời gian chiếu</label>
                                     </div>
@@ -179,12 +179,12 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                             </li>
 
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
 
                             <li>
-                                <div class="d-flex tw-flex-col p-2">
+                                <div class="p-2 d-flex tw-flex-col">
                                     <div class="row">
                                         <label class="form-label" for>Rạp</label>
                                     </div>
@@ -192,20 +192,20 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                                         data-selected-text-format="count" multiple class="selectpicker !tw-w-full">
 
                                         <?php foreach ($cinemas as $cinema): ?>
-                                        <option data-tokens="<?= $cinema['TenRapChieu'] ?>"
-                                            value="<?= $cinema['MaRapChieu'] ?>">
-                                            <?= $cinema['TenRapChieu'] ?></option>
+                                                <option data-tokens="<?= $cinema['TenRapChieu'] ?>"
+                                                    value="<?= $cinema['MaRapChieu'] ?>">
+                                                    <?= $cinema['TenRapChieu'] ?></option>
                                         <?php endforeach; ?>
 
                                     </select>
                                 </div>
                             </li>
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
                             <li>
-                                <div class="d-flex tw-flex-col p-2">
+                                <div class="p-2 d-flex tw-flex-col">
                                     <div class="row">
                                         <label class="form-label" for>
                                             Phim
@@ -214,14 +214,14 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                                     <select x-model="query['phims']" data-selected-text-format="count"
                                         data-live-search="true" multiple class="selectpicker !tw-w-full">
                                         <?php foreach ($movies as $movie): ?>
-                                        <option data-tokens="<?= $movie['TenPhim'] ?>" value="<?= $movie['MaPhim'] ?>">
-                                            <?= $movie['TenPhim'] ?></option>
+                                                <option data-tokens="<?= $movie['TenPhim'] ?>" value="<?= $movie['MaPhim'] ?>">
+                                                    <?= $movie['TenPhim'] ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
                             </li>
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
                         </ul>
                     </div>
@@ -230,7 +230,7 @@ const trangthais = <?= json_encode($showStatuses) ?>;
             </div>
 
             <div class="col-6">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="gap-2 d-grid d-md-flex justify-content-md-end">
                     <a href="/admin/suat-chieu/them" class="btn btn-primary me-md-2" type="button">Thêm suất chiếu
                         mới</a>
                 </div>
@@ -239,8 +239,8 @@ const trangthais = <?= json_encode($showStatuses) ?>;
         <!-- hết thanh tìm kiếm và nút thêm phim mới -->
 
         <!-- danh sách phim -->
-        <div class="row m-3 table-responsive" style="flex: 1;">
-            <table class="table table-hover align-middle" style="height: 100%;">
+        <div class="m-3 row table-responsive" style="flex: 1;">
+            <table class="table align-middle table-hover" style="height: 100%;">
                 <!-- header của table -->
                 <thead class="table-light">
                     <tr>
@@ -326,7 +326,7 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                 <tbody>
                     <template x-if="isFetching">
                         <tr>
-                            <td class="   tw-border-b tw-border-gray-50" colspan="7">
+                            <td class=" tw-border-b tw-border-gray-50" colspan="7">
                                 <div class='tw-w-full tw-flex tw-py-32 tw-items-center tw-justify-center'>
                                     <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
                                 </div>
@@ -459,9 +459,8 @@ const trangthais = <?= json_encode($showStatuses) ?>;
         <!-- thanh phan trang -->
         <div class="d-flex justify-content-end column-gap-3">
             <div class="d-flex input-group h-50 w-25">
-                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Rows per
-                    page</label>
-                <select x-model="query['limit']" class="form-select rounded" id="inputGroupSelect01">
+                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
+                <select x-model="query['limit']" class="rounded form-select" id="inputGroupSelect01">
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>
@@ -482,9 +481,6 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
                         </li>
-                        <!-- <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li> -->
                         <template x-for="item in getArrayPages()" :key="item">
                             <li x-on:click="query['trang']=item;refresh()" class="page-item"
                                 :class="{'active': query['trang']==item}">
