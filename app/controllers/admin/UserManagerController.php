@@ -19,6 +19,18 @@ class UserManagerController
     {
         return view('admin/nguoi-dung/index');
     }
+    #[Route('/admin/nguoi-dung/them', 'GET')]
+    public static function themNguoiDung()
+    {
+        return view('admin/nguoi-dung/add');
+    }
+    #[Route('/admin/nguoi-dung/{id}/sua', 'GET')]
+    public static function suaNguoiDung($id)
+    {
+        $user = UserService::getUserById($id);
+        return view('admin/nguoi-dung/edit', ['user' => $user]);
+    }
+
     // #[Route('/api/nguoi-dung/{id}', 'GET')] -> lấy thông tin người dùng bằng id
     // #[Route('/api/nguoi-dung/{id}', 'PUT')] -> cập nhật thông tin người dùng bằng id
     // #[Route('/api/nguoi-dung/{id}', 'DELETE')] -> xóa người dùng bằng id

@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
+use App\Core\Logger;
 use App\Core\Request;
 use App\Dtos\JsonResponse;
 use App\Dtos\LoaiTaiKhoan;
@@ -167,8 +168,10 @@ class AccountService
     }
     public static function login($username, $password)
     {
-        $account = Database::queryOne("SELECT MaTaiKhoan,MaNguoiDung, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE TenDangNhap = ?", [$username]);
+        $account = Database::queryOne("SELECT MaTaiKhoan,MaNguoiDung, MatKhau,TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE TenDangNhap = ?", [$username]);
         if ($account) {
+            Logger::info($password);
+            Logger::info($account['MatKhau']);
             if (self::comparePassword($password, $account['MatKhau'])) {
                 return $account;
             }
@@ -184,7 +187,7 @@ class AccountService
     public static function updatePassword($userId, $oldPassword, $newPassword)
     {
         $account = self::getAccountByUserId($userId);
-        if ($account) {
+        if (isset($account)) {
             if (self::comparePassword($oldPassword, $account['MatKhau'])) {
                 $newPassword = self::hashPassword($newPassword);
                 $result = Database::update('TaiKhoan', ['MatKhau' => $newPassword], "MaNguoiDung=$userId");

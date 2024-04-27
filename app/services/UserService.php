@@ -261,7 +261,7 @@ class UserService
         setcookie("remember", "", time() - 3600, '/');
     }
 
-    private static function getUserById($id)
+    public static function getUserById($id)
     {
         $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
         $user = Database::queryOne($query, [$id]);

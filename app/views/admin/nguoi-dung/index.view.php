@@ -11,8 +11,8 @@ require ('app/views/admin/header.php');
 
 <link rel="stylesheet" href="/public/tiendat/showtime.css">
 
-<div x-data="{}" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
-    <div class="showtime container-fluid  shadow">
+<div x-data="{}" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
+    <div class="shadow showtime container-fluid">
         <dialog id="delete_modal" class="tw-modal">
             <div class="tw-modal-box">
                 <h3 class="tw-font-bold tw-text-lg">
@@ -36,7 +36,7 @@ require ('app/views/admin/header.php');
         </dialog>
         <div class='tw-mt-3'></div>
         <!-- thanh tìm kiếm và nút thêm phim mới -->
-        <div class="row justify-content-between px-5">
+        <div class="px-5 row justify-content-between">
             <div class="col-6 tw-flex tw-items-center">
                 <div class="input-group">
                     <input x-model.debounce.500ms="query['tu-khoa']" type="text" name id="searchMovie"
@@ -47,9 +47,9 @@ require ('app/views/admin/header.php');
 
                 </div>
 
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end mx-2 tw-shrink-0">
+                <div class="gap-2 mx-2 d-grid d-md-flex justify-content-md-end tw-shrink-0">
                     <div class="dropdown">
-                        <button data-bs-auto-close="outside" class="btn border-0 fw-medium " data-bs-toggle="dropdown"
+                        <button data-bs-auto-close="outside" class="border-0 btn fw-medium " data-bs-toggle="dropdown"
                             aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter-filled"
                                 width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
@@ -63,13 +63,13 @@ require ('app/views/admin/header.php');
                         </button>
                         <ul class="dropdown-menu tw-min-w-80">
                             <li>
-                                <div class="d-flex justify-content-between align-items-center px-2 pb-2">
+                                <div class="px-2 pb-2 d-flex justify-content-between align-items-center">
                                     <div>
                                         <label class="fw-semibold" for>Lọc</label>
                                     </div>
 
                                     <div class="d-flex flex-nowrap">
-                                        <button class="btn btn-light mx-2">Xóa
+                                        <button class="mx-2 btn btn-light">Xóa
                                             lọc</button>
                                         <button class="btn btn-primary">Áp
                                             dụng</button>
@@ -79,11 +79,11 @@ require ('app/views/admin/header.php');
                             </li>
 
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
                             <li>
-                                <form class="d-flex flex-wrap p-2">
+                                <form class="flex-wrap p-2 d-flex">
                                     <div class="row">
                                         <label class="form-label">Điểm tích luỹ từ</label>
                                     </div>
@@ -94,19 +94,19 @@ require ('app/views/admin/header.php');
                                         </div>
                                         <span class='col tw-grow-0'>đến</span>
                                         <div class="col tw-grow">
-                                            <input class="form-control  tw-w-full" type="number">
+                                            <input class="form-control tw-w-full" type="number">
                                         </div>
                                     </div>
                                 </form>
                             </li>
 
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
 
                             <li>
-                                <div class="d-flex tw-flex-col p-2">
+                                <div class="p-2 d-flex tw-flex-col">
                                     <div class="row">
                                         <label class="form-label" for>Loại người dùng</label>
                                     </div>
@@ -122,7 +122,7 @@ require ('app/views/admin/header.php');
                                 </div>
                             </li>
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
                         </ul>
@@ -132,7 +132,7 @@ require ('app/views/admin/header.php');
             </div>
 
             <div class="col-6">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="gap-2 d-grid d-md-flex justify-content-md-end">
                     <a href="/admin/nguoi-dung/them" class="btn btn-primary me-md-2" type="button">Thêm người dùng
                         mới</a>
                 </div>
@@ -141,8 +141,8 @@ require ('app/views/admin/header.php');
         <!-- hết thanh tìm kiếm và nút thêm phim mới -->
 
         <!-- danh sách phim -->
-        <div class="row m-3 table-responsive" style="flex: 1;">
-            <table class="table table-hover align-middle" style="height: 100%;">
+        <div class="m-3 row table-responsive" style="flex: 1;">
+            <table class="table align-middle table-hover" style="height: 100%;">
                 <!-- header của table -->
                 <thead class="table-light">
                     <tr>
@@ -194,7 +194,7 @@ require ('app/views/admin/header.php');
                 <tbody>
                     <template x-if="isFetching">
                         <tr>
-                            <td class="   tw-border-b tw-border-gray-50" colspan="7">
+                            <td class=" tw-border-b tw-border-gray-50" colspan="7">
                                 <div class='tw-w-full tw-flex tw-py-32 tw-items-center tw-justify-center'>
                                     <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
                                 </div>
@@ -204,7 +204,7 @@ require ('app/views/admin/header.php');
                     <tr>
                         <th scope="row">
                             <span>
-                                1
+                                9
                             </span>
                         </th>
                         <td>
@@ -245,7 +245,7 @@ require ('app/views/admin/header.php');
                                 <ul class="dropdown-menu">
 
                                     <li>
-                                        <a href="/admin/nguoi-dung/1/sua" class="dropdown-item !tw-text-yellow-400">
+                                        <a href="/admin/nguoi-dung/9/sua" class="dropdown-item !tw-text-yellow-400">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                                 fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                 <path
@@ -268,10 +268,10 @@ require ('app/views/admin/header.php');
                                                     d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.133 2.845a.75.75 0 0 1 1.06 0l1.72 1.72 1.72-1.72a.75.75 0 1 1 1.06 1.06l-1.72 1.72 1.72 1.72a.75.75 0 1 1-1.06 1.06L12 15.685l-1.72 1.72a.75.75 0 1 1-1.06-1.06l1.72-1.72-1.72-1.72a.75.75 0 0 1 0-1.06Z"
                                                     clip-rule="evenodd" />
                                             </svg>
-
+    
 
                                             <span class="px-xl-3 ">
-                                                Huỷ suất chiếu
+                                                Xoá người dùng
                                             </span>
                                         </div>
                                     </li>
@@ -287,9 +287,9 @@ require ('app/views/admin/header.php');
         <!-- thanh phan trang -->
         <div class="d-flex justify-content-end column-gap-3">
             <div class="d-flex input-group h-50 w-25">
-                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Rows per
+                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Rows per
                     page</label>
-                <select class="form-select rounded" id="inputGroupSelect01">
+                <select class="rounded form-select" id="inputGroupSelect01">
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>

@@ -40,14 +40,18 @@ IF NOT EXIST %PHP_DIR% (
     php.exe -r "unlink('composer-setup.php');"
 
     echo "Lien he huu hoang de co file csdl"
-    @REM set /p mssv=
     cd ..
     echo Install dependencies
     %COMPOSER_CMD% install
 )
 
-
-echo PHP %PHP_VERSION% is ready to use.
+@REM SET PHP_IDE_CONFIG=serverName=Docker
+@REM SET DB_HOST=localhost:3306
+@REM SET DB_NAME=app
+@REM SET DB_USERNAME=app
+@REM SET DB_PASSWORD=app
+@REM SET DB_PORT=3306
+@REM echo PHP %PHP_VERSION% is ready to use.
 
 %COMPOSER_CMD% update
 %COMPOSER_CMD% dump-autoload
