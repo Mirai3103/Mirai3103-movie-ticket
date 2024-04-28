@@ -43,13 +43,15 @@ class HomeController
     #[Route("/dang-nhap", "POST")]
     public static function loginPost()
     {
+        $returnUrl = getArrayValueSafe($_GET, 'returnUrl', null);
+
         $username = $_POST['username'];
         $password = $_POST['password'];
 
         $loginResult = UserService::login($username, $password, getArrayValueSafe($_POST, 'remember', false));
         if ($loginResult->isSuccessful()) {
             if ($loginResult->data['TaiKhoan']['LoaiTaiKhoan'] == AccountType::Customer->value) {
-                return redirect("trang-chu");
+                return redirect($returnUrl ?? "trang-chu");
             } else {
                 return redirect("admin");
             }

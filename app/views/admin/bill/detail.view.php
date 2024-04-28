@@ -11,19 +11,29 @@ require ('app/views/admin/header.php');
             <div class="detail-bill-container col-8 p-0 m-0">
                 <!-- chi tiết vé đã đặt -->
                 <div class="ticket-container row w-100 shadow p-3">
-                    <div class="fs-4 fw-bold mb-3">Điềm báo của
-                        quỷ (T18)</div>
-                    <div class="fw-semibold fs-5">Pixel Cinema Quốc
-                        Thanh</div>
-                    <div class="fw-normal">271 Nguyễn Trãi, Phường
-                        Nguyễn Cư Trinh, Quận 1, Thành phố Hồ Chí
-                        Minh</div>
+                    <div class="fs-4 fw-bold mb-3">
+                        <?= $order['SuatChieu']['TenPhim'] ?>
+                    </div>
+                    <div class="fw-semibold fs-5">
+                        <?= $order['SuatChieu']['TenRapChieu'] ?>
+                    </div>
+                    <div class="fw-normal">
+                        <?= $order['SuatChieu']['DiaChi'] ?>
+                    </div>
 
                     <div class="d-flex align-items-stretch mt-3">
                         <div class="flex-column">
                             <div class="fw-semibold">Thời
                                 gian</div>
-                            <div class="fs-5 fw-normal">22:45 Thứ
+                            <script>
+                            //YYYY-MM-DD HH:mm:ss
+                            var dateStr = '<?= $order['SuatChieu']['NgayGioChieu'] ?>';
+                            </script>
+                            <div class="fs-5 fw-normal tw-capitalize" x-init="
+                             const ngayChieuDayJs = dayjs(dateStr, 'YYYY-MM-DD HH:mm:ss');
+                                const ngayChieuStr = ngayChieuDayJs.format('HH:mm dddd DD/MM/YYYY');
+                                $el.innerText = ngayChieuStr;
+                            ">22:45 Thứ
                                 Hai
                                 08/04/2024</div>
                         </div>
@@ -31,12 +41,29 @@ require ('app/views/admin/header.php');
                         <div class="flex-column px-4">
                             <div class="fw-semibold">Phòng
                                 chiếu</div>
-                            <div class="fs-5 fw-normal">02</div>
+                            <div class="fs-5 fw-normal">
+                                <?= $order['SuatChieu']['TenPhongChieu'] ?>
+                            </div>
                         </div>
                     </div>
-
+                    <?php
+                    $groupedByTicketType = []; // MaLoaiVe => [Ve]
+                    foreach ($order['Ve'] as $ve) {
+                        if (!isset($groupedByTicketType[$ve['MaLoaiVe']])) {
+                            $groupedByTicketType[$ve['MaLoaiVe']] = [];
+                        }
+                        $groupedByTicketType[$ve['MaLoaiVe']][] = $ve;
+                    }
+                    $groupedBySeatType = []; // MaLoaiGhe => [Ve]
+                    foreach ($order['Ve'] as $ve) {
+                        if (!isset($groupedBySeatType[$ve['MaLoaiGhe']])) {
+                            $groupedBySeatType[$ve['MaLoaiGhe']] = [];
+                        }
+                        $groupedBySeatType[$ve['MaLoaiGhe']][] = $ve;
+                    }
+                    ?>
                     <div class="d-flex align-items-stretch mt-3">
-                        <div class="flex-column">
+                        <!-- <div class="flex-column">
                             <div class="fw-semibold">Số vé</div>
                             <div class="fs-5 fw-normal">02</div>
                         </div>
@@ -45,81 +72,62 @@ require ('app/views/admin/header.php');
                             <div class="fw-semibold">Loại vé</div>
                             <div class="fs-5 fw-normal">HSSV - Người
                                 cao tuổi</div>
-                        </div>
-                    </div>
-                    <div class="d-flex align-items-stretch mt-3">
-                        <div class="flex-column">
-                            <div class="fw-semibold">Loại ghế</div>
-                            <div class="fs-5 fw-normal">Giường</div>
+                        </div> -->
+                        <div class="tw-grid tw-gap-2  tw-gap-x-4 tw-grid-cols-2 tw-max-w-96">
+                            <div class="fw-semibold">Loại vé</div>
+
+                            <div class="fw-semibold">Số vé</div>
+                            <?php foreach ($groupedByTicketType as $maLoaiVe => $ve): ?>
+                                <div class="fs-5 fw-normal"><?= $ve[0]['TenLoaiVe'] ?></div>
+                                <div class="fs-5 fw-normal"><?= count($ve) ?></div>
+                            <?php endforeach; ?>
+
                         </div>
 
-                        <div class="flex-column px-4">
-                            <div class="fw-semibold">Ghế</div>
-                            <div class="fs-5 fw-normal">D03,
-                                D03</div>
+                    </div>
+                    <div class="d-flex align-items-stretch mt-3">
+                        <div class="tw-grid tw-gap-2  tw-gap-x-4 tw-grid-cols-2 tw-max-w-96">
+                            <div class="fw-semibold">Số Ghế</div>
+
+                            <div class="fw-semibold">Loại Ghế</div>
+                            <?php foreach ($groupedBySeatType as $maLoaiGhe => $ve): ?>
+                                <div class="fs-5 fw-normal"><?= $ve[0]['TenLoaiGhe'] ?></div>
+                                <div class="fs-5 fw-normal"><?= count($ve) ?></div>
+                            <?php endforeach; ?>
+
                         </div>
                     </div>
                 </div>
                 <!-- hết chi tiết vé đã đặt -->
 
                 <!-- combo bắp mước -->
-                <div class="prucduct-container row w-100 shadow p-3">
+                <div class="prucduct-container row w-100 shadow p-3 tw-overflow-auto">
                     <div class="fs-4 fw-semibold mb-3">Bắp
                         nước</div>
-                    <!-- combo 1 -->
-                    <div class="row align-items-center">
-                        <div class="col-1">
-                            <img src="https://api-website.cinestar.com.vn/media/.thumbswysiwyg/pictures/Cinestar/BAP-2-NGAN_COMBO-SOLO.png?rand=1711034558"
-                                alt width="48px">
+                    <?php foreach ($order['Combos'] as $combo): ?>
+                        <div class="row align-items-center">
+                            <div class="col-1">
+                                <img src="<?= $combo['HinhAnh'] ?>" alt width="48px">
+                            </div>
+                            <div class="col-7">
+                                <div class="fw-medium fs-5">
+                                    <?= $combo['TenCombo'] ?>
+                                </div>
+                                <div class="fs-6 fw-light">1 Coke 32oz -
+                                    V + 1 Bắp 2 Ngăn 64OZ PM +
+                                    CARAMEN</div>
+                            </div>
+                            <div class="col-1 text-end">
+                                x<?= $combo['SoLuong'] ?>
+                            </div>
+                            <div class="col-3 text-end" x-text="toVnd(<?= $combo['Gia'] ?>)">
+                                100,000
+                                VNĐ
+                            </div>
                         </div>
-                        <div class="col-7">
-                            <div class="fw-medium fs-5">COMBO SOLO 2
-                                NGĂN - VOL</div>
-                            <div class="fs-6 fw-light">1 Coke 32oz -
-                                V + 1 Bắp 2 Ngăn 64OZ PM +
-                                CARAMEN</div>
-                        </div>
-                        <div class="col-1 text-end">x1</div>
-                        <div class="col-3 text-end">119,000
-                            VNĐ</div>
-                    </div>
-                    <hr class="my-4">
-                    <!-- combo 2 -->
-                    <div class="row align-items-center">
-                        <div class="col-1">
-                            <img src="https://api-website.cinestar.com.vn/media/.thumbswysiwyg/pictures/Cinestar/BAP-2-NGAN_COMBO-PARTY.png?rand=1711034558"
-                                alt width="48px">
-                        </div>
-                        <div class="col-7">
-                            <div class="fw-medium fs-5">COMBO SOLO 2
-                                NGĂN - VOL</div>
-                            <div class="fs-6 fw-light">4 Coke 22oz -
-                                V + 2 Bắp 2 Ngăn 64OZ PM +
-                                CARAMEN</div>
-                        </div>
-                        <div class="col-1 text-end">x1</div>
-                        <div class="col-3 text-end">259,000
-                            VNĐ</div>
-                    </div>
-                    <hr class="my-4">
-                    <!-- combo 3 -->
-                    <div class="row align-items-center">
-                        <div class="col-1">
-                            <img src="https://api-website.cinestar.com.vn/media/.thumbswysiwyg/pictures/Cinestar/BAP-2-NGAN_COMBO-PARTY.png?rand=1711034558"
-                                alt width="48px">
-                        </div>
-                        <div class="col-7">
-                            <div class="fw-medium fs-5">COMBO SOLO 2
-                                NGĂN - VOL</div>
-                            <div class="fs-6 fw-light">2 Coke 32oz -
-                                V + 1 Bắp 2 Ngăn 64OZ PM +
-                                CARAMEN</div>
-                        </div>
-                        <div class="col-1 text-end">x1</div>
-                        <div class="col-3 text-end">129,000
-                            VNĐ</div>
-                    </div>
-                    <hr class="my-4">
+                        <hr class="my-4">
+                    <?php endforeach; ?>
+
                 </div>
                 <!-- hết combo bắp nước -->
             </div>

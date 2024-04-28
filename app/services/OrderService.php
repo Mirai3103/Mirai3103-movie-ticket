@@ -2,7 +2,9 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
+use App\Core\Request;
 use App\Dtos\JsonResponse;
 use App\Dtos\TrangThaiHoaDon;
 use App\Dtos\TrangThaiVe;
@@ -66,7 +68,25 @@ class OrderService
         $_SESSION['bookingData'] = $bookingData;
         return JsonResponse::ok($bookingData);
     }
-
+    public static function getOrderById($id)
+    {
+        $sql = "SELECT * FROM HoaDon WHERE MaHoaDon = ?";
+        $order = Database::queryOne($sql, [$id]);
+        if (!$order) {
+            return null;
+        }
+        $sql = "SELECT Combo.*, CT_HoaDon_Combo.SoLuong FROM Combo JOIN CT_HoaDon_Combo ON Combo.MaCombo = CT_HoaDon_Combo.MaCombo WHERE CT_HoaDon_Combo.MaHoaDon = ?";
+        $combos = Database::query($sql, [$id]);
+        $sql = "SELECT ThucPham.*, CT_HoaDon_ThucPham.SoLuong FROM ThucPham JOIN CT_HoaDon_ThucPham ON ThucPham.MaThucPham = CT_HoaDon_ThucPham.MaThucPham WHERE CT_HoaDon_ThucPham.MaHoaDon = ?";
+        $thucPhams = Database::query($sql, [$id]);
+        $ve = TicketService::getTicketByOrderId($id);
+        $suatChieu = ShowService::getShowById($ve[0]['MaSuatChieu']);
+        $order['Combos'] = $combos;
+        $order['ThucPhams'] = $thucPhams;
+        $order['Ve'] = $ve;
+        $order['SuatChieu'] = $suatChieu;
+        return $order;
+    }
     public static function saveOrder($data)
     {
         $uid = $data['id'];
@@ -86,8 +106,8 @@ class OrderService
             $MaNguoiDung = $data['userId'];
         }
         $MaKhuyenMai = null;
-        if (isset($data['MaKhuyenMai'])) {
-            $MaKhuyenMai = $data['MaKhuyenMai'];
+        if (isset($data['promotion_code'])) {
+            $MaKhuyenMai = $data['promotion_code'];
         }
         $TrangThai = TrangThaiHoaDon::ThanhCong->value;
         Database::insert("HoaDon", [
@@ -125,7 +145,61 @@ class OrderService
         UserService::plusPoint($MaNguoiDung, $point);
         return $uid;
     }
+    public static function searchOrder($query = [])
+    {
+        $keyword = getArrayValueSafe($query, 'tu-khoa', '');
+        $MaNguoiDung = getArrayValueSafe($query, 'ma-nguoi-dung', '');
+        $tongTienTu = getArrayValueSafe($query, 'tong-tien-tu', '');
+        $tongTienDen = getArrayValueSafe($query, 'tong-tien-den', '');
+        $tuNgay = getArrayValueSafe($query, 'tu-ngay', '');
+        $denNgay = getArrayValueSafe($query, 'den-ngay', '');
+        $phuongThucThanhToan = getArrayValueSafe($query, 'phuong-thuc-thanh-toan', '');
+        $page = getArrayValueSafe($query, 'trang', 1);
+        $pageSize = getArrayValueSafe($query, 'limit', 20);
+        $offset = ($page - 1) * $pageSize;
+        $orderBy = getArrayValueSafe($query, 'sap-xep', 'MaHoaDon');
+        $orderType = getArrayValueSafe($query, 'thu-tu', 'desc');
 
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->select(["HoaDon.*", "NguoiDung.TenNguoiDung"])
+            ->from("HoaDon")
+            ->join("NguoiDung", "HoaDon.MaNguoiDung = NguoiDung.MaNguoiDung", "left")
+            ->where("1", "=", "1");
+        if ($keyword) {
+            $queryBuilder->and();
+            $queryBuilder->startGroup();
+            $queryBuilder->where('HoaDon.MaHoaDon', 'like', "%$keyword%");
+            $queryBuilder->orWhere('NguoiDung.TenNguoiDung', 'like', "%$keyword%");
+            $queryBuilder->orWhere('NguoiDung.Email', 'like', "%$keyword%");
+            $queryBuilder->orWhere('NguoiDung.SoDienThoai', 'like', "%$keyword%");
+            $queryBuilder->orWhere('HoaDon.MaKhuyenMai', 'like', "%$keyword%");
+            $queryBuilder->endGroup();
+        }
+        if ($MaNguoiDung) {
+            $queryBuilder->andWhere('HoaDon.MaNguoiDung', '=', $MaNguoiDung);
+        }
+        if ($tongTienTu) {
+            $queryBuilder->andWhere('HoaDon.TongTien', '>=', $tongTienTu);
+        }
+        if ($tongTienDen) {
+            $queryBuilder->andWhere('HoaDon.TongTien', '<=', $tongTienDen);
+        }
+        if ($tuNgay) {
+            $queryBuilder->andWhere('HoaDon.NgayGioThanhToan', '>=', $tuNgay);
+        }
+        if ($denNgay) {
+            $queryBuilder->andWhere('HoaDon.NgayGioThanhToan', '<=', $denNgay);
+        }
+        if ($phuongThucThanhToan) {
+            $queryBuilder->andWhere('HoaDon.PhuongThucThanhToan', '=', $phuongThucThanhToan);
+        }
+        $count = $queryBuilder->count();
+        $queryBuilder->orderBy('HoaDon.' . $orderBy, $orderType);
+        $queryBuilder->limit($pageSize, $offset);
+        $result = $queryBuilder->get();
+        Request::setQueryCount($count);
+        return $result;
+    }
     public static function isUserOrdered($MaNguoiDung)
     {
         $sql = "SELECT * FROM HoaDon WHERE MaNguoiDung = ? ";

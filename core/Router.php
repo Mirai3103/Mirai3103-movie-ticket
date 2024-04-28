@@ -75,20 +75,6 @@ class Router
     }
     public static function build()
     {
-        // $domain = $_SERVER['HTTP_HOST'];
-        // $protocol = isset($_SERVER['HTTPS']) ? 'https' : 'http';
-        // $robotContent = "";
-        // foreach (static::$routes as $route) {
-        //     $pattern = $route['pattern'];
-        //     // only get method
-        //     if ($route['method'] !== 'GET') {
-        //         continue;
-        //     }
-        //     $fullPath = $protocol . '://' . $domain . $pattern;
-        //     $robotContent .= "$fullPath\n";
-        // }
-        // // write to robots.txt
-        // file_put_contents('robots.txt', $robotContent);
         usort(static::$routes, function ($a, $b) {
             return strlen($a['pattern']) > strlen($b['pattern']) ? 1 : -1;
         });
@@ -113,7 +99,7 @@ class Router
                 continue;
             }
             $pattern = '/^' . str_replace('/', '\/', $pattern) . '$/';
-            $pattern = preg_replace('/{([\w]+)}/', '(?<$1>\w+)', $pattern);
+            $pattern = preg_replace('/{([\w]+)}/', '(?<$1>[A-Za-z0-9_-]+)', $pattern);
 
             if (preg_match($pattern, $requestUri, $matches)) {
                 $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);

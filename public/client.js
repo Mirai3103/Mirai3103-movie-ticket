@@ -42,7 +42,12 @@ window.Alpine = Alpine;
 window.addEventListener("DOMContentLoaded", () => {
   Alpine.start();
 });
-
+window.toVnd = function (number) {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(number);
+};
 function useDisableAllInput() {
   let inputThatDisabled = [];
   function disableAllButton() {

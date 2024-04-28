@@ -144,7 +144,7 @@ class AccountService
         $params = [
             'TenDangNhap' => $data['TenDangNhap'],
             'MatKhau' => self::hashPassword($data['MatKhau']),
-            'TrangThai' => $data['TrangThai'],
+            'TrangThai' => getArrayValueSafe($data, 'TrangThai', TrangThaiTaiKhoan::DangHoatDong->value),
             'LoaiTaiKhoan' => $data['LoaiTaiKhoan'],
             'MaNguoiDung' => $data['MaNguoiDung'],
         ];

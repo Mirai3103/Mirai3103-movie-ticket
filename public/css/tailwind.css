@@ -30,3 +30,6 @@
 .dropdown-menu .show {
   @apply tw-max-w-full;
 }
+th > div {
+  @apply tw-flex tw-items-center;
+}

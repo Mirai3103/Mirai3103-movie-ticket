@@ -319,6 +319,11 @@ class UserService
                 if ($user) {
                     $query = "SELECT MaTaiKhoan, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE MaNguoiDung = ?;";
                     $account = Database::queryOne($query, [$userId]);
+                    $trangThai = $account['TrangThai'];
+                    if ($trangThai == TrangThaiTaiKhoan::DangBiKhoa->value) {
+                        self::logout();
+                        return;
+                    }
                     $user['TaiKhoan'] = $account;
 
                     self::setSession($user);

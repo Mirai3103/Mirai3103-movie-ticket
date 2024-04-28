@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Logger;
 use App\Dtos\JsonResponse;
 
 global $scripts;
@@ -117,13 +118,19 @@ function execPostRequest($url, array $data)
 
 function json($data, $status = 200)
 {
-    // if data is an instance of JsonResponse
-    if ($data instanceof JsonResponse) {
-        $status = $data->status;
-    }
     http_response_code($status);
     header('Content-Type: application/json');
-    echo json_encode($data);
+    if ($data instanceof JsonResponse) {
+        $status = $data->status;
+        echo json_encode($data);
+        die($status);
+    }
+    if (is_object($data)) {
+        $data = (array) $data;
+    }
+    $res = JsonResponse::ok($data);
+    $res->status = $status;
+    echo json_encode($res);
     die($status);
 }
 

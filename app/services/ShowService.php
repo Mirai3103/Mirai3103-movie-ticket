@@ -17,7 +17,7 @@ class ShowService
     {
         $now = date('Y-m-d H:i:s');
         $next7Days = date('Y-m-d H:i:s', strtotime('+7 days', strtotime($now)));
-        $sql = "SELECT * FROM SuatChieu WHERE MaPhim = ? AND NgayGioChieu BETWEEN ? AND ?";
+        $sql = "SELECT * FROM SuatChieu WHERE MaPhim = ? AND NgayGioChieu BETWEEN ? AND ? AND TrangThai != " . TrangThaiSuatChieu::Hidden->value;
         $shows = Database::query($sql, [$movieId, $now, $next7Days]);
         return $shows;
     }
@@ -142,7 +142,11 @@ class ShowService
     }
     public static function getShowById($id)
     {
-        $sql = "SELECT * FROM SuatChieu WHERE MaXuatChieu = ?";
+        $sql = "SELECT * FROM SuatChieu
+        JOIN Phim ON SuatChieu.MaPhim = Phim.MaPhim
+        JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu
+        JOIN RapChieu ON PhongChieu.MaRapChieu = RapChieu.MaRapChieu
+        WHERE MaXuatChieu = ?";
         $show = Database::queryOne($sql, [$id]);
         return $show;
     }

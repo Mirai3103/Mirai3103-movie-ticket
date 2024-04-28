@@ -3380,6 +3380,10 @@ details.tw-collapse summary::-webkit-details-marker {
   z-index: 100;
 }
 
+.tw-col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
 .tw-m-1 {
   margin: 0.25rem;
 }
@@ -3874,6 +3878,10 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-max-w-80 {
   max-width: 20rem;
+}
+
+.tw-max-w-96 {
+  max-width: 24rem;
 }
 
 .tw-max-w-\[40px\] {
@@ -4786,6 +4794,10 @@ details.tw-collapse summary::-webkit-details-marker {
   text-transform: uppercase;
 }
 
+.tw-capitalize {
+  text-transform: capitalize;
+}
+
 .tw-italic {
   font-style: italic;
 }
@@ -5141,6 +5153,11 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .dropdown-menu .show {
   max-width: 100%;
+}
+
+th > div {
+  display: flex;
+  align-items: center;
 }
 
 .before\:tw-pointer-events-none::before {

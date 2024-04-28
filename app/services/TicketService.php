@@ -168,4 +168,12 @@ class TicketService
         Database::commit();
         return true;
     }
+    public static function getTicketByOrderId($orderId)
+    {
+        return Database::query("SELECT * FROM Ve
+        JOIN LoaiVe ON Ve.MaLoaiVe = LoaiVe.MaLoaiVe
+        JOIN Ghe ON Ve.MaGhe = Ghe.MaGhe
+        Join LoaiGhe ON Ghe.MaLoaiGhe = LoaiGhe.MaLoaiGhe
+        WHERE MaHoaDon = ?", [$orderId]);
+    }
 }

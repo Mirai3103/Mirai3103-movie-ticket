@@ -511,7 +511,9 @@ $watch('selectedSchedule',async (value) => {
                                         <ul class="row ctype-items justify-content-sm-start ms-sm-0 ps-0">
                                             <template x-for="show in getShowsOfRoom(room.MaPhongChieu)"
                                                 :key="show.MaXuatChieu">
-                                                <li :id-show="show.MaXuatChieu" role="button" x-on:click="
+                                                <li :id-show="show.MaXuatChieu" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" :title="toVnd(show.GiaVe)" role="button"
+                                                    x-on:click="
                                                     selectedShow = {
                                                         ...show,
                                                         PhongChieu: {
@@ -867,7 +869,7 @@ $watch('selectedSchedule',async (value) => {
                     </div>
                     <div class="col-6">
                         <div class="room">
-                            <span class="txt">Phòng chiếu: </span>
+                            <span class="txt">Suất chiếu: </span>
                             <span class="room-tilte me-1" x-text="selectedShow?.PhongChieu.TenPhongChieu"></span>
 
                             <span class="time-tilte" x-text="dayjs(selectedShow?.NgayGioChieu).format('HH:mm')"></span>
