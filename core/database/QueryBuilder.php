@@ -66,7 +66,7 @@ class QueryBuilder
     }
     private static function parseValue($value)
     {
-        if (is_null($value)) {
+        if (is_null($value) || $value === "NULL") {
             return "NULL";
         }
         if (is_string($value)) {

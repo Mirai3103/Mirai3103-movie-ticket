@@ -266,10 +266,15 @@ const statuses = <?= json_encode($statuses) ?>;
                 <p class="tw-py-4">
                     Bạn sẽ không thể hoàn tác hành động này.
                 </p>
+                <div class="tw-modal-action">
+                    <form method="dialog">
+                        <button class="tw-btn">Huỷ</button>
+                        <button class="tw-btn tw-btn-error tw-text-white">Xoá</button>
+                    </form>
+                </div>
             </div>
-            <form method="tw-dialog" class="tw-modal-backdrop">
+            <form method="dialog" class="tw-modal-backdrop">
                 <button>close</button>
-                <button class="tw-bg-red-500 tw-text-white tw-p-2 tw-rounded-md" type="button">Xóa</button>
             </form>
         </dialog>
 
@@ -283,9 +288,9 @@ const statuses = <?= json_encode($statuses) ?>;
                         <option value="">Chọn nhóm quyền</option>
 
                         <?php foreach ($roles as $role): ?>
-                                                    <option value="<?= $role['MaNhomQuyen'] ?>">
-                                                        <?= $role['TenNhomQuyen'] ?>
-                                                    </option>
+                        <option value="<?= $role['MaNhomQuyen'] ?>">
+                            <?= $role['TenNhomQuyen'] ?>
+                        </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -303,7 +308,7 @@ const statuses = <?= json_encode($statuses) ?>;
                     </form>
                 </div>
             </div>
-            <form method="tw-dialog" class="tw-modal-backdrop">
+            <form method="dialog" class="tw-modal-backdrop">
                 <button>close</button>
 
             </form>
@@ -313,8 +318,7 @@ const statuses = <?= json_encode($statuses) ?>;
         <div class="d-flex justify-content-end column-gap-3">
             <div class="d-flex input-group h-50 w-25 tw-mb-3">
                 <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
-                <select x-model="query['limit']"
-                class="rounded form-select" id="inputGroupSelect01">
+                <select x-model="query['limit']" class="rounded form-select" id="inputGroupSelect01">
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>

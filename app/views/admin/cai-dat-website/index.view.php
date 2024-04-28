@@ -253,7 +253,7 @@ const initbanners = <?= json_encode($configs['Banners']) ?>;
                     <div class="input-group date">
                         <input type="number" min="2" max="60" step="1" title="Thời gian giữ vé phải từ 2 đến 60 phút"
                             name="TICKET_HOLD_TIME" id="TICKET_HOLD_TIME" name="TICKET_HOLD_TIME" class="form-control "
-                            required value="<?= $configs['Website']['hold_time'] ?>">
+                            required value="<?= $GLOBALS['config']['Website']['hold_time'] ?>">
                         <div id="TICKET_HOLD_TIME-feedback" class="invalid-feedback">
                             Please choose a minutes
                         </div>

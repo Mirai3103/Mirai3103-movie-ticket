@@ -5,7 +5,10 @@ require ("app/views/admin/header.php");
 
 <link rel="stylesheet" href="/public/the-loai/home.css">
 
-<div style="
+<div x-data="{
+        state: 'create',
+        selectedCategory: null,
+    }" style="
           flex-grow: 1;
           flex-shrink: 1;
           overflow-y: auto;
@@ -27,7 +30,10 @@ require ("app/views/admin/header.php");
 
             <div class="col-6">
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button class="btn btn-primary me-md-2" type="button" data-bs-toggle="modal"
+                    <button x-on:click="
+                    state = 'create';
+                    selectedCategory = null;
+                    " class="btn btn-primary me-md-2" type="button" data-bs-toggle="modal"
                         data-bs-target="#type-of-film-modal">
                         Thêm thể loại phim mới
                     </button>
@@ -41,7 +47,7 @@ require ("app/views/admin/header.php");
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
-                            <div class="col-name" onclick="sortByIdMovie()">
+                            <div class="col-name">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-sort-numeric-down m-2" viewBox="0 0 16 16" id="sortNumDown_icon">
                                     <path d="M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z" />
@@ -63,7 +69,7 @@ require ("app/views/admin/header.php");
                             </div>
                         </th>
                         <th scope="col">
-                            <div class="col-name" onclick="sortByNameMovie()">
+                            <div class="col-name">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-sort-alpha-down m-2" viewBox="0 0 16 16" id="sortAlphaDown_icon">
                                     <path fill-rule="evenodd"
@@ -102,17 +108,7 @@ require ("app/views/admin/header.php");
                                     </svg>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li>
-                                        <div class="dropdown-item">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                                <path
-                                                    d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                            </svg>
-                                            <span class="px-xl-3">Xem</span>
-                                        </div>
-                                    </li>
+
                                     <li>
                                         <div class="dropdown-item">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -122,7 +118,15 @@ require ("app/views/admin/header.php");
                                                 <path fill-rule="evenodd"
                                                     d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                                             </svg>
-                                            <span class="px-xl-3">Sửa</span>
+                                            <span class="px-xl-3" x-on:click="
+                                            state = 'edit';
+                                            // tuỳ chỉnh dữ liệu
+                                            selectedCategory = {
+                                                MaTheLoai: 127,
+                                                TenTheLoai: 'Hành động'
+                                            }
+                                            $('#type-of-film-modal').modal('show');
+                                            ">Sửa</span>
                                         </div>
                                     </li>
                                     <li>
@@ -132,7 +136,13 @@ require ("app/views/admin/header.php");
                                                 <path
                                                     d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
                                             </svg>
-                                            <span class="px-xl-3">Xóa</span>
+                                            <span class="px-xl-3" x-on:click="
+                                                selectedCategory = {
+                                                    MaTheLoai: 127,
+                                                    TenTheLoai: 'Hành động'
+                                                }
+                                                window['deleteModal'].showModal();">
+                                                Xóa</span>
                                         </div>
                                     </li>
                                 </ul>
@@ -185,8 +195,9 @@ require ("app/views/admin/header.php");
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header position-relative">
-                    <h4 class="modal-title" id="myLargeModalLabel">
-                        Thông tin Thể loại phim
+                    <h4 class="modal-title" id="edit-category-title"
+                        x-text="state == 'create' ? 'Thêm thể loại phim mới' : 'Sửa thể loại phim'">
+
                     </h4>
                     <button type="button" class="close close-modal position-absolute" data-dismiss="modal"
                         aria-hidden="true" id="btn-close-modal-tof">
@@ -200,25 +211,10 @@ require ("app/views/admin/header.php");
                                 Tên thể loại phim
                             </label>
                             <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control is-invalid" id="tof-name"
+                                <input type="text" class="form-control " id="tof-name"
                                     aria-describedby="tof-price-feedback" required />
                                 <div id="tof-name-feedback" class="invalid-feedback">
                                     Please choose a username.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row d-flex mt-2">
-                            <label for="combo-tof-status" class="col-xl-2">
-                                Trạng thái
-                            </label>
-                            <div class="col-xl-10 p-0">
-                                <select class="form-select is-invalid text-danger" id="validationServer04"
-                                    aria-describedby="validationServer04Feedback" required>
-                                    <option selected disabled value="">Choose...</option>
-                                    <option>...</option>
-                                </select>
-                                <div id="validationServer04Feedback" class="invalid-feedback">
-                                    Please select a valid state.
                                 </div>
                             </div>
                         </div>
@@ -226,15 +222,34 @@ require ("app/views/admin/header.php");
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" id="btn-cancel-modal-tof">
-                        Cancel
+                        Huỷ
                     </button>
                     <button type="button" class="btn btn-primary" id="btn-save-modal-tof">
-                        Save
+                        Thêm
                     </button>
                 </div>
             </div>
         </div>
     </div>
+    <dialog id="deleteModal" class=" tw-modal">
+        <div class="tw-modal-box">
+            <h3 class="tw-font-bold tw-text-lg">
+                Bạn có chắc chắn muốn xóa thể loại phim #<span x-text="selectedCategory?.MaTheLoai"></span> không?
+            </h3>
+            <p class="tw-py-4">
+                Bạn sẽ không thể hoàn tác hành động này.
+            </p>
+            <div class="tw-modal-action">
+                <form method="dialog">
+                    <button class="tw-btn">Huỷ</button>
+                    <button class="tw-btn tw-btn-error tw-text-white">Xoá</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="tw-modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
 </div>
 
 <?php

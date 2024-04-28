@@ -53,6 +53,7 @@ class UserService
 
     public static function updateUser($userId, $newInfo)
     {
+        Logger::info(print_r($newInfo, true));
         $result = null;
         $params = [
             "TenNguoiDung" => $newInfo["TenNguoiDung"] ?? "",
@@ -169,6 +170,7 @@ class UserService
                     "TenNguoiDung" => $data['name'],
                     "Email" => $data['email'],
                     "SoDienThoai" => $data['phone'],
+                    'DiemTichLuy' => 0,
                 ]
             );
             if (!$id) {
@@ -195,7 +197,7 @@ class UserService
             $id = Database::insert(
                 "NguoiDung",
                 [
-                    "TenNguoiDung" => $data['name'],
+                    "TenNguoiDung" => $data['fullname'],
                     "Email" => $data['email'],
                     "SoDienThoai" => $data['phone'],
                     "DiaChi" => $data['address'],
@@ -204,6 +206,13 @@ class UserService
                 ]
             );
         } else {
+            self::updateUser($existUser['MaNguoiDung'], [
+                "TenNguoiDung" => $data['fullname'],
+                "SoDienThoai" => $data['phone'],
+                "DiaChi" => $data['address'],
+                "NgaySinh" => getArrayValueSafe($data, 'dateOfBirth', null),
+                "Email" => $data['email'],
+            ]);
             $id = $existUser['MaNguoiDung'];
         }
         if (!$id) {

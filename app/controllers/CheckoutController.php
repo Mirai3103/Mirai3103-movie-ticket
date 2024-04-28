@@ -59,9 +59,20 @@ class CheckoutController
     public static function createPayUrl()
     {
 
+
         $data = request_body();
-        $discountCode = getArrayValueSafe($data, 'discount', null);
         $bookingData = $_SESSION['bookingData'];
+        $discountCode = getArrayValueSafe($data, 'discount', null);
+        if ($discountCode != null) {
+            $discount = PromotionService::checkPromotion($discountCode, array_map(fn($item) => $item['MaLoaiVe'], $bookingData['DanhSachVe']), $bookingData['TongTien']);
+            if ($discount->data['reducePrice'] > 0) {
+                $_SESSION['bookingData']['TongTien'] = $bookingData['TongTien'] - $discount->data['reducePrice'];
+                $_SESSION['bookingData']['promotion_code'] = $discountCode;
+
+                $bookingData = $_SESSION['bookingData'];
+            }
+        }
+
         $payment_method = PaymentType::tryFrom($data['payment_method']);
         if (!isset($bookingData['userId'])) {
             $bookingData['userId'] = UserService::getUserOrCreateIfNotExist($data);
@@ -85,14 +96,7 @@ class CheckoutController
             $payment->mobileUrl = true;
             return json($payment);
         }
-        if ($discountCode != null) {
-            $discount = PromotionService::checkPromotion($discountCode, array_map(fn($item) => $item['MaLoaiVe'], $bookingData['DanhSachVe']), $bookingData['TongTien']);
-            if ($discount->data['reducePrice'] > 0) {
-                $_SESSION['bookingData']['TongTien'] = $bookingData['TongTien'] - $discount->data['reducePrice'];
-                $_SESSION['bookingData']['promotion_code'] = $discountCode;
-                $bookingData = $_SESSION['bookingData'];
-            }
-        }
+
         $totalPrice = $bookingData['TongTien'];
         $displayText = "Thanh toán vé xem phim";
         $paymentStrategy = getPaymentStrategy($payment_method);

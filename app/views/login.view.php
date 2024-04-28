@@ -145,6 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fullname: data.fullname,
                 dateOfBirth: dayjs(data.dateOfBirth).format('YYYY-MM-DD'),
                 email: data.email,
+                phone: data.phone,
                 password: data.password
             };
             axios.post('/dang-ky', payload)
@@ -171,8 +172,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 <div class="form-group my-3">
                     <label for="phone" class="fs-5">Số điện thoại</label>
-                    <input type="text" name="phone" id="phone" class="form-control " x-model="data.phone"
-                        placeholder="Nhập số điện thoại"
+                    <input type="text" x-model="data.phone" name="phone" id="phone" class="form-control "
+                        x-model="data.phone" placeholder="Nhập số điện thoại"
                         :class="{'is-invalid': errors?.phone && errors?.phone.length > 0}" required>
                     <div class="invalid-feedback" x-show="errors?.phone">
                         <span x-text="errors?.phone?.join(', ')"></span>

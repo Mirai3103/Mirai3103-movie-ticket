@@ -54,14 +54,14 @@ class TicketService
 
     public static function lockTicket($ticketId)
     {
-        $lockTime = time() + getArrayValueSafe($GLOBALS['config'], 'hold_time', 10) * 60;
+        $lockTime = time() + getArrayValueSafe($GLOBALS['config']['Website'], 'hold_time', 10) * 60;
         Database::execute("UPDATE Ve SET KhoaDen = ? WHERE id = ?", [date('Y-m-d H:i:s', $lockTime), $ticketId]);
         return $lockTime;
     }
     public static function lockSeats($seatIds, $showId)
     {
         $seatIds = implode(",", $seatIds);
-        $lockTime = time() + getArrayValueSafe($GLOBALS['config'], 'hold_time', 10) * 60;
+        $lockTime = time() + getArrayValueSafe($GLOBALS['config']['Website'], 'hold_time', 10) * 60;
         Database::execute("UPDATE Ve SET KhoaDen = ? WHERE MaGhe IN ($seatIds) AND MaSuatChieu = ?", [date('Y-m-d H:i:s', $lockTime), $showId]);
         return $lockTime;
     }

@@ -120,6 +120,9 @@ class OrderService
                 'SoLuong' => $thucPham['SoLuong']
             ]);
         }
+        // 1k = 1 point
+        $point = floor($TongTien / 1000);
+        UserService::plusPoint($MaNguoiDung, $point);
         return $uid;
     }
 

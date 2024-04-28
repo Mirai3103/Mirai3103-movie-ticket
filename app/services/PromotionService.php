@@ -96,7 +96,7 @@ class PromotionService
             return JsonResponse::error("Khuyến mãi không áp dụng cho loại vé bạn chọn");
         }
         $userId = $_SESSION['user']['MaNguoiDung'];
-        $usageCount = self::countPromotionUsedByUser($userId, $code);
+        $usageCount = self::countPromotionUsedByUser($userId, $promotion['MaKhuyenMai']);
         if ($promotion['GioiHanTrenKhachHang'] != null && $usageCount >= $promotion['GioiHanTrenKhachHang']) {
             return JsonResponse::error("Bạn đã sử dụng hết số lần sử dụng khuyến mãi");
         }
@@ -122,9 +122,9 @@ class PromotionService
     }
     private static function countPromotionUsedByUser($userId, $promotionId)
     {
-        $query = "SELECT COUNT(*) FROM HoaDon WHERE MaKhuyenMai = ? AND MaNguoiDung = ?";
+        $query = "SELECT COUNT(*) as count FROM HoaDon WHERE MaKhuyenMai = ? AND MaNguoiDung = ?";
         $count = Database::queryOne($query, [$promotionId, $userId]);
-        return $count;
+        return $count['count'];
     }
     public static function usePromotion($code)
     {
