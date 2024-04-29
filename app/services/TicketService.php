@@ -170,7 +170,14 @@ class TicketService
     }
     public static function getTicketByOrderId($orderId)
     {
-        return Database::query("SELECT * FROM Ve
+        return Database::query("SELECT 
+        Ve.*,
+        LoaiVe.TenLoaiVe,
+        Ghe.SoGhe,
+        LoaiGhe.TenLoaiGhe,
+        LoaiGhe.MaLoaiGhe
+
+         FROM Ve
         JOIN LoaiVe ON Ve.MaLoaiVe = LoaiVe.MaLoaiVe
         JOIN Ghe ON Ve.MaGhe = Ghe.MaGhe
         Join LoaiGhe ON Ghe.MaLoaiGhe = LoaiGhe.MaLoaiGhe

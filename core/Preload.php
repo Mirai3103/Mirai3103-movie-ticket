@@ -30,6 +30,8 @@ Router::load_from_class(AdminController::class);
 Router::load_from_class(UserManagerController::class);
 Router::load_from_class(FilmCategoryController::class);
 Router::load_from_class(OrderController::class);
+Router::load_from_class(StatisticController::class);
+Router::load_from_class(DiscountController::class);
 Router::build();
 function exception_handler(Throwable $exception)
 {

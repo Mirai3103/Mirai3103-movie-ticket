@@ -131,8 +131,20 @@ class PayController
     #[Route("/pay/callback/zalopay", "GET")]
     public static function zalopayCallback()
     {
-        // $paymentStrategy = getPaymentStrategy(PaymentType::ZaloPay);
-        // $paymentStrategy->callback();
+        $paymentStrategy = getPaymentStrategy(PaymentType::ZaloPay);
+        $paymentStatus = $paymentStrategy->callback($_GET);
+        if ($paymentStatus == PaymentStatus::Failed) {
+            echo "Thanh toán thất bại";
+            $_SESSION['bookingData'] = null;
+            return;
+        }
+        $bookingData = isset($_SESSION['bookingData']) ? $_SESSION['bookingData'] : null;
+        if ($bookingData == null) {
+            return redirect("");
+        }
+        $orderModel = self::createOrderModel();
+        $orderModel['paymentType'] = "Ví điện tử ZaloPay";
+        return view("checkout-success", $orderModel);
     }
 
 }

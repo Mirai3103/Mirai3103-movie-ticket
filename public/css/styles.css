@@ -3583,6 +3583,14 @@ details.tw-collapse summary::-webkit-details-marker {
   margin-top: auto;
 }
 
+.-tw-ml-3 {
+  margin-left: -0.75rem;
+}
+
+.-tw-mt-2 {
+  margin-top: -0.5rem;
+}
+
 .tw-line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -3728,6 +3736,14 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-max-h-\[40px\] {
   max-height: 40px;
+}
+
+.tw-max-h-\[300px\] {
+  max-height: 300px;
+}
+
+.tw-max-h-\[400px\] {
+  max-height: 400px;
 }
 
 .tw-min-h-screen {

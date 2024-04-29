@@ -3,6 +3,7 @@
 namespace App\Services\Payments;
 
 use App\Core\App;
+use App\Core\Logger;
 use App\Services\Payments\Models\CreatePaymentResponse;
 
 class ZaloPayStrategy implements PaymentStrategy
@@ -38,7 +39,7 @@ class ZaloPayStrategy implements PaymentStrategy
         $data = $order["app_id"] . "|" . $order["app_trans_id"] . "|" . $order["app_user"] . "|" . $order["amount"]
             . "|" . $order["app_time"] . "|" . $order["embed_data"] . "|" . $order["item"];
         $order["mac"] = hash_hmac("sha256", $data, $key1);
-
+        Logger::info("ZaloPay order: " . http_build_query($order));
         $context = stream_context_create([
             "http" => [
                 "header" => "Content-type: application/x-www-form-urlencoded\r\n",
@@ -65,6 +66,10 @@ class ZaloPayStrategy implements PaymentStrategy
      */
     public function callback($data): PaymentStatus
     {
+        $status = $data['status'];
+        if ($status != 1) {
+            return PaymentStatus::Failed;
+        }
         return PaymentStatus::Success;
     }
 }

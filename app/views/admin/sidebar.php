@@ -41,8 +41,8 @@ function isActive($path)
 
             <ul class="menu-links scrollable " style=" transition: height 0.3s;">
                 <?php foreach ($menu as $key => $item): ?>
-                        <?php if (isset($item['hasChildren'])): ?>
-                                <li x-data="
+                <?php if (isset($item['hasChildren'])): ?>
+                <li x-data="
                         {
                             open: false,
                             toggle() {
@@ -65,50 +65,50 @@ function isActive($path)
                             }
                              
                         })" class="menu-links__item  " x-on:click="toggle()">
-                                    <a class>
-                                        <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
-                                        <span class="text nav-text">
-                                            <?= $item['text'] ?>
-                                        </span>
-                                        <i class="icon-drop-down fa-solid fa-sort-down"
-                                            :style="open ? 'transform: rotate(90deg)' : 'transform: rotate(-90deg)'">
-                                        </i>
-                                    </a>
-                                </li>
-                                <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
+                    <a class>
+                        <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
+                        <span class="text nav-text">
+                            <?= $item['text'] ?>
+                        </span>
+                        <i class="icon-drop-down fa-solid fa-sort-down"
+                            :style="open ? 'transform: rotate(90deg)' : 'transform: rotate(-90deg)'">
+                        </i>
+                    </a>
+                </li>
+                <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
 
-                                    <?php foreach ($item['childrens'] as $child): ?>
-                                            <li class="menu-links__item <?= isActive($child['href']) ?>">
-                                                <a href="<?= $child['href'] ?>">
-                                                    <i class="menu-links__item-icon"></i>
+                    <?php foreach ($item['childrens'] as $child): ?>
+                    <li class="menu-links__item <?= isActive($child['href']) ?>">
+                        <a href="<?= $child['href'] ?>">
+                            <i class="menu-links__item-icon"></i>
 
-                                                    <span class="text nav-text">
-                                                        <?= $child['text'] ?>
-                                                    </span>
-                                                </a>
-                                            </li>
-                                    <?php endforeach; ?>
-                                </div>
+                            <span class="text nav-text">
+                                <?= $child['text'] ?>
+                            </span>
+                        </a>
+                    </li>
+                    <?php endforeach; ?>
+                </div>
 
-                            </ul>
+            </ul>
 
-                    <?php else: ?>
+            <?php else: ?>
 
-                            <li class="menu-links__item <?= isActive($item['href']) ?>">
-                                <a href="<?= $item['href'] ?>">
-                                    <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
+            <li class="menu-links__item <?= isActive($item['href']) ?>">
+                <a href="<?= $item['href'] ?>">
+                    <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
 
-                                    <span class="text nav-text">
-                                        <?= $item['text'] ?>
-                                    </span>
-                                </a>
-                            </li>
-                    <?php endif; ?>
+                    <span class="text nav-text">
+                        <?= $item['text'] ?>
+                    </span>
+                </a>
+            </li>
+            <?php endif; ?>
             <?php endforeach; ?>
             </ul>
 
             <div class="py-2 menu-links__item">
-                <a asp-action="index" asp-controller="Category" asp-area="Blog" href="#">
+                <a href="/dang-xuat">
                     <i class="fa-solid fa-right-from-bracket menu-links__item-icon"></i>
                     <span class="text nav-text">Đăng xuất</span>
                 </a>

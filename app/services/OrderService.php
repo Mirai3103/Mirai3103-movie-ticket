@@ -75,9 +75,9 @@ class OrderService
         if (!$order) {
             return null;
         }
-        $sql = "SELECT Combo.*, CT_HoaDon_Combo.SoLuong FROM Combo JOIN CT_HoaDon_Combo ON Combo.MaCombo = CT_HoaDon_Combo.MaCombo WHERE CT_HoaDon_Combo.MaHoaDon = ?";
+        $sql = "SELECT Combo.*, CT_HoaDon_Combo.SoLuong, CT_HoaDon_Combo.ThanhTien FROM Combo JOIN CT_HoaDon_Combo ON Combo.MaCombo = CT_HoaDon_Combo.MaCombo WHERE CT_HoaDon_Combo.MaHoaDon = ?";
         $combos = Database::query($sql, [$id]);
-        $sql = "SELECT ThucPham.*, CT_HoaDon_ThucPham.SoLuong FROM ThucPham JOIN CT_HoaDon_ThucPham ON ThucPham.MaThucPham = CT_HoaDon_ThucPham.MaThucPham WHERE CT_HoaDon_ThucPham.MaHoaDon = ?";
+        $sql = "SELECT ThucPham.*, CT_HoaDon_ThucPham.SoLuong, CT_HoaDon_ThucPham.ThanhTien FROM ThucPham JOIN CT_HoaDon_ThucPham ON ThucPham.MaThucPham = CT_HoaDon_ThucPham.MaThucPham WHERE CT_HoaDon_ThucPham.MaHoaDon = ?";
         $thucPhams = Database::query($sql, [$id]);
         $ve = TicketService::getTicketByOrderId($id);
         $suatChieu = ShowService::getShowById($ve[0]['MaSuatChieu']);
@@ -85,6 +85,11 @@ class OrderService
         $order['ThucPhams'] = $thucPhams;
         $order['Ve'] = $ve;
         $order['SuatChieu'] = $suatChieu;
+        $order['NguoiDung'] = UserService::getUserById($order['MaNguoiDung']);
+        if (isset($order['MaKhuyenMai'])) {
+            $order['KhuyenMai'] = PromotionService::getPromotionByCode($order['MaKhuyenMai']);
+        }
+
         return $order;
     }
     public static function saveOrder($data)
