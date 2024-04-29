@@ -118,13 +118,14 @@ function execPostRequest($url, array $data)
 
 function json($data, $status = 200)
 {
-    http_response_code($status);
     header('Content-Type: application/json');
     if ($data instanceof JsonResponse) {
         $status = $data->status;
+        http_response_code($status);
         echo json_encode($data);
         die($status);
     }
+    http_response_code($status);
     if (is_object($data)) {
         $data = (array) $data;
     }

@@ -6,9 +6,9 @@ class JsonResponse
 {
     public int $status;
     public string $message;
-    public array $data = [];
+    public mixed $data = [];
 
-    public function __construct(int $status, string $message, array $data = [])
+    public function __construct(int $status, string $message, mixed $data = null)
     {
         $this->status = $status;
         $this->message = $message;
@@ -18,7 +18,7 @@ class JsonResponse
     {
         return $this->status >= 200 && $this->status < 300;
     }
-    public static function ok(array $data = []): self
+    public static function ok(mixed $data = null): self
     {
         return new JsonResponse(200, "Thành công", $data);
     }

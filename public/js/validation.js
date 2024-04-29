@@ -126,6 +126,13 @@ document.addEventListener("alpine:init", () => {
       errors: {},
       data: {},
       validate: null,
+      reset() {
+        this.errors = {};
+        this.data = {};
+        Object.keys(validationRules).forEach((field) => {
+          this.data[field] = validationRules[field].default || "";
+        });
+      },
       init() {
         this.validator = new Validator();
         Object.keys(validationRules).forEach((field) => {

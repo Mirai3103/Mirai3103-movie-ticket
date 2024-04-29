@@ -71,8 +71,7 @@ class PayController
         $orderModel['paymentType'] = "Thanh toán thử nghiệm";
         $bookingData['payment_method'] = PaymentType::Momo->value;
         OrderService::saveOrder($bookingData);
-        if (isset($bookingData['promotion_code']))
-            PromotionService::usePromotion($bookingData['promotion_code']);
+
 
         return view("checkout-success", $orderModel);
     }
