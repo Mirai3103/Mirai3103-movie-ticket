@@ -170,8 +170,6 @@ class AccountService
     {
         $account = Database::queryOne("SELECT MaTaiKhoan,MaNguoiDung, MatKhau,TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE TenDangNhap = ?", [$username]);
         if ($account) {
-            Logger::info($password);
-            Logger::info($account['MatKhau']);
             if (self::comparePassword($password, $account['MatKhau'])) {
                 return $account;
             }

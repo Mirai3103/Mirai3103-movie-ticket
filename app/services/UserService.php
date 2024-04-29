@@ -53,7 +53,6 @@ class UserService
 
     public static function updateUser($userId, $newInfo)
     {
-        Logger::info(print_r($newInfo, true));
         $result = null;
         $params = [
             "TenNguoiDung" => $newInfo["TenNguoiDung"] ?? "",
@@ -160,7 +159,6 @@ class UserService
     }
     public static function getUserOrCreateIfNotExist($data)
     {
-        Logger::info(print_r($data, true));
         $email = $data['email'];
         $user = self::getUserByEmail($email);
         if (!$user) {
@@ -246,7 +244,6 @@ class UserService
         } else {
             $user['permissions'] = [];
         }
-        Logger::info(print_r($user, true));
         $_SESSION['user'] = $user;
     }
     private static function rememberLogin($user)

@@ -74,13 +74,12 @@ const trangthais = <?= json_encode($statuses) ?>;
         <div class="mb-4 border-bottom">
             <div>
                 <input type="button" class="btn button fw-semibold" value="Tất cả"
-                    :class="{'button-nav-active': query['trang-thai']==undefined}"
-                    x-on:click="query['trang-thai']=undefined;refresh()" onclick="optionOfList(this)">
+                    :class="{'button-nav-active': query['trang-thais']==undefined}"
+                    x-on:click="query['trang-thais']=undefined;refresh()">
                 <?php foreach ($statuses as $status): ?>
                     <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                        :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
-                        x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';refresh()"
-                        onclick="optionOfList(this)">
+                        :class="{'button-nav-active': query['trang-thais'].includes('<?= $status['MaTrangThai'] ?>')}"
+                        x-on:click="query['trang-thais']=['<?= $status['MaTrangThai'] ?>'];refresh()">
                 <?php endforeach; ?>
             </div>
         </div>
@@ -142,11 +141,13 @@ const trangthais = <?= json_encode($statuses) ?>;
 
                                     <div class="row d-flex tw-items-center flex-nowrap">
                                         <div class="col">
-                                            <input x-model="query['tu-ngay']" class="form-control" type="date">
+                                            <input x-model="query['khoang-thoi-gian-tu']" class="form-control"
+                                                type="date">
                                         </div>
                                         <span class='col'>đến</span>
                                         <div class="col">
-                                            <input x-model="query['den-ngay']" class="form-control" type="date">
+                                            <input x-model="query['khoang-thoi-gian-den']" class="form-control"
+                                                type="date">
                                         </div>
                                     </div>
                                 </form>
@@ -381,7 +382,7 @@ const trangthais = <?= json_encode($statuses) ?>;
         <!-- hết danh sách phim -->
 
         <!-- thanh phan trang -->
-        <div class="d-flex justify-content-end column-gap-3">
+        <div class="d-flex justify-content-end column-gap-3 tw-mb-3">
             <div class="d-flex input-group h-50 w-25">
                 <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
                 <select x-model="query['limit']" class="rounded form-select" id="inputGroupSelect01">

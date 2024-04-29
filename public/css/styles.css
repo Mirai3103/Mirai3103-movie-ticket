@@ -3742,8 +3742,16 @@ details.tw-collapse summary::-webkit-details-marker {
   max-height: 40px;
 }
 
+.tw-min-h-52 {
+  min-height: 13rem;
+}
+
 .tw-min-h-screen {
   min-height: 100vh;
+}
+
+.tw-min-h-0 {
+  min-height: 0px;
 }
 
 .\!tw-w-11 {
@@ -5566,6 +5574,10 @@ th > div {
 
   .md\:tw-hidden {
     display: none;
+  }
+
+  .md\:tw-min-h-0 {
+    min-height: 0px;
   }
 
   .md\:tw-w-72 {

@@ -24,7 +24,7 @@ var listMovie = <?= json_encode($phims) ?>;
                 ?>
             <a class="<?= $class ?>" href="<?= $banner['href'] ?>">
                 <img style="aspect-ratio: 1215/365;object-fit: cover;" src="<?= $banner['image'] ?>"
-                    class="d-block w-100" alt="...">
+                    class="d-block w-100 tw-min-h-52 md:tw-min-h-0" alt="...">
             </a>
             <?php endforeach; ?>
         </div>
@@ -45,7 +45,7 @@ var listMovie = <?= json_encode($phims) ?>;
     <h2 class="text-uppercase text-center text-dark heading mb-4 fw-bold">Phim đang chiếu</h2>
 
     <div class="movies-container">
-        <div class="row movies-wrapper">
+        <div class="row movies-wrapper g-1">
 
         </div>
     </div>
@@ -65,7 +65,7 @@ var listMovie = <?= json_encode($phims) ?>;
     <h2 class="text-uppercase text-center text-dark heading mb-4 fw-bold">Phim Sắp Chiếu</h2>
 
     <div class="movies-container">
-        <div class="row comming-movies-wrapper">
+        <div class="row comming-movies-wrapper g-1">
 
         </div>
     </div>

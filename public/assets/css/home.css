@@ -38,13 +38,29 @@ body {
   height: 135px;
   box-shadow: 4px 2px 4px #e68e69;
 }
+form.nav-menu-mobile__item {
+  width: 90%;
+  display: flex;
+  align-items: center;
+}
 
 .header__logo-wrapper {
   position: absolute;
-  background-color: #f8ebd7;
+  background-color: var(--blue-strong-color);
   top: 0;
   width: 300px;
   z-index: 10000;
+}
+@media screen and (max-width: 375px) {
+  .header__logo-wrapper {
+    width: 120px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .header__logo-wrapper {
+    width: 180px;
+  }
 }
 
 .header__logo-img {
@@ -269,7 +285,16 @@ a.menu-item {
   z-index: 0;
   width: 30px;
 }
-
+@media screen and (max-width: 576px) {
+  .header {
+    height: 110px;
+  }
+}
+@media screen and (max-width: 576px) {
+  .icon-triangle {
+    display: none;
+  }
+}
 .nav-item-dropdown {
   display: none;
 }
@@ -314,6 +339,11 @@ a.menu-item {
   bottom: 0;
   z-index: 10000000;
   transition: all 0.3s;
+}
+@media screen and (max-width: 576px) {
+  .nav-menu-mobile {
+    top: 100px;
+  }
 }
 
 /* ----------------carousel----------------- */

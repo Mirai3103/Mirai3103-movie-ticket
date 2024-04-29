@@ -1,7 +1,9 @@
 <?php
 
+use App\Core\Request;
 use App\Dtos\JsonDataErrorRespose;
 use App\Dtos\JsonResponse;
+use App\Dtos\Permission;
 use App\Dtos\TrangThaiNhomQuyen;
 use App\Services\CinemaService;
 use App\Services\PermissionService;
@@ -18,6 +20,7 @@ class RoleController
     #[Route("/admin/nhom-quyen", "GET")]
     public static function index()
     {
+        needAnyPermissionOrDie([Permission::READ_NHOMQUYEN, Permission::UPDATE_NHOMQUYEN, Permission::DELETE_NHOMQUYEN, Permission::CREATE_NHOMQUYEN]);
         $roles = RoleService::getAllRole([
             'trang-thais' => [
                 TrangThaiNhomQuyen::Hien->value,
@@ -29,12 +32,14 @@ class RoleController
     #[Route("/admin/nhom-quyen/them", "GET")]
     public static function add()
     {
+        needAnyPermissionOrDie([Permission::CREATE_NHOMQUYEN]);
         $permissions = PermissionService::getAllPermissions();
         return view('admin/role/add', ['permissions' => $permissions]);
     }
     #[Route("/admin/nhom-quyen/them", "POST")]
     public static function save()
     {
+        needAnyPermissionOrDie([Permission::CREATE_NHOMQUYEN]);
         $data = request_body();
         $result = RoleService::addRole([
             "Quyen" => $data['permissions'],
@@ -52,6 +57,8 @@ class RoleController
     #[Route("/admin/nhom-quyen/{id}/sua", "GET")]
     public static function edit($id)
     {
+        error_log(print_r(Request::getUser(), true));
+        needAnyPermissionOrDie([Permission::UPDATE_NHOMQUYEN]);
         $role = RoleService::getRoleById($id);
         $permissions = PermissionService::getAllPermissions();
         return view('admin/role/update', ['role' => $role, 'permissions' => $permissions]);
@@ -59,6 +66,7 @@ class RoleController
     #[Route("/admin/nhom-quyen/{id}/sua", "PUT")]
     public static function update($id)
     {
+        needAnyPermissionOrDie([Permission::UPDATE_NHOMQUYEN]);
         $data = request_body();
         RoleService::updateRole([
             "Quyen" => $data['permissions'],
@@ -72,6 +80,7 @@ class RoleController
     #[Route("/api/nhom-quyen/{id}", "DELETE")]
     public static function delete($id)
     {
+        needAnyPermissionOrDie([Permission::DELETE_NHOMQUYEN]);
         RoleService::deleteRole($id);
         return json(JsonResponse::ok());
     }
@@ -79,6 +88,7 @@ class RoleController
     #[Route("/api/nhom-quyen/{id}/trang-thai", "PUT")]
     public static function toggleStatus($id)
     {
+        needAnyPermissionOrDie([Permission::DELETE_NHOMQUYEN]);
         RoleService::toggleStatusRole($id);
         return json(JsonResponse::ok());
     }

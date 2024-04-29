@@ -59,7 +59,7 @@ function renderCommingMovies() {
     .map((movie, index) => {
       if (index >= startComming && index < endComming) {
         return `
-            <div class="col-xl-3 mb-4 mb-xl-0 col-md-6 col-12 app-carousel-movie-item" >
+            <div class="col-xl-3 mb-4 mb-xl-0 col-md-6 col-6 app-carousel-movie-item" >
                 <div class="app-carousel-movie-item__img">
                     <div class="app-carousel-movie-item__info--hover text-white p-4 text-start fs-5" >
                         <h2 class="fs-4 fw-bold" >${movie.TenPhim}</h2>
