@@ -57,7 +57,7 @@ class ShowService
         $timeRangeTo = getArrayValueSafe($queryInput, 'thoi-gian-den');
         $durationFrom = getArrayValueSafe($queryInput, 'thoi-luong-tu');
         $durationTo = getArrayValueSafe($queryInput, 'thoi-luong-den');
-        $cinema = getArrayValueSafe($queryInput, 'rapchieus', []);
+        $cinema = getArrayValueSafe($queryInput, 'raps', null);
         $sortDir = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'thu-tu'), 'ASC');
         $sortBy = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'sap-xep'), 'Phim.TenPhim');
         $page = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'trang'), 1);
@@ -79,7 +79,7 @@ class ShowService
         }
 
         if (!isNullOrEmptyArray($cinema)) {
-            $sql .= "AND EXISTS (SELECT * FROM SuatChieu JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in ($cinema)) ";
+            $sql .= "AND EXISTS (SELECT * FROM SuatChieu JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in (" . implode(",", $cinema) . ")) ";
         }
         if (!isNullOrEmptyString($timeRangeFrom)) {
             $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) >= DATE('$timeRangeFrom')) ";

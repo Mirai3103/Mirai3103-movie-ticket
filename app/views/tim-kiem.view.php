@@ -39,6 +39,24 @@ img {
     listPage: [],
     isLoading: false,
     isShowFilter: false,
+    onClearFilter: function(){
+        const elements = document.querySelectorAll('.theloai:checked');
+        elements.forEach(e => {
+            e.checked = false;
+        });
+        const elements2 = document.querySelectorAll('.rapchieu:checked');
+        elements2.forEach(e => {
+            e.checked = false;
+        });
+        $refs.keywordInput.value = '';
+        $refs.showFromInput.value = '';
+        $refs.showToInput.value = '';
+        $refs.durrationFromInput.value = '';
+        $refs.durrationToInput.value = '';
+        $refs.sortByInput.value = 'Phim.TenPhim';
+        $refs.sortInput.value = 'ASC';
+        this.onSearch();
+    },
     onSearch: async function(){
             this.isLoading = true;
             this.data = [];
@@ -159,15 +177,15 @@ $watch('page', (value) => {
                             <ul
                                 class="tw-menu tw-max-h-60 !tw-flex-nowrap tw-overflow-x-scroll tw-bg-base-200   tw-w-full tw-rounded-box">
                                 <?php foreach ($cinemas as $cinema): ?>
-                                <li>
-                                    <label role="button" class='flex tw-items-center tw-gap-x-2'>
-                                        <input type="checkbox" value="<?= $cinema['MaRapChieu'] ?>"
-                                            class="tw-checkbox tw-checkbox-sm rapchieu" />
-                                        <span class='tw-truncate'>
-                                            <?= $cinema['TenRapChieu'] ?>
-                                        </span>
-                                    </label>
-                                </li>
+                                    <li>
+                                        <label role="button" class='flex tw-items-center tw-gap-x-2'>
+                                            <input type="checkbox" value="<?= $cinema['MaRapChieu'] ?>"
+                                                class="tw-checkbox tw-checkbox-sm rapchieu" />
+                                            <span class='tw-truncate'>
+                                                <?= $cinema['TenRapChieu'] ?>
+                                            </span>
+                                        </label>
+                                    </li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -190,15 +208,15 @@ $watch('page', (value) => {
                                 });
                                 ?>
                                 <?php foreach ($categories as $category): ?>
-                                <li>
-                                    <label role="button" class='flex tw-items-center tw-gap-x-2'>
-                                        <input type="checkbox" value="<?= $category['MaTheLoai'] ?>"
-                                            class="tw-checkbox tw-checkbox-sm theloai" />
-                                        <span class='tw-truncate'>
-                                            <?= $category['TenTheLoai'] ?>
-                                        </span>
-                                    </label>
-                                </li>
+                                    <li>
+                                        <label role="button" class='flex tw-items-center tw-gap-x-2'>
+                                            <input type="checkbox" value="<?= $category['MaTheLoai'] ?>"
+                                                class="tw-checkbox tw-checkbox-sm theloai" />
+                                            <span class='tw-truncate'>
+                                                <?= $category['TenTheLoai'] ?>
+                                            </span>
+                                        </label>
+                                    </li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -306,7 +324,7 @@ $watch('page', (value) => {
                     </div>
                 </div>
                 <div class='tw-flex tw-justify-center tw-pt-8 tw-pb-3 tw-gap-2 '>
-                    <button class="tw-btn tw-w-full tw-max-w-xs">
+                    <button class="tw-btn tw-w-full tw-max-w-xs" x-on:click="onClearFilter">
                         Xoá bộ lọc
                     </button>
                     <button x-on:click="onSearch" class="tw-btn tw-text-white tw-btn-primary tw-w-full tw-max-w-xs">
