@@ -62,7 +62,9 @@ img {
             this.data = [];
             const keyword = $refs.keywordInput.value;
                 const theloais = Array.from(document.querySelectorAll('.theloai:checked')).map(e => e.value);
-
+                document.querySelectorAll('.search-input').forEach(e => {
+                    e.value = keyword;
+                });
                 const rapchieus = Array.from(document.querySelectorAll('.rapchieu:checked')).map(e => e.value);
 
                 const showFrom = $refs.showFromInput.value;
@@ -137,10 +139,10 @@ $watch('page', (value) => {
  });
 ">
     <div class="header2 container-fluid ">
-        <div class="row justify-content-center mt-3 heading">
+        <div class="mt-3 row justify-content-center heading">
             <div class="col-auto">
                 <h1
-                    class="text-center text-uppercase fw-medium   tw-font-semibold tw-text-2xl  tw-py-2 tw-text-white m-1">
+                    class="m-1 text-center text-uppercase fw-medium tw-font-semibold tw-text-2xl tw-py-2 tw-text-white">
                     Kết quả tìm kiếm
                 </h1>
             </div>
@@ -156,7 +158,7 @@ $watch('page', (value) => {
             <div class="tw-collapse-content" style="visibility: hidden;"
                 :style="isShowFilter ? 'visibility: visible; opacity: 1;' : 'visibility: hidden; opacity: 0;'">
 
-                <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
+                <div class="tw-collapse tw-collapse-arrow tw-border-b tw-bg-white tw-rounded-md tw-shadow-sm">
                     <input type="checkbox" />
                     <div class="tw-collapse-title tw-text-xl tw-font-medium">
                         Từ khóa
@@ -170,22 +172,22 @@ $watch('page', (value) => {
                     class="tw-collapse !tw-overflow-visible  tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
                     <input type="checkbox" />
                     <div class="tw-collapse-title tw-text-xl tw-font-medium">
-                        Được chiếu ở rạp
+                        Được chiếu ở một trong các rạp
                     </div>
                     <div class="tw-collapse-content tw-relative">
                         <div class='tw-relative'>
                             <ul
                                 class="tw-menu tw-max-h-60 !tw-flex-nowrap tw-overflow-x-scroll tw-bg-base-200   tw-w-full tw-rounded-box">
                                 <?php foreach ($cinemas as $cinema): ?>
-                                    <li>
-                                        <label role="button" class='flex tw-items-center tw-gap-x-2'>
-                                            <input type="checkbox" value="<?= $cinema['MaRapChieu'] ?>"
-                                                class="tw-checkbox tw-checkbox-sm rapchieu" />
-                                            <span class='tw-truncate'>
-                                                <?= $cinema['TenRapChieu'] ?>
-                                            </span>
-                                        </label>
-                                    </li>
+                                            <li>
+                                                <label role="button" class='flex tw-items-center tw-gap-x-2'>
+                                                    <input type="checkbox" value="<?= $cinema['MaRapChieu'] ?>"
+                                                        class="tw-checkbox tw-checkbox-sm rapchieu" />
+                                                    <span class='tw-truncate'>
+                                                        <?= $cinema['TenRapChieu'] ?>
+                                                    </span>
+                                                </label>
+                                            </li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -208,15 +210,15 @@ $watch('page', (value) => {
                                 });
                                 ?>
                                 <?php foreach ($categories as $category): ?>
-                                    <li>
-                                        <label role="button" class='flex tw-items-center tw-gap-x-2'>
-                                            <input type="checkbox" value="<?= $category['MaTheLoai'] ?>"
-                                                class="tw-checkbox tw-checkbox-sm theloai" />
-                                            <span class='tw-truncate'>
-                                                <?= $category['TenTheLoai'] ?>
-                                            </span>
-                                        </label>
-                                    </li>
+                                            <li>
+                                                <label role="button" class='flex tw-items-center tw-gap-x-2'>
+                                                    <input type="checkbox" value="<?= $category['MaTheLoai'] ?>"
+                                                        class="tw-checkbox tw-checkbox-sm theloai" />
+                                                    <span class='tw-truncate'>
+                                                        <?= $category['TenTheLoai'] ?>
+                                                    </span>
+                                                </label>
+                                            </li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -263,7 +265,7 @@ $watch('page', (value) => {
 
                     </div>
                 </div>
-                <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
+                <div class="tw-collapse tw-collapse-arrow tw-border-b tw-bg-white tw-rounded-md tw-shadow-sm">
                     <input type="checkbox" />
                     <div class="tw-collapse-title tw-text-xl tw-font-medium">
                         Thời lượng chiếu (phút)
@@ -288,7 +290,7 @@ $watch('page', (value) => {
                         </div>
                     </div>
                 </div>
-                <div class="tw-collapse tw-collapse-arrow tw-border-b  tw-bg-white tw-rounded-md tw-shadow-sm">
+                <div class="tw-collapse tw-collapse-arrow tw-border-b tw-bg-white tw-rounded-md tw-shadow-sm">
                     <input type="checkbox" />
                     <div class="tw-collapse-title tw-text-xl tw-font-medium">
                         Sắp xếp kết quả
@@ -334,25 +336,25 @@ $watch('page', (value) => {
             </div>
         </div>
     </div>
-    <div class="product container my-lg-4 " x-data="{}">
+    <div class="container product my-lg-4 " x-data="{}">
         <div class="row tw-gap-y-4 ">
             <template x-if="isLoading">
-                <div class="col-12 text-center tw-justify-center tw-items-center tw-py-12">
+                <div class="text-center col-12 tw-justify-center tw-items-center tw-py-12">
                     <span class="tw-loading tw-loading-dots tw-loading-lg"></span>
                 </div>
             </template>
             <template x-if="!isLoading && data.length == 0">
-                <div class="col-12 text-center tw-justify-center tw-items-center tw-py-12">
+                <div class="text-center col-12 tw-justify-center tw-items-center tw-py-12">
                     <span class="tw-text-xl tw-font-semibold">Không có kết quả nào</span>
                 </div>
             </template>
             <template x-for="item in data" :key="item.MaPhim">
-                <div class="col-xl-3 gx-5 mb-4 mb-xl-0 col-md-4 col-6 col-lg-4 ">
-                    <div class="tw-rounded-md  tw-pb-2">
+                <div class="mb-4 col-xl-3 gx-5 mb-xl-0 col-md-4 col-6 col-lg-4 ">
+                    <div class="tw-rounded-md tw-pb-2">
                         <div class="app-carousel-movie-item__img" x-on:mouseover="onItemMouseOver($event)"
                             x-on:mouseout="onItemMouseOut($event)">
 
-                            <div class="app-carousel-movie-item__info--hover text-white p-4 text-start fs-5">
+                            <div class="p-4 text-white app-carousel-movie-item__info--hover text-start fs-5">
                                 <h2 class="fs-4 fw-bold" x-text="item.TenPhim"></h2>
 
                                 <div class="mt-5">
@@ -362,12 +364,12 @@ $watch('page', (value) => {
                                     </div>
 
                                     <div>
-                                        <i class="me-3 mt-2 fa-solid fa-clock"></i>
+                                        <i class="mt-2 me-3 fa-solid fa-clock"></i>
                                         <span x-text="item.ThoiLuong"></span>
                                     </div>
 
                                     <div>
-                                        <i class="fa-solid fa-closed-captioning  me-3 mt-2"></i>
+                                        <i class="mt-2 fa-solid fa-closed-captioning me-3"></i>
                                         <span x-text="item.NgonNgu"></span>
                                     </div>
 
@@ -377,7 +379,7 @@ $watch('page', (value) => {
                             <img :src="item.HinhAnh" class="d-block w-100" alt="...">
                         </div>
                         <h4 class="mt-3 app-carousel-movie-item__title" x-text="item.TenPhim"></h4>
-                        <div class="d-flex justify-content-around mt-4 align-items-center">
+                        <div class="mt-4 d-flex justify-content-around align-items-center">
                             <a style="color: var(--color1)" :href="item.Trailer">
                                 <i class="fa-solid fa-star"></i>
                                 <span>Xem Trailer</span>

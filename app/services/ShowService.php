@@ -62,32 +62,70 @@ class ShowService
         $sortBy = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'sap-xep'), 'Phim.TenPhim');
         $page = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'trang'), 1);
         $limit = ifNullOrEmptyString(getArrayValueSafe($queryInput, 'limit'), 10);
-
-        $sql = "Select Phim.MaPhim from Phim ";
-        $sql .= "LEFT JOIN CT_Phim_TheLoai ON CT_Phim_TheLoai.MaPhim = Phim.MaPhim ";
-        $sql .= "WHERE 1=1 ";
+        // đầu tiên tìm suất chiếu phù hợp với các tiêu chí
+        $sql = "SELECT DISTINCT Phim.MaPhim FROM SuatChieu 
+                JOIN Phim ON SuatChieu.MaPhim = Phim.MaPhim
+                JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu
+                WHERE 1=1 ";
         if (!isNullOrEmptyString($keyword)) {
             $sql .= "AND (Phim.TenPhim LIKE '%$keyword%' OR Phim.DaoDien LIKE '%$keyword%') ";
         }
-        if (!isNullOrEmptyArray($genre)) {
-            $sql .= "AND CT_Phim_TheLoai.MaTheLoai IN (" . implode(",", $genre) . ") ";
+        // genre để cho lần query sau
+        if (!isNullOrEmptyString($timeRangeFrom)) {
+            $sql .= "AND DATE(SuatChieu.NgayGioChieu) >= DATE('$timeRangeFrom') ";
+        }
+        if (!isNullOrEmptyString($timeRangeTo)) {
+            $sql .= "AND DATE(SuatChieu.NgayGioChieu) <= DATE('$timeRangeTo') ";
         }
         if (!empty($durationFrom))
             $sql .= "AND Phim.ThoiLuong >= $durationFrom ";
         if (!empty($durationTo)) {
             $sql .= "AND Phim.ThoiLuong <= $durationTo ";
         }
-
         if (!isNullOrEmptyArray($cinema)) {
-            $sql .= "AND EXISTS (SELECT * FROM SuatChieu JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in (" . implode(",", $cinema) . ")) ";
+            $sql .= "AND PhongChieu.MaRapChieu IN (" . implode(",", $cinema) . ") ";
         }
-        if (!isNullOrEmptyString($timeRangeFrom)) {
-            $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) >= DATE('$timeRangeFrom')) ";
+        $sql .= "AND Phim.TrangThai != " . TrangThaiPhim::NgungChieu->value . " ";
+        $listPhimIds = array_map(function ($movie) {
+            return $movie['MaPhim'];
+        }, Database::query($sql, []));
+        if (isNullOrEmptyArray($listPhimIds)) {
+            Request::setQueryCount(0);
+            return [];
         }
-        if (!isNullOrEmptyString($timeRangeTo)) {
-            $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) <= DATE('$timeRangeTo')) ";
+        $sql = "SELECT Phim.MaPhim,Phim.TenPhim,NgayPhatHanh,HanCheDoTuoi,HinhAnh,ThoiLuong,NgonNgu,DaoDien ,DinhDang,Trailer FROM Phim JOIN CT_Phim_TheLoai ON CT_Phim_TheLoai.MaPhim = Phim.MaPhim WHERE Phim.MaPhim IN (" . implode(",", $listPhimIds) . ") ";
+        if (!isNullOrEmptyArray($genre)) {
+            $sql .= "AND CT_Phim_TheLoai.MaTheLoai IN (" . implode(",", $genre) . ") ";
         }
-        $sql .= "GROUP BY Phim.MaPhim ";
+
+
+
+
+        // $sql = "Select Phim.MaPhim from Phim ";
+        // $sql .= "LEFT JOIN CT_Phim_TheLoai ON CT_Phim_TheLoai.MaPhim = Phim.MaPhim ";
+        // $sql .= "WHERE 1=1 ";
+        // if (!isNullOrEmptyString($keyword)) {
+        //     $sql .= "AND (Phim.TenPhim LIKE '%$keyword%' OR Phim.DaoDien LIKE '%$keyword%') ";
+        // }
+        // if (!isNullOrEmptyArray($genre)) {
+        //     $sql .= "AND CT_Phim_TheLoai.MaTheLoai IN (" . implode(",", $genre) . ") ";
+        // }
+        // if (!empty($durationFrom))
+        //     $sql .= "AND Phim.ThoiLuong >= $durationFrom ";
+        // if (!empty($durationTo)) {
+        //     $sql .= "AND Phim.ThoiLuong <= $durationTo ";
+        // }
+
+        // if (!isNullOrEmptyArray($cinema)) {
+        //     $sql .= "AND EXISTS (SELECT * FROM SuatChieu JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND PhongChieu.MaRapChieu in (" . implode(",", $cinema) . ")) ";
+        // }
+        // if (!isNullOrEmptyString($timeRangeFrom)) {
+        //     $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) >= DATE('$timeRangeFrom')) ";
+        // }
+        // if (!isNullOrEmptyString($timeRangeTo)) {
+        //     $sql .= "AND EXISTS (SELECT * FROM SuatChieu WHERE SuatChieu.MaPhim = Phim.MaPhim AND DATE(SuatChieu.NgayGioChieu) <= DATE('$timeRangeTo')) ";
+        // }
+        // $sql .= "GROUP BY Phim.MaPhim ";
         //     	Select Phim.MaPhim from Phim 
         //  JOIN CT_Phim_TheLoai ON CT_Phim_TheLoai.MaPhim = Phim.MaPhim 
         //  WHERE CT_Phim_TheLoai.MaTheLoai IN (6, 7)

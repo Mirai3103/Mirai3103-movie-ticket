@@ -223,7 +223,12 @@ a.menu-item {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
-
+.search-btn:hover {
+  background-color: #d0cece;
+}
+.search-btn:disable {
+  background-color: #959595;
+}
 .search-btn:focus {
   border-left: none;
   box-shadow: none;
