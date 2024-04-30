@@ -65,6 +65,7 @@ class SeatService
     {
 
         $inputSeats = $data['inputSeats'];
+        $roomID = $data['MaPhongChieu'];
 
         Database::beginTransaction();
         foreach ($inputSeats as $seat) {
@@ -72,6 +73,18 @@ class SeatService
                 'MaLoaiGhe' => $seat['MaLoaiGhe'],
                 'SoGhe' => $seat['SoGhe']
             ];
+            if (!isset($seat['MaGhe'])) {
+                $params['MaPhongChieu'] = $roomID;
+                $params['TrangThai'] = TrangThaiGhe::Hien->value;
+                $params['X'] = $seat['X'];
+                $params['Y'] = $seat['Y'];
+                $result = Database::insert('Ghe', $params);
+                if (!$result) {
+                    Database::rollBack();
+                    return JsonResponse::error('Tạo ghế thất bại', 500);
+                }
+                continue;
+            }
             $result = Database::update('Ghe', $params, "MaGhe = " . $seat['MaGhe']);
             if (!$result) {
                 Database::rollBack();

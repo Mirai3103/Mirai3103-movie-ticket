@@ -71,7 +71,7 @@ const validatorRule = {
 <main class=' tw-h-full tw-w-full tw-overflow-y-auto tw-pb-40' x-data="
 formValidator(validatorRule);
             ">
-    <div class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-md tw-shadow-md  tw-bg-clip-border'
+    <div class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-md tw-shadow-md tw-bg-clip-border'
         x-data="
          {
                listCells: [],
@@ -131,6 +131,10 @@ formValidator(validatorRule);
                         });
                         return;
                     };
+                      toast('Tạo phòng chiếu thành công', {
+                        position: 'bottom-center',
+                        type: 'success'
+                    });
                     const MaPhongChieu =res.data.data.MaPhongChieu;
                     const inputSeats = this.createInputSeats(MaPhongChieu)
                     const res2 = await axios.post('/api/ghe/tao-nhieu', inputSeats,{validateStatus: () => true})
@@ -140,10 +144,17 @@ formValidator(validatorRule);
                             type: 'error'
                         });
                         this.isProcessing = false
-                        // window.location.href = '/admin/phong-chieu/' + MaPhongChieu+'/sua'
+                        setTimeout(() => {
+                            window.location.href = '/admin/phong-chieu/' + MaPhongChieu+'/sua'
+                        }, 1000);
                         return;
                     };
                     this.isProcessing = false
+                    toast('Tạo ghế thành công', {
+                        position: 'bottom-center',
+                        type: 'success'
+                    });
+                  
 
                 }
             }
@@ -159,7 +170,7 @@ formValidator(validatorRule);
             </div>
             <div class="tw-flex tw-flex-col tw-gap-2 shrink-0 sm:tw-flex-row tw-my-2">
 
-                <a href="/admin/phong-chieu" data-ripple-light="true" class="  tw-btn tw-btn-ghost" type="button">
+                <a href="/admin/phong-chieu" data-ripple-light="true" class=" tw-btn tw-btn-ghost" type="button">
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -198,8 +209,7 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="MaRapChieu" class="tw-text-lg
-                        tw-p-1">
+                    <label for="MaRapChieu" class="tw-text-lg tw-p-1">
                         Rạp chiếu
                     </label>
                     <select x-model="data.MaRapChieu" name="MaRapChieu" id="MaRapChieu" class="form-select"
@@ -215,8 +225,7 @@ formValidator(validatorRule);
                         <span x-text="errors?.MaRapChieu?.join(', ')"></span>
                     </div>
                 </div>
-                <div class="form-group
-                    ">
+                <div class="form-group ">
                     <label for="TrangThai" class="tw-text-lg tw-p-1">
                         Trạng thái
                     </label>
@@ -232,8 +241,7 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class='tw-grid tw-grid-cols-2 tw-gap-x-2'>
-                    <div class="form-group
-                    ">
+                    <div class="form-group ">
                         <label for="ChieuDai" class="tw-text-lg tw-p-1">
                             Chiều dài
                         </label>
@@ -244,8 +252,7 @@ formValidator(validatorRule);
                             <span x-text="errors?.ChieuDai?.join(', ')"></span>
                         </div>
                     </div>
-                    <div class="form-group
-                    ">
+                    <div class="form-group ">
                         <label for="ChieuRong" class="tw-text-lg tw-p-1">
                             Chiều rộng
                         </label>
@@ -449,7 +456,7 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class='tw-w-full'>
-                    <div class='tw-grid  tw-mx-auto' x-data="{ 
+                    <div class='tw-grid tw-mx-auto' x-data="{ 
         }" @createRequest.window="createRequest()" x-init="
          
           const cal= (value)=>{
@@ -498,7 +505,7 @@ formValidator(validatorRule);
                             <div :hidden="cell.MaLoaiGhe === -1" :index="cell.index" :bg-select="cell.MauSelect"
                                 :bg-normal="cell.Mau" :class="cell.Mau"
                                 :style="`background-color: ${cell.Mau}; grid-column: span ${cell.Rong}; aspect-ratio: ${cell.Rong} / ${cell.Dai}`"
-                                class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
+                                class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center tw-seat tw-rounded"
                                 x-text="getCellName(cell)"></div>
                         </template>
 

@@ -180,7 +180,15 @@ class ShowService
     }
     public static function getShowById($id)
     {
-        $sql = "SELECT * FROM SuatChieu
+        $sql = "SELECT SuatChieu.*,
+        Phim.TenPhim,
+        PhongChieu.TenPhongChieu,
+        RapChieu.TenRapChieu,
+        RapChieu.DiaChi,
+        RapChieu.MaRapChieu,
+        Phim.MaPhim,
+        Phim.HinhAnh
+         FROM SuatChieu
         JOIN Phim ON SuatChieu.MaPhim = Phim.MaPhim
         JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu
         JOIN RapChieu ON PhongChieu.MaRapChieu = RapChieu.MaRapChieu
@@ -299,6 +307,7 @@ class ShowService
         if (!$show) {
             return JsonResponse::error('Không tìm thấy suất chiếu', 404);
         }
+        error_log(var_dump($show));
         $params = [
             'TrangThai' => $show['TrangThai'] == TrangThaiSuatChieu::Hidden->value ? TrangThaiSuatChieu::DangMoBan->value : TrangThaiSuatChieu::Hidden->value,
         ];

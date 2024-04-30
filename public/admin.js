@@ -6,7 +6,7 @@ import "dayjs/locale/vi";
 
 dayjs.extend(customParseFormat);
 import "./css/tailwind.css";
-"".endsWith("/a/c/d");
+
 dayjs.locale("vi");
 import axios from "axios";
 import lodash from "lodash";

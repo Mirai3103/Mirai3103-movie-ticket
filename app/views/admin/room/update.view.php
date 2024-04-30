@@ -10,7 +10,6 @@ const statuses = <?= json_encode($statuses) ?>;
 const cinemas = <?= json_encode($cinemas) ?>;
 const seats = <?= json_encode($seats) ?>;
 const room = <?= json_encode($room) ?>;
-console.log(seats)
 const validatorRule = {
     TenPhongChieu: {
         default: room.TenPhongChieu,
@@ -80,13 +79,17 @@ const validatorRule = {
 <main class=' tw-h-full tw-w-full tw-overflow-y-auto tw-pb-40' x-data="
 formValidator(validatorRule);
             ">
-    <div class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-md tw-shadow-md  tw-bg-clip-border'
+    <div class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-md tw-shadow-md tw-bg-clip-border'
         x-data="
          {
                listCells: [],
                 getCellName:function (value) {
                     if (value.MaLoaiGhe === 0) {
                         return ''
+                    }
+                    if(value.SoGhe)
+                    {
+                        return value.SoGhe;
                     }
                     const index = value.index
                     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -116,6 +119,8 @@ formValidator(validatorRule);
                                         MaGhe: cell.MaGhe,
                                         MaLoaiGhe: cell.MaLoaiGhe,
                                         SoGhe: this.getCellName(cell),
+                                         X: index % data.ChieuRong,
+                                        Y: Math.floor(index / data.ChieuRong),
                                     })
                             }
                         }else {
@@ -190,7 +195,6 @@ formValidator(validatorRule);
             seats.forEach((seat) => {
                 const seatType = seatTypes.find((item) => item.MaLoaiGhe === seat.MaLoaiGhe)
                 const index = seat.Y * ChieuRong + seat.X
-                 console.log(tempCells[index],index)
                 tempCells[index] = {
                     ...seat,
                     ...seatType,
@@ -221,7 +225,7 @@ formValidator(validatorRule);
             </div>
             <div class="tw-flex tw-flex-col tw-gap-2 shrink-0 sm:tw-flex-row tw-my-2">
 
-                <a href="/admin/phong-chieu" data-ripple-light="true" class="  tw-btn tw-btn-ghost" type="button">
+                <a href="/admin/phong-chieu" data-ripple-light="true" class=" tw-btn tw-btn-ghost" type="button">
 
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -260,8 +264,7 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="MaRapChieu" class="tw-text-lg
-                        tw-p-1">
+                    <label for="MaRapChieu" class="tw-text-lg tw-p-1">
                         Rạp chiếu
                     </label>
                     <select x-model="data.MaRapChieu" name="MaRapChieu" id="MaRapChieu" class="form-select"
@@ -277,8 +280,7 @@ formValidator(validatorRule);
                         <span x-text="errors?.MaRapChieu?.join(', ')"></span>
                     </div>
                 </div>
-                <div class="form-group
-                    ">
+                <div class="form-group ">
                     <label for="TrangThai" class="tw-text-lg tw-p-1">
                         Trạng thái
                     </label>
@@ -286,7 +288,7 @@ formValidator(validatorRule);
                         :class="{'is-invalid': errors?.TrangThai && errors?.TrangThai.length > 0}" required>
                         <option value="" disabled selected hidden>Chọn trạng thái</option>
                         <?php foreach ($statuses as $status): ?>
-                            <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
+                                                    <option value="<?= $status['MaTrangThai'] ?>"><?= $status['Ten'] ?></option>
                         <?php endforeach; ?>
 
                     </select>
@@ -295,8 +297,7 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class='tw-grid tw-grid-cols-2 tw-gap-x-2'>
-                    <div class="form-group
-                    ">
+                    <div class="form-group ">
                         <label for="ChieuDai" class="tw-text-lg tw-p-1">
                             Chiều dài
                         </label>
@@ -307,8 +308,7 @@ formValidator(validatorRule);
                             <span x-text="errors?.ChieuDai?.join(', ')"></span>
                         </div>
                     </div>
-                    <div class="form-group
-                    ">
+                    <div class="form-group ">
                         <label for="ChieuRong" class="tw-text-lg tw-p-1">
                             Chiều rộng
                         </label>
@@ -511,7 +511,7 @@ formValidator(validatorRule);
                     </div>
                 </div>
                 <div class='tw-w-full'>
-                    <div class='tw-grid  tw-mx-auto' x-data="{ 
+                    <div class='tw-grid tw-mx-auto' x-data="{ 
         }" @createRequest.window="createRequest()" x-init="
          
           const cal= (value)=>{
@@ -546,8 +546,8 @@ formValidator(validatorRule);
                             <div :hidden="cell.MaLoaiGhe === -1" :index="cell.index" :bg-select="cell.MauSelect"
                                 :bg-normal="cell.Mau"
                                 :style="`background-color: ${cell.Mau}; grid-column: span ${cell.Rong}; aspect-ratio: ${cell.Rong} / ${cell.Dai}`"
-                                class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center  tw-seat  tw-rounded"
-                                x-text="cell.SoGhe||getCellName(cell)"></div>
+                                class=" seat tw-flex tw-text-white tw-cursor-pointer tw-justify-center tw-items-center tw-seat tw-rounded"
+                                x-text="getCellName(cell)"></div>
                         </template>
 
 

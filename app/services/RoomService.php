@@ -7,6 +7,7 @@ use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
 use App\Core\Request;
 use App\Dtos\JsonResponse;
+use App\Dtos\TrangThaiGhe;
 use App\Dtos\TrangThaiPhong;
 use App\Dtos\TrangThaiVe;
 
@@ -88,8 +89,8 @@ class RoomService
 
     public static function updateRoomSeatCount($roomId)
     {
-        $sql = "SELECT COUNT(*) as count FROM Ghe WHERE MaPhongChieu = ?";
-        $count = Database::queryOne($sql, [$roomId]);
+        $sql = "SELECT COUNT(*) as count FROM Ghe WHERE MaPhongChieu = ? and TrangThai = ?";
+        $count = Database::queryOne($sql, [$roomId, TrangThaiGhe::Hien->value]);
         $sql = "UPDATE PhongChieu SET SoGhe = ? WHERE MaPhongChieu = ?";
         $result = Database::execute($sql, [$count['count'], $roomId]);
         return $result;

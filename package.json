@@ -10,6 +10,7 @@
     "@material-tailwind/html": "^2.2.2",
     "@types/bootstrap-select": "^1.13.7",
     "alpinejs": "^3.13.8",
+    "apexcharts": "^3.49.0",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "bootstrap-select": "^1.14.0-beta3",

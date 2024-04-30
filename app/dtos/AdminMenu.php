@@ -7,6 +7,12 @@ class AdminMenu
     private static
     $MENU_ITEMS = [
         [
+            'href' => '/admin/tong-quan',
+            'icon' => 'fa-solid fa-chart-pie',
+            'text' => 'Tổng quan',
+            'permissions' => [Permission::THONG_KE]
+        ],
+        [
             'href' => '/admin/phim',
             'icon' => 'fa-solid fa-film',
             'text' => 'Phim',

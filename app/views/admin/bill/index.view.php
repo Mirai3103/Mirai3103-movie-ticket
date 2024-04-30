@@ -12,7 +12,7 @@ require ('app/views/admin/header.php');
         'trang': 1,
         'limit': 50,
     }
-})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="wrapper p-5">
+})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
     <div x-data="{
         onApllyFilter(){
             console.log(query);
@@ -26,9 +26,9 @@ require ('app/views/admin/header.php');
         }
 
     }
-    " class="bill container-fluid  shadow">
+    " class="shadow bill container-fluid">
         <!-- thanh tiềm kiếm và nút lọc dữ liệu  -->
-        <div class="row justify-content-between px-5 mt-4">
+        <div class="px-5 mt-4 row justify-content-between">
             <div class="col-6">
                 <div class="input-group">
                     <input x-model="query['tu-khoa']" x-on:keydown.enter="onApllyFilter" type="text" name
@@ -41,9 +41,9 @@ require ('app/views/admin/header.php');
             </div>
 
             <div class="col-6">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="gap-2 d-grid d-md-flex justify-content-md-end">
                     <div class="dropdown">
-                        <button class="btn border-0 fw-medium" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="border-0 btn fw-medium" data-bs-toggle="dropdown" aria-expanded="false">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-filter-filled"
                                 width="18" height="18" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -56,13 +56,13 @@ require ('app/views/admin/header.php');
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <div class="d-flex justify-content-between align-items-center px-2 pb-2">
+                                <div class="px-2 pb-2 d-flex justify-content-between align-items-center">
                                     <div>
                                         <label class="fw-semibold" for>Lọc</label>
                                     </div>
 
                                     <div class="d-flex flex-nowrap">
-                                        <button x-on:click="onClearFilter" class="btn btn-light mx-2">Xóa
+                                        <button x-on:click="onClearFilter" class="mx-2 btn btn-light">Xóa
                                             lọc</button>
                                         <button x-on:click="onApllyFilter" class="btn btn-primary">Áp
                                             dụng</button>
@@ -72,11 +72,11 @@ require ('app/views/admin/header.php');
                             </li>
 
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
                             <li>
-                                <form class="d-flex flex-wrap p-2">
+                                <form class="flex-wrap p-2 d-flex">
                                     <div class="row">
                                         <label class="form-label" for>khoảng thời
                                             gian</label>
@@ -94,11 +94,11 @@ require ('app/views/admin/header.php');
                             </li>
 
                             <li>
-                                <hr class="dropdown-divider m-0">
+                                <hr class="m-0 dropdown-divider">
                             </li>
 
                             <li>
-                                <form class="d-flex flex-wrap p-2">
+                                <form class="flex-wrap p-2 d-flex">
                                     <div class="row">
                                         <label class="form-label" for>Khoảng tiền</label>
                                     </div>
@@ -123,8 +123,8 @@ require ('app/views/admin/header.php');
         <!-- hết thanh tìm kiếm và nút lọc dữ liệu -->
 
         <!-- bảng dữ liệu hóa đơn -->
-        <div class="row m-3 table-responsive" style="flex: 1;">
-            <table class="table table-hover align-middle" style="height: 100%;">
+        <div class="m-3 row table-responsive" style="flex: 1;">
+            <table class="table align-middle table-hover" style="height: 100%;">
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
@@ -200,14 +200,14 @@ require ('app/views/admin/header.php');
         <!-- thanh phân trang và số dòng hiển thị -->
         <div class="d-flex justify-content-end column-gap-3">
             <div class="d-flex input-group h-50 w-25">
-                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Hiển thị</label>
-                <select x-model="query['limit']" class="form-select rounded" id="inputGroupSelect01">
-                    <option value="1">20</option>
-                    <option value="2">30</option>
-                    <option value="3">40</option>
-                    <option value="3">50</option>
+                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
+                <select x-model="query['limit']" class="rounded form-select" id="inputGroupSelect01">
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
                 </select>
-                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">hóa đơn</label>
+                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">hóa đơn</label>
             </div>
 
             <div>

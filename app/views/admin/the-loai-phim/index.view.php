@@ -8,16 +8,25 @@ require ("app/views/admin/header.php");
 <div x-data="{
         state: 'create',
         selectedCategory: null,
-    }" style="
+        TenTheLoai: ''
+    }"
+    x-init="
+    $watch('selectedCategory', value => {
+        if (value) {
+            TenTheLoai = value.TenTheLoai;
+        }
+    });
+    "
+    style="
           flex-grow: 1;
           flex-shrink: 1;
           overflow-y: auto;
           max-height: 100vh;
-        " class="wrapper p-5">
-    <div class="movie container shadow pt-3">
-        <h3 class="ms-3 mb-3">Thể loại phim</h3>
+        " class="p-5 wrapper">
+    <div class="container pt-3 shadow movie">
+        <h3 class="mb-3 ms-3">Thể loại phim</h3>
         <!-- thanh tim kiem va nut them phim moi -->
-        <div class="row justify-content-between px-5">
+        <div class="px-5 row justify-content-between">
             <div class="col-6">
                 <div class="input-group">
                     <input type="text" name id="searchMovie" placeholder="Nhập tên thể loại phim cần tìm"
@@ -29,7 +38,7 @@ require ("app/views/admin/header.php");
             </div>
 
             <div class="col-6">
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <div class="gap-2 d-grid d-md-flex justify-content-md-end">
                     <button x-on:click="
                     state = 'create';
                     selectedCategory = null;
@@ -42,14 +51,14 @@ require ("app/views/admin/header.php");
         </div>
 
         <!-- chua bang phim -->
-        <div class="row m-3 table-responsive" style="flex: 1">
-            <table class="table table-hover align-middle" style="height: 100%">
+        <div class="m-3 row table-responsive" style="flex: 1">
+            <table class="table align-middle table-hover" style="height: 100%">
                 <thead class="table-light">
                     <tr>
                         <th scope="col">
                             <div class="col-name">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-sort-numeric-down m-2" viewBox="0 0 16 16" id="sortNumDown_icon">
+                                    class="m-2 bi bi-sort-numeric-down" viewBox="0 0 16 16" id="sortNumDown_icon">
                                     <path d="M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z" />
                                     <path fill-rule="evenodd"
                                         d="M11.36 14.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.835 1.973-1.835 1.09 0 2.063.636 2.063 2.687 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98" />
@@ -58,7 +67,7 @@ require ("app/views/admin/header.php");
                                 </svg>
 
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-sort-numeric-up m-2 d-none" viewBox="0 0 16 16" id="sortNumUp_icon">
+                                    class="m-2 bi bi-sort-numeric-up d-none" viewBox="0 0 16 16" id="sortNumUp_icon">
                                     <path d="M12.438 1.668V7H11.39V2.684h-.051l-1.211.859v-.969l1.262-.906h1.046z" />
                                     <path fill-rule="evenodd"
                                         d="M11.36 14.098c-1.137 0-1.708-.657-1.762-1.278h1.004c.058.223.343.45.773.45.824 0 1.164-.829 1.133-1.856h-.059c-.148.39-.57.742-1.261.742-.91 0-1.72-.613-1.72-1.758 0-1.148.848-1.835 1.973-1.835 1.09 0 2.063.636 2.063 2.687 0 1.867-.723 2.848-2.145 2.848zm.062-2.735c.504 0 .933-.336.933-.972 0-.633-.398-1.008-.94-1.008-.52 0-.927.375-.927 1 0 .64.418.98.934.98" />
@@ -71,14 +80,14 @@ require ("app/views/admin/header.php");
                         <th scope="col">
                             <div class="col-name">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-sort-alpha-down m-2" viewBox="0 0 16 16" id="sortAlphaDown_icon">
+                                    class="m-2 bi bi-sort-alpha-down" viewBox="0 0 16 16" id="sortAlphaDown_icon">
                                     <path fill-rule="evenodd"
                                         d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z" />
                                     <path
                                         d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z" />
                                 </svg>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                    class="bi bi-sort-alpha-up m-2 d-none" viewBox="0 0 16 16" id="sortAlphaUp_icon">
+                                    class="m-2 bi bi-sort-alpha-up d-none" viewBox="0 0 16 16" id="sortAlphaUp_icon">
                                     <path fill-rule="evenodd"
                                         d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z" />
                                     <path
@@ -157,8 +166,8 @@ require ("app/views/admin/header.php");
         <!-- thanh phan trang -->
         <div class="d-flex justify-content-end column-gap-3 tw-mb-3">
             <div class="d-flex input-group h-50 w-25">
-                <label class="input-group-text border-0 bg-white " for="inputGroupSelect01">Hiển thị</label>
-                <select class="form-select rounded" id="inputGroupSelect01">
+                <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
+                <select class="rounded form-select" id="inputGroupSelect01">
                     <option value="1">5</option>
                     <option value="2">10</option>
                     <option value="3">15</option>
@@ -196,7 +205,7 @@ require ("app/views/admin/header.php");
             <div class="modal-content">
                 <div class="modal-header position-relative">
                     <h4 class="modal-title" id="edit-category-title"
-                        x-text="state == 'create' ? 'Thêm thể loại phim mới' : 'Sửa thể loại phim'">
+                        x-text="state == 'create' ? 'Thêm thể loại phim mới' : 'Sửa thể loại phim #'+selectedCategory?.MaTheLoai">
 
                     </h4>
                     <button type="button" class="close close-modal position-absolute" data-dismiss="modal"
@@ -205,13 +214,15 @@ require ("app/views/admin/header.php");
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="create-tof container bg-white">
-                        <div class="row d-flex mt-2">
+                    <div class="container bg-white create-tof">
+                        <div class="mt-2 row d-flex">
                             <label for="tof-name" class="col-xl-2">
                                 Tên thể loại phim
                             </label>
-                            <div class="input-group has-validation col-xl-10 p-0">
-                                <input type="text" class="form-control " id="tof-name"
+                            <div class="p-0 input-group has-validation col-xl-10">
+                                <input type="text"
+                                x-model="TenTheLoai"
+                                class="form-control " id="tof-name"
                                     aria-describedby="tof-price-feedback" required />
                                 <div id="tof-name-feedback" class="invalid-feedback">
                                     Please choose a username.

@@ -24,7 +24,9 @@ class ShowController
         $cinemas = CinemaService::getAllCinemas([
         ]);
         $movies = PhimService::getTatCaPhim([
-            'trang-thais' => [TrangThaiPhim::DangChieu->value, TrangThaiPhim::SapChieu->value],
+            'trang-thais' => [TrangThaiPhim::DangChieu->value, TrangThaiPhim::SapChieu->value, TrangThaiPhim::NgungChieu->value],
+            'trang' => 1,
+            'limit' => 10000
         ]);
         $showStatuses = StatusService::getAllStatus('SuatChieu');
         return view('admin/show/index', [
@@ -48,6 +50,8 @@ class ShowController
         $cinemas = CinemaService::getAllCinemas([]);
         $movies = PhimService::getTatCaPhim([
             'trang-thais' => [TrangThaiPhim::DangChieu->value, TrangThaiPhim::SapChieu->value],
+            'trang' => 1,
+            'limit' => 10000
         ]);
         $showStatuses = StatusService::getAllStatus('SuatChieu');
         return view('admin/show/add', [
@@ -77,6 +81,8 @@ class ShowController
         $currentCinema = CinemaService::getCinemaByRoomId($show['MaPhongChieu']);
         $movies = PhimService::getTatCaPhim([
             'trang-thais' => [TrangThaiPhim::DangChieu->value, TrangThaiPhim::SapChieu->value],
+            'trang' => 1,
+            'limit' => 10000
         ]);
         $showStatuses = StatusService::getAllStatus('SuatChieu');
         return view('admin/show/edit', [
