@@ -301,7 +301,7 @@ require ('app/views/admin/header.php');
         <!-- chứa các biểu đồ tổng quát -->
         <div class="mb-4 row">
             <div class=" col-8">
-                <div class="p-4 bg-white shadow border_radius-16">
+                <div id="pie-root" class="p-4 bg-white shadow border_radius-16">
                     <div class="d-flex flex-column">
                         <span class="fs-5 fw-semibold">Tổng doanh
                             thu</span>
@@ -316,10 +316,10 @@ require ('app/views/admin/header.php');
             </div>
 
             <div class=" col-4">
-                <div class="bg-white shadow border_radius-16" style="height: 100%;">
+                <div class="bg-white shadow border_radius-16 tw-flex tw-flex-col" style="height: 100%;">
                     <div class="px-4 pt-4 fs-5 fw-semibold">Phân khúc phim</div>
                     <!-- chứa biểu đồ tròn -->
-                    <div id="pie_chart" class="p-0">
+                    <div id="pie_chart" class="p-0 tw-flex-1">
                     </div>
                     <!-- hết chứa biểu đồ tròn -->
                 </div>
@@ -501,8 +501,17 @@ var options = {
     }
 };
 
-var chart = new ApexCharts(document.querySelector("#pie_chart"), options);
-chart.render();
+const piechart = new ApexCharts(document.querySelector("#pie_chart"), options);
+piechart.render();
+const root = document.querySelector("#pie_chart");
+const resizeObserver = new ResizeObserver(() => {
+    piechart.updateOptions({
+        chart: {
+            height: root.clientHeight
+        }
+    });
+});
+resizeObserver.observe(root);
 </script>
 <!-- hết biểu đồ tròn -->
 
@@ -700,6 +709,14 @@ var options = {
 
 var chart = new ApexCharts(document.querySelector("#bar_chart"), options);
 chart.render();
+window.addEventListener('resize', function() {
+    chart.updateOptions({
+        chart: {
+            height: document.querySelector("#bar_chart").clientHeight,
+            width: document.querySelector("#bar_chart").clientWidth
+        }
+    });
+});
 </script>
 <?php
 require ('app/views/admin/footer.php');
