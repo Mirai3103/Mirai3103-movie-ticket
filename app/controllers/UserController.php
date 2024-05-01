@@ -25,8 +25,10 @@ class UserController
     public static function hienThiLichSuDatVe()
     {
         $userId = Request::getUser()['MaNguoiDung'];
-        // $user = UserService::
-        return view("nguoi-dung/lich-su-dat-ve/index");
+        $user = UserService::getUserInfo($userId);
+        return view("nguoi-dung/lich-su-dat-ve/index", [
+            "userif" => $user
+        ]);
     }
 
     #[Route("/nguoi-dung/thong-tin", "GET")]
@@ -56,20 +58,9 @@ class UserController
     public static function doimatkhaunguoidung()
     {
         $userId = Request::getUser()['MaNguoiDung'];
-
-        $matKhauCu = $_POST["matKhauCu"];
-        $matKhauMoi = $_POST["matKhauMoi"];
-        $xacThucMatKhauMoi = $_POST["xacThucMatKhauMoi"];
-
-        if ($matKhauMoi !== $xacThucMatKhauMoi) {
-            return json(JsonResponse::error("Mật khẩu không trùng khớp"));
-        }
-
+        $matKhauCu = request_body()["MatKhauCu"];
+        $matKhauMoi = request_body()["MatKhauMoi"];
         $result = AccountService::updatePassword($userId, $matKhauCu, $matKhauMoi);
-        if ($result) {
-            return json(JsonResponse::ok());
-        } else {
-            return json(JsonResponse::error("Thay đổi mật khẩu thất bại"));
-        }
+        return json($result);
     }
 }

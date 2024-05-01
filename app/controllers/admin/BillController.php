@@ -1,5 +1,7 @@
 <?php
 
+use App\Core\Request;
+use App\Dtos\JsonResponse;
 use App\Dtos\Permission;
 use App\Services\OrderService;
 use Core\Attributes\Route;
@@ -30,8 +32,10 @@ class BillController
     #[Route("/api/hoa-don/{id}", "GET")]
     public static function getOrder($id)
     {
-        needAnyPermissionOrDie([Permission::READ_HOANDON]);
+        // needAnyPermissionOrDie([Permission::READ_HOANDON]);
         $order = OrderService::getOrderById($id);
+        if (!$order)
+            return json(JsonResponse::error('Không tìm thấy hóa đơn'));
         return json($order);
     }
     #[Route("/api/nguoi-dung/hoa-don", "GET")]
@@ -39,6 +43,12 @@ class BillController
     public static function getMyOrder()
     {
         needLogin();
-        return view("admin/order/my-order");
+        $userId = Request::getUser()['MaNguoiDung'];
+        $orders = OrderService::searchOrder([
+            'ma-nguoi-dung' => $userId,
+            ...$_GET,
+        ]);
+
+        return json($orders);
     }
 }

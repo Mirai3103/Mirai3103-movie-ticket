@@ -255,23 +255,36 @@ formValidator(validatorRule);
 
             <div class="row mb-3">
                 <div class="col">
-                    <label for="GiamToiDa" class="form-label">Giảm tối đa</label>
+                    <label for="GiamToiDa" class="form-label">Giảm tối đa
+
+                        <span class="tw-italic tw-font-light tw-text-sm">
+                            (tuỳ chọn)
+                        </span>
+                    </label>
                     <input :disabled="data.LoaiGiamGia != 'percentage'" x-model="data.GiamToiDa" min="1000"
                         type="number" class="form-control" id="GiamToiDa">
                 </div>
                 <div class="col">
-                    <label for="GiaTriToiThieu" class="form-label">Giá trị đơn hàng tối thiểu</label>
+                    <label for="GiaTriToiThieu" class="form-label">Giá trị đơn hàng tối thiểu <span
+                            class="tw-italic tw-font-light tw-text-sm">
+                            (tuỳ chọn)
+                        </span></label>
                     <input x-model="data.GiaTriToiThieu" min="0" type="number" class="form-control" id="GiaTriToiThieu">
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
-                    <label for="GioiHanSuDung" class="form-label">Số lượng</label>
+                    <label for="GioiHanSuDung" class="form-label">Số lượng <span
+                            class="tw-italic tw-font-light tw-text-sm">
+                            (tuỳ chọn)
+                        </span></label>
                     <input x-model="data.GioiHanSuDung" min="1" type="number" class="form-control" id="GioiHanSuDung">
                 </div>
                 <div class="col">
                     <label for="GioiHanTrenKhachHang" class="form-label">
-                        Số lần sử dụng tối đa cho mỗi khách hàng
+                        Số lần sử dụng tối đa cho mỗi khách hàng <span class="tw-italic tw-font-light tw-text-sm">
+                            (tuỳ chọn)
+                        </span>
                     </label>
                     <input x-model="data.GioiHanTrenKhachHang" min="1" type="number" class="form-control"
                         id="GioiHanTrenKhachHang">
@@ -287,16 +300,18 @@ formValidator(validatorRule);
                             Tất cả
                         </option>
                         <?php foreach ($allTicketTypes as $tk): ?>
-                            <option value="<?= $tk['MaLoaiVe'] ?>">
-                                <?= $tk['TenLoaiVe'] ?>
-                            </option>
+                        <option value="<?= $tk['MaLoaiVe'] ?>">
+                            <?= $tk['TenLoaiVe'] ?>
+                        </option>
                         <?php endforeach; ?>
 
                     </select>
                 </div>
                 <div class="col">
                     <label for="DiemToiThieu" class="form-label">
-                        Số điểm tối thiểu để sử dụng khuyến mãi
+                        Số điểm tối thiểu để sử dụng khuyến mãi <span class="tw-italic tw-font-light tw-text-sm">
+                            (tuỳ chọn)
+                        </span>
                     </label>
                     <input x-model="data.DiemToiThieu" type="number" min="0" class="form-control" id="DiemToiThieu">
                 </div>
@@ -309,9 +324,9 @@ formValidator(validatorRule);
                     <select x-model="data.TrangThai" id="TrangThai" class="selectpicker !tw-w-full">
 
                         <?php foreach ($statuses as $tk): ?>
-                            <option value="<?= $tk['MaTrangThai'] ?>">
-                                <?= $tk['Ten'] ?>
-                            </option>
+                        <option value="<?= $tk['MaTrangThai'] ?>">
+                            <?= $tk['Ten'] ?>
+                        </option>
                         <?php endforeach; ?>
 
                     </select>

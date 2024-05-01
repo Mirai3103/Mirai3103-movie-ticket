@@ -85,7 +85,7 @@ class SeatController
     #[Route("/ajax/loai-ghe/{id}/toggleHienThi", "POST")]
     public static function toggleHienThi($id)
     {
-        needAnyPermissionOrDie([Permission::DELETE_COMBO]);
+        needAnyPermissionOrDie([Permission::DELETE_LOAIGHE]);
         $result = SeatTypeService::toggleHideSeatType($id);
         return json($result);
     }

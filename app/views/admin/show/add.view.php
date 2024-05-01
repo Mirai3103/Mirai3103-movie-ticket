@@ -104,7 +104,8 @@ formValidator(validatorRule);
             MaPhongChieu: data.PhongChieu,
             NgayGioBatDau: ngayGioBatDau.format('YYYY-MM-DD HH:mm:ss'),
             NgayGioKetThuc: ngayGioKetThuc.format('YYYY-MM-DD HH:mm:ss'),
-            GiaVe: data.GiaVe
+            GiaVe: data.GiaVe,
+            TrangThai: data.TrangThai
         };
         const res= await axios.post('', payload,{validateStatus: () => true} );
          if (res.status !=200) {
@@ -126,8 +127,8 @@ formValidator(validatorRule);
                     <select x-model="data.RapChieu" class="form-select" id="rapchieu" required>
                         <option value="">Chọn rạp chiếu</option>
                         <?php foreach ($cinemas as $cinema): ?>
-                                <option value="<?= $cinema['MaRapChieu'] ?>">
-                                    <?= $cinema['TenRapChieu'] ?></option>
+                            <option value="<?= $cinema['MaRapChieu'] ?>">
+                                <?= $cinema['TenRapChieu'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -152,9 +153,9 @@ formValidator(validatorRule);
                 <select x-model="data.MaPhim" class="form-select" id="phim" required>
                     <option value="">Chọn phim</option>
                     <?php foreach ($movies as $movie): ?>
-                            <option data-thoi-luong-phim="<?= $movie['ThoiLuong'] ?>" value="<?= $movie['MaPhim'] ?>">
-                                <?= $movie['TenPhim'] ?> - <?= $movie['ThoiLuong'] ?> phút
-                            </option>
+                        <option data-thoi-luong-phim="<?= $movie['ThoiLuong'] ?>" value="<?= $movie['MaPhim'] ?>">
+                            <?= $movie['TenPhim'] ?> - <?= $movie['ThoiLuong'] ?> phút
+                        </option>
                     <?php endforeach; ?>
 
                 </select>
@@ -194,7 +195,14 @@ formValidator(validatorRule);
                 </div>
 
                 <div class="col">
-
+                    <label for="GiaVe" class="form-label">Phụ
+                        thu</label>
+                    <select x-model="data.TrangThai" class="form-select" id="trangthai" required>
+                        <option value="">Chọn trạng thái</option>
+                        <?php foreach ($showStatuses as $value): ?>
+                            <option value="<?= $value['MaTrangThai'] ?>"> <?= $value['Ten'] ?> </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
             </div>

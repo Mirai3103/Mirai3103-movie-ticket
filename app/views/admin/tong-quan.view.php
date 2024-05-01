@@ -82,7 +82,8 @@ require ('app/views/admin/header.php');
                         <h6 class="fw-semibold">Tổng số hóa đơn</h6>
                         <h3 class="fw-semibold" x-text="sumOfBill"></h3>
 
-                        <div class="text-body-secondary fw-medium" style="font-size: 14px;">
+                        <div class="text-body-secondary fw-medium tw-flex tw-items-center tw-gap-x-2 tw-mt-2"
+                            style="font-size: 14px;">
                             <svg x-show="changePercent < 0" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
                                 class="css-jc110d" width="1em" height="1em" viewBox="0 0 24 24">
@@ -187,7 +188,8 @@ require ('app/views/admin/header.php');
                         <h3 class="fw-semibold" x-text="sumOfBalance">
 
                         </h3>
-                        <div class="text-body-secondary fw-medium" style="font-size: 14px;">
+                        <div class="text-body-secondary fw-medium tw-flex tw-items-center tw-gap-x-2 tw-mt-2 "
+                            style="font-size: 14px;">
                             <svg x-show="changePercent < 0" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
                                 class="css-jc110d" width="1em" height="1em" viewBox="0 0 24 24">
@@ -265,7 +267,8 @@ require ('app/views/admin/header.php');
                         <h6 class="fw-semibold">Tổng lợi nhuận</h6>
                         <h3 class="fw-semibold" x-text="toVnd(sumOfProfit)"></h3>
 
-                        <div class="text-body-secondary fw-medium" style="font-size: 14px;">
+                        <div class="text-body-secondary fw-medium tw-flex tw-items-center tw-gap-x-2 tw-mt-2"
+                            style="font-size: 14px;">
                             <svg x-show="changePercent < 0" xmlns="http://www.w3.org/2000/svg"
                                 xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
                                 class="css-jc110d" width="1em" height="1em" viewBox="0 0 24 24">
@@ -305,7 +308,8 @@ require ('app/views/admin/header.php');
                     <div class="d-flex flex-column">
                         <span class="fs-5 fw-semibold">Tổng doanh
                             thu</span>
-                        <span class="text-body-secondary" style="font-size: 0.875rem">( <?= $growth ?> %) so với năm
+                        <span class="text-body-secondary" style="font-size: 0.875rem">
+                            (<?= $growth > 0 ? '+' : '' ?><?= $growth ?> %) so với năm
                             ngoái</span>
                     </div>
                     <!-- chứa biểu đồ kết hợp -->

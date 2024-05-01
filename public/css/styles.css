@@ -3417,6 +3417,10 @@ details.tw-collapse summary::-webkit-details-marker {
   margin: 2.5rem;
 }
 
+.tw-m-5 {
+  margin: 1.25rem;
+}
+
 .tw-mx-2 {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -3608,12 +3612,20 @@ details.tw-collapse summary::-webkit-details-marker {
   margin-top: 1.5rem;
 }
 
+.tw-mt-7 {
+  margin-top: 1.75rem;
+}
+
 .tw-mt-8 {
   margin-top: 2rem;
 }
 
 .tw-mt-auto {
   margin-top: auto;
+}
+
+.\!tw-mt-7 {
+  margin-top: 1.75rem !important;
 }
 
 .tw-line-clamp-2 {
@@ -3771,6 +3783,10 @@ details.tw-collapse summary::-webkit-details-marker {
   min-height: 0px;
 }
 
+.tw-min-h-28 {
+  min-height: 7rem;
+}
+
 .tw-min-h-52 {
   min-height: 13rem;
 }
@@ -3779,8 +3795,8 @@ details.tw-collapse summary::-webkit-details-marker {
   min-height: 100vh;
 }
 
-.tw-min-h-28 {
-  min-height: 7rem;
+.\!tw-min-h-0 {
+  min-height: 0px !important;
 }
 
 .\!tw-w-11 {
@@ -3801,6 +3817,10 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-w-11 {
   width: 2.75rem;
+}
+
+.tw-w-11\/12 {
+  width: 91.666667%;
 }
 
 .tw-w-12 {
@@ -3915,6 +3935,10 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-max-w-4xl {
   max-width: 56rem;
+}
+
+.tw-max-w-5xl {
+  max-width: 64rem;
 }
 
 .tw-max-w-60 {
@@ -4726,8 +4750,16 @@ details.tw-collapse summary::-webkit-details-marker {
   padding-left: 0.75rem;
 }
 
+.tw-pl-4 {
+  padding-left: 1rem;
+}
+
 .tw-pl-5 {
   padding-left: 1.25rem;
+}
+
+.tw-pl-6 {
+  padding-left: 1.5rem;
 }
 
 .tw-pl-8 {
@@ -4825,6 +4857,10 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-font-extrabold {
   font-weight: 800;
+}
+
+.tw-font-light {
+  font-weight: 300;
 }
 
 .tw-font-medium {
@@ -5637,6 +5673,10 @@ th > div {
 }
 
 @media (min-width: 1024px) {
+  .lg\:tw-m-5 {
+    margin: 1.25rem;
+  }
+
   .lg\:tw-max-w-\[63rem\] {
     max-width: 63rem;
   }

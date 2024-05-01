@@ -5,6 +5,7 @@ use App\Core\Database\Database;
 use App\Core\Database\QueryBuilder;
 use App\Core\Logger;
 use App\Core\Request;
+use App\Dtos\JsonDataErrorRespose;
 use App\Dtos\JsonResponse;
 use App\Dtos\LoaiTaiKhoan;
 use App\Dtos\TrangThaiTaiKhoan;
@@ -189,9 +190,13 @@ class AccountService
             if (self::comparePassword($oldPassword, $account['MatKhau'])) {
                 $newPassword = self::hashPassword($newPassword);
                 $result = Database::update('TaiKhoan', ['MatKhau' => $newPassword], "MaNguoiDung=$userId");
-                return $result;
+                return JsonResponse::ok();
+            } else {
+                return JsonDataErrorRespose::create([
+                    'MatKhauCu' => 'Mật khẩu cũ không đúng'
+                ]);
             }
         }
-        return false;
+        return JsonResponse::error('Người dùng không tồn tại', 404);
     }
 }

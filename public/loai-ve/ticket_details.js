@@ -108,7 +108,7 @@ function showEditModal(id) {
     url: `/api/loai-ve/${id}`,
     type: "GET",
     success: function (data) {
-      const typeTicket = data;
+      const typeTicket = data.data;
       console.log(typeTicket);
       txtIdTypeTicket.value = id;
       txtNameTypeTicket.value = typeTicket.TenLoaiVe;

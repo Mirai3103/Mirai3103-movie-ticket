@@ -107,8 +107,7 @@ function showEditModal(id) {
     url: `/api/loai-ghe/${id}`,
     type: "GET",
     success: function (data) {
-      const typeSeat = data;
-      console.log(typeSeat);
+      const typeSeat = data.data;
       txtIdTypeSeat.value = id;
       txtNameTypeSeat.value = typeSeat.TenLoaiGhe;
       txtPriceTypeSeat.value = typeSeat.GiaVe;
