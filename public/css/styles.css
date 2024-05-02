@@ -3456,6 +3456,10 @@ details.tw-collapse summary::-webkit-details-marker {
   margin-bottom: 1rem;
 }
 
+.\!tw-mt-7 {
+  margin-top: 1.75rem !important;
+}
+
 .-tw-ml-2 {
   margin-left: -0.5rem;
 }
@@ -3624,10 +3628,6 @@ details.tw-collapse summary::-webkit-details-marker {
   margin-top: auto;
 }
 
-.\!tw-mt-7 {
-  margin-top: 1.75rem !important;
-}
-
 .tw-line-clamp-2 {
   overflow: hidden;
   display: -webkit-box;
@@ -3779,6 +3779,10 @@ details.tw-collapse summary::-webkit-details-marker {
   max-height: 40px;
 }
 
+.\!tw-min-h-0 {
+  min-height: 0px !important;
+}
+
 .tw-min-h-0 {
   min-height: 0px;
 }
@@ -3793,10 +3797,6 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-min-h-screen {
   min-height: 100vh;
-}
-
-.\!tw-min-h-0 {
-  min-height: 0px !important;
 }
 
 .\!tw-w-11 {
@@ -3829,6 +3829,10 @@ details.tw-collapse summary::-webkit-details-marker {
 
 .tw-w-2 {
   width: 0.5rem;
+}
+
+.tw-w-28 {
+  width: 7rem;
 }
 
 .tw-w-3 {

@@ -1,17 +1,10 @@
 <?php
 
-use App\Core\Logger;
 use App\Dtos\JsonResponse;
-use App\Dtos\TrangThaiPhim;
+
 use App\Services\CinemaService;
-use App\Services\PhimService;
-use App\Services\RoomService;
-use App\Services\SeatService;
-use App\Services\SeatTypeService;
-use App\Services\ShowService;
 use App\Services\StatisticService;
-use App\Services\StatusService;
-use Core\Attributes\Controller;
+
 use Core\Attributes\Route;
 
 class StatisticController
@@ -57,16 +50,73 @@ class StatisticController
         $total = StatisticService::ticketStatistic($params);
         return json(JsonResponse::ok($total));
     }
-    #[Route(path:'/api/thong-ke/rap-chieu', method:'GET')]
-    public static function cinema() {
-        return view('admin/thong-ke/rap-chieu/index');
+    #[Route(path: '/api/tong-quan/khach-hang', method: 'GET')]
+    public static function countCustomer()
+    {
+        $params = $_GET;
+        $total = StatisticService::countCustomer($params);
+        return json(JsonResponse::ok($total));
     }
-    #[Route(path:'/api/thong-ke/phim', method:'GET')]
-    public static function movie() { 
+    #[Route(path: '/api/tong-quan/rap-chieu', method: 'GET')]
+    public static function sumTotalRevenueEachCinema()
+    {
+        $params = $_GET;
+        $total = StatisticService::sumTotalRevenueEachCinema($params);
+        return json(JsonResponse::ok($total));
+    }
+
+    #[Route(path: '/api/tong-quan/san-pham', method: 'GET')]
+    public static function sumTotalRevenueFood()
+    {
+        $params = $_GET;
+        $total = StatisticService::sumTotalRevenueFood($params);
+        return json(JsonResponse::ok($total));
+    }
+    #[Route(path: '/api/tong-quan/phim/chi-tiet', method: 'GET')]
+    public static function movieStatistic()
+    {
+        $params = $_GET;
+        $total = StatisticService::movieStatistic($params);
+        return json(JsonResponse::ok($total));
+    }
+    #[Route(path: '/api/tong-quan/san-pham/chi-tiet', method: 'GET')]
+    public static function foodStatistic()
+    {
+        $params = $_GET;
+        $total = StatisticService::sumTotalEachFood($params);
+        return json(JsonResponse::ok($total));
+    }
+    #[Route(path: '/api/tong-quan/khach-hang/count', method: 'GET')]
+    public static function countCustomerByDate()
+    {
+        $params = $_GET;
+        $total = StatisticService::countCustomer($params);
+        return json(JsonResponse::ok($total));
+    }
+
+    #[Route(path: '/admin/thong-ke/rap-chieu', method: 'GET')]
+    public static function cinema()
+    {
+        // tổng doanh thu, tổng lượt khách tổng, hoá đơn
+        $totalRevenue = StatisticService::sumTotalBill([]);
+        $totalBillCount = StatisticService::countTotalBill([]);
+        $totalCustomerCount = StatisticService::countCustomer([]);
+        $cinemas = CinemaService::getAllCinemas();
+        return view('admin/thong-ke/rap-chieu/index', [
+            'totalRevenue' => $totalRevenue[0],
+            'totalBillCount' => $totalBillCount[0],
+            'totalCustomerCount' => $totalCustomerCount[0],
+            'cinemas' => $cinemas
+        ]);
+    }
+    #[Route(path: '/admin/thong-ke/phim', method: 'GET')]
+    public static function movie()
+    {
         return view('admin/thong-ke/phim/index');
     }
-    #[Route(path:'/api/thong-ke/san-pham', method:'GET')]
-    public static function movieDetail() {
+    #[Route(path: '/admin/thong-ke/san-pham', method: 'GET')]
+    public static function movieDetail()
+    {
         return view('admin/thong-ke/san-pham/index');
     }
 }

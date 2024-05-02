@@ -29,7 +29,13 @@ function isActive($path)
         <i class="fa-solid fa-angle-right toggle"></i>
     </header>
 
-    <div class="menu-bar">
+    <div class="menu-bar" x-init="
+        window.$('.menu-links__item.active')[0].scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'center'
+        })
+    ">
         <div class="menu">
             <?php
             use App\Dtos\AdminMenu;
@@ -41,8 +47,8 @@ function isActive($path)
 
             <ul class="menu-links scrollable " style=" transition: height 0.3s;">
                 <?php foreach ($menu as $key => $item): ?>
-                <?php if (isset($item['hasChildren'])): ?>
-                <li x-data="
+                    <?php if (isset($item['hasChildren'])): ?>
+                        <li x-data="
                         {
                             open: false,
                             toggle() {
@@ -65,45 +71,45 @@ function isActive($path)
                             }
                              
                         })" class="menu-links__item  " x-on:click="toggle()">
-                    <a class>
-                        <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
-                        <span class="text nav-text">
-                            <?= $item['text'] ?>
-                        </span>
-                        <i class="icon-drop-down fa-solid fa-sort-down"
-                            :style="open ? 'transform: rotate(90deg)' : 'transform: rotate(-90deg)'">
-                        </i>
-                    </a>
-                </li>
-                <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
+                            <a class>
+                                <i class="fa-solid fa-chart-simple menu-links__item-icon"></i>
+                                <span class="text nav-text">
+                                    <?= $item['text'] ?>
+                                </span>
+                                <i class="icon-drop-down fa-solid fa-sort-down"
+                                    :style="open ? 'transform: rotate(90deg)' : 'transform: rotate(-90deg)'">
+                                </i>
+                            </a>
+                        </li>
+                        <div id="sub-menu-for-<?= $key ?>" style="overflow: hidden; transition: height 0.3s;">
 
-                    <?php foreach ($item['childrens'] as $child): ?>
-                    <li class="menu-links__item <?= isActive($child['href']) ?>">
-                        <a href="<?= $child['href'] ?>">
-                            <i class="menu-links__item-icon"></i>
+                            <?php foreach ($item['childrens'] as $child): ?>
+                                <li class="menu-links__item <?= isActive($child['href']) ?>">
+                                    <a href="<?= $child['href'] ?>">
+                                        <i class="menu-links__item-icon"></i>
+
+                                        <span class="text nav-text">
+                                            <?= $child['text'] ?>
+                                        </span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+                        </div>
+
+                    </ul>
+
+                <?php else: ?>
+
+                    <li class="menu-links__item <?= isActive($item['href']) ?>">
+                        <a href="<?= $item['href'] ?>">
+                            <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
 
                             <span class="text nav-text">
-                                <?= $child['text'] ?>
+                                <?= $item['text'] ?>
                             </span>
                         </a>
                     </li>
-                    <?php endforeach; ?>
-                </div>
-
-            </ul>
-
-            <?php else: ?>
-
-            <li class="menu-links__item <?= isActive($item['href']) ?>">
-                <a href="<?= $item['href'] ?>">
-                    <i class="menu-links__item-icon <?= $item['icon'] ?>"></i>
-
-                    <span class="text nav-text">
-                        <?= $item['text'] ?>
-                    </span>
-                </a>
-            </li>
-            <?php endif; ?>
+                <?php endif; ?>
             <?php endforeach; ?>
             </ul>
 

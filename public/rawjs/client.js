@@ -13,7 +13,6 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import "dayjs/locale/vi";
-import "./css/tailwind.css";
 dayjs.locale("vi");
 dayjs.prototype.getDayOfWeek = function () {
   const dayOfWeek = [
@@ -33,7 +32,7 @@ import queryString from "query-string";
 import * as bt from "bootstrap";
 window.bootstrap = bt;
 window.$ = window.jQuery = $;
-require("./js/validation");
+require("../js/validation");
 window.queryString = queryString;
 window.axios = axios;
 window.dayjs = dayjs;

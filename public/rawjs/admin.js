@@ -5,7 +5,6 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import "dayjs/locale/vi";
 
 dayjs.extend(customParseFormat);
-import "./css/tailwind.css";
 
 dayjs.locale("vi");
 import axios from "axios";
@@ -16,7 +15,7 @@ import * as bt from "bootstrap";
 window.bootstrap = bt;
 window.$ = window.jQuery = $;
 require("bootstrap-select");
-require("./js/validation");
+require("../js/validation");
 window.queryString = queryString;
 window._ = lodash;
 window.axios = axios;
@@ -127,6 +126,7 @@ Alpine.data("dataTable", ({ initialQuery = {}, endpoint }) => ({
 }));
 window.addEventListener("DOMContentLoaded", () => {
   Alpine.start();
+  console.log("Alpine started");
   $(".selectpicker").selectpicker();
 });
 function useDisableAllInput() {

@@ -14,6 +14,10 @@ class Database
         static::$mysqli = Connection::make($GLOBALS['config']['database']);
     }
 
+    public static function real_escape_string($string)
+    {
+        return static::$mysqli->real_escape_string($string);
+    }
     public static function insert(string $table, array $parameters)
     {
         $sql = sprintf(

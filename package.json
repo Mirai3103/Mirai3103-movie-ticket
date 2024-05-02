@@ -22,7 +22,8 @@
     "lodash": "^4.17.21",
     "npm-run-all": "^4.1.5",
     "quagga": "^0.12.1",
-    "query-string": "^9.0.0"
+    "query-string": "^9.0.0",
+    "watcher": "^2.3.1"
   },
   "devDependencies": {
     "@types/alpinejs__focus": "^3.13.4",
@@ -31,13 +32,17 @@
     "daisyui": "^4.9.0",
     "esbuild": "0.20.2",
     "esbuild-plugin-tailwindcss": "^1.2.0",
+    "nodemon": "^3.1.0",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1"
   },
   "scripts": {
     "watch:css": "npx tailwindcss -i public/css/tailwind.css -o public/css/styles.css --watch",
-    "bundlejs": "esbuild ./public/admin.js ./public/client.js --bundle --minify --target=es2017 --outdir=public/bundle/ --sourcemap --watch",
-    "build:all": "npm-run-all --parallel watch:css bundlejs"
+    "watch:all": "npm-run-all --parallel watch:css watch:js",
+    "watch:js": "nodemon esbuild.js --watch public/rawjs",
+    "build:css": "npx tailwindcss -i public/css/tailwind.css -o public/css/styles.css",
+    "build:js": "node esbuild.js",
+    "build": "npm-run-all --parallel build:css build:js"
   },
   "type": "module"
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Database\Database;
 use App\Core\Logger;
 use App\Dtos\JsonResponse;
 
@@ -88,7 +89,8 @@ function isNullOrEmptyArray($arr)
 }
 function getArrayValueSafe($arr, $key, $default = null)
 {
-    return isset($arr[$key]) ? $arr[$key] : $default;
+    // esce
+    return isset($arr[$key]) ? Database::real_escape_string($arr[$key]) : $default;
 }
 function execPostRequest($url, array $data)
 {
