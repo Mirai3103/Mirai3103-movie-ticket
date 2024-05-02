@@ -57,4 +57,16 @@ class StatisticController
         $total = StatisticService::ticketStatistic($params);
         return json(JsonResponse::ok($total));
     }
+    #[Route(path:'/api/thong-ke/rap-chieu', method:'GET')]
+    public static function cinema() {
+        return view('admin/thong-ke/rap-chieu/index');
+    }
+    #[Route(path:'/api/thong-ke/phim', method:'GET')]
+    public static function movie() { 
+        return view('admin/thong-ke/phim/index');
+    }
+    #[Route(path:'/api/thong-ke/san-pham', method:'GET')]
+    public static function movieDetail() {
+        return view('admin/thong-ke/san-pham/index');
+    }
 }
