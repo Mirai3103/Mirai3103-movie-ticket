@@ -41,7 +41,7 @@ class StatisticService
         JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu
         WHERE 1=1";
         if ($ngayBatDau) {
-            $subSql .= " AND WHERE DATE(HoaDon.NgayGioThanhToan) >= DATE('$ngayBatDau')";
+            $subSql .= " AND  DATE(HoaDon.NgayGioThanhToan) >= DATE('$ngayBatDau')";
         }
         if ($ngayKetThuc) {
             $subSql .= " AND DATE(HoaDon.NgayGioThanhToan) <= DATE('$ngayKetThuc')";

@@ -3,8 +3,19 @@ window.ApexCharts = ApexCharts;
 const Alphine = window.Alpine;
 const dayjs = window.dayjs;
 const _ = window._;
-const axios = window.axios;
+let axios = window.axios.create();
 
+import { setupCache } from "axios-cache-interceptor/dev";
+window.axios = setupCache(axios, {
+  methods: ["get"],
+  debug: console.log,
+  ttl: 15 * 60 * 1000,
+  headerInterpreter: function (headers) {
+    return headers["can-use-cache"] !== "false";
+  },
+});
+console.log("setup cache");
+axios = window.axios;
 async function getSumTotalRevenueEachCinema(params) {
   const res = await axios.get("/api/tong-quan/rap-chieu", {
     params: params,

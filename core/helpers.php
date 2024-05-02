@@ -48,7 +48,8 @@ function view($name, $data = [])
     $name = str_replace('.', '/', $name);
 
 
-    return require "app/views/{$name}.view.php";
+    require "app/views/{$name}.view.php";
+    die();
 }
 function ajax($name, $data = [])
 {
@@ -169,8 +170,7 @@ function onForbidden()
     }
     // set 403 status code
     http_response_code(403);
-    echo "403 Forbidden";
-    die();
+    return view('404');
 }
 
 function needLogin()

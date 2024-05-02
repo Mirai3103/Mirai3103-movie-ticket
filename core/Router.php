@@ -70,7 +70,7 @@ class Router
 
         if (!$result) {
             http_response_code(404);
-            echo "404 Not Found";
+            return view('404');
         }
     }
     public static function build()
