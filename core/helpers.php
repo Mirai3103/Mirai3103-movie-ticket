@@ -90,8 +90,9 @@ function isNullOrEmptyArray($arr)
 }
 function getArrayValueSafe($arr, $key, $default = null)
 {
-    // esce
-    return isset($arr[$key]) ? Database::real_escape_string($arr[$key]) : $default;
+    // esce]
+    $val = isset($arr[$key]) ? $arr[$key] : $default;
+    return is_string($val) ? Database::real_escape_string($val) : $val;
 }
 function execPostRequest($url, array $data)
 {
