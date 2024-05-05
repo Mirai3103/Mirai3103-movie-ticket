@@ -276,6 +276,8 @@ class StatisticService
         $ngayBatDau = getArrayValueSafe($params, 'tu-ngay', '');
         $ngayKetThuc = getArrayValueSafe($params, 'den-ngay', '');
         $rapChieu = getArrayValueSafe($params, 'rap-chieu', '');
+        $loaiSanPham = getArrayValueSafe($params, 'loai-san-pham', '');
+        // 1=> thức ăn, 2=> combo
         // lấy ra tổng tiền, ngày, tên,
         $sql1 = "SELECT CT_HoaDon_ThucPham.ThanhTien as totalMoney,
         CT_HoaDon_ThucPham.SoLuong totalAmount,
@@ -331,10 +333,16 @@ WHERE
         if ($rapChieu) {
             $sql2 .= " AND SubQuery.MaRapChieu = $rapChieu";
         }
-        $sql = "SELECT SUM(totalMoney) as totalMoney, name,  SUM(totalAmount) as totalAmount
+        if ($loaiSanPham == 1) {
+            $sql = $sql1 . " GROUP BY name";
+        } else if ($loaiSanPham == 2) {
+            $sql = $sql2 . " GROUP BY name";
+        } else {
+            $sql = "SELECT SUM(totalMoney) as totalMoney, name,  SUM(totalAmount) as totalAmount, `date`
                  from
                 ( ($sql1) UNION ALL ($sql2) ) as subSql
                 GROUP BY  name";
+        }
         $total = Database::query($sql, []);
         return $total;
 
