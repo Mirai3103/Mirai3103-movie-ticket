@@ -2,34 +2,11 @@
 namespace App\Services;
 
 use App\Core\Database\Database;
+use App\Dtos\TrangThaiPhim;
 
 
 class StatisticService
 {
-    private static function getBillIds($params)
-    {
-        $ngayBatDau = getArrayValueSafe($params, 'tu-ngay', '');
-        $ngayKetThuc = getArrayValueSafe($params, 'den-ngay', '');
-        $rapChieu = getArrayValueSafe($params, 'rap-chieu', '');
-        $sql = "SELECT DISTINCT HoaDon.MaHoaDon FROM HoaDon
-        JOIN Ve ON HoaDon.MaHoaDon = Ve.MaHoaDon
-        JOIN SuatChieu ON Ve.MaSuatChieu = SuatChieu.MaXuatChieu
-        JOIN PhongChieu ON SuatChieu.MaPhongChieu = PhongChieu.MaPhongChieu
-        WHERE 1=1";
-        if ($ngayBatDau) {
-            $sql .= " AND DATE(NgayGioThanhToan) >= DATE('$ngayBatDau')";
-        }
-        if ($ngayKetThuc) {
-            $sql .= " AND DATE(NgayGioThanhToan) <= DATE('$ngayKetThuc')";
-        }
-        if ($rapChieu) {
-            $sql .= " AND PhongChieu.MaRapChieu = $rapChieu";
-        }
-        $billIds = Database::query($sql, []);
-        return array_map(function ($item) {
-            return $item['MaHoaDon'];
-        }, $billIds);
-    }
     public static function countCustomer($params)
     {
         $ngayBatDau = getArrayValueSafe($params, 'tu-ngay', '');
@@ -399,5 +376,79 @@ WHERE
 
     }
 
-    //Số lượng sản phẩm, Doanh thu sản phẩm, Số vé, Doanh thu phim
+    public static function overviewMovie(
+        $params,
+    ) {
+        // mã phim,/ tên phim, số vé bán, số suất chiếu , tổng doanh thu
+        $tuNgay = getArrayValueSafe($params, 'tu-ngay', '');
+        $denNgay = getArrayValueSafe($params, 'den-ngay', '');
+        $theLoais = getArrayValueSafe($params, 'the-loais', '');
+        // đầu tiên tìm phim theo thể loại having count = count của thể loại
+        $sql = "SELECT
+        DISTINCT
+         Phim.MaPhim, Phim.TenPhim, Phim.HinhAnh
+            FROM Phim
+            JOIN CT_Phim_TheLoai ON Phim.MaPhim = CT_Phim_TheLoai.MaPhim
+            JOIN TheLoai ON CT_Phim_TheLoai.MaTheLoai = TheLoai.MaTheLoai
+            WHERE Phim.TrangThai != " . TrangThaiPhim::SapChieu->value;
+        if ($theLoais) {
+            $theLoaisIn = implode(',', $theLoais);
+            $sql .= " AND TheLoai.MaTheLoai IN ($theLoaisIn)";
+            $sql .= " GROUP BY Phim.MaPhim HAVING COUNT(Phim.MaPhim) = " . count($theLoais);
+        }
+
+        $result = Database::query($sql, []);
+        $phimIds = array_column($result, 'MaPhim');
+        if (count($phimIds) === 0) {
+            return [];
+        }
+        $phimIds = implode(',', $phimIds);
+        $countSuatChieu = "SELECT COUNT(*) as total, Phim.MaPhim FROM Phim
+        JOIN SuatChieu ON Phim.MaPhim = SuatChieu.MaPhim
+        WHERE Phim.MaPhim IN ($phimIds)";
+        if ($tuNgay) {
+            $countSuatChieu .= " AND DATE(SuatChieu.NgayGioChieu) >= DATE('$tuNgay')";
+        }
+        if ($denNgay) {
+            $countSuatChieu .= " AND DATE(SuatChieu.NgayGioChieu) <= DATE('$denNgay')";
+        }
+        $countSuatChieu .= " GROUP BY Phim.MaPhim";
+        $countSuatChieuResult = Database::query($countSuatChieu, []);
+
+        $countVe = "SELECT COUNT(*) as total, SUM(Ve.GiaVe) as totalMoney, Phim.MaPhim FROM Phim
+        JOIN SuatChieu ON Phim.MaPhim = SuatChieu.MaPhim
+        JOIN Ve ON Ve.MaSuatChieu = SuatChieu.MaXuatChieu
+        JOIN HoaDon ON Ve.MaHoaDon = HoaDon.MaHoaDon
+        WHERE Phim.MaPhim IN ($phimIds)
+        AND Ve.MaHoaDon IS NOT NULL
+        ";
+        if ($tuNgay) {
+            $countVe .= " AND DATE(HoaDon.NgayGioThanhToan) >= DATE('$tuNgay')";
+        }
+        if ($denNgay) {
+            $countVe .= " AND DATE(HoaDon.NgayGioThanhToan) <= DATE('$denNgay')";
+        }
+        $countVe .= " GROUP BY Phim.MaPhim";
+        $countVeResult = Database::query($countVe, []);
+
+        // join bảng countSuatChieu vào countVe
+        $result = array_map(function ($item) use ($countSuatChieuResult, $countVeResult) {
+            $suatChieu = array_filter($countSuatChieuResult, function ($suatChieu) use ($item) {
+                return $suatChieu['MaPhim'] == $item['MaPhim'];
+            });
+            $ve = array_filter($countVeResult, function ($ve) use ($item) {
+                return $ve['MaPhim'] == $item['MaPhim'];
+            });
+            $suatChieu = array_values($suatChieu);
+            $ve = array_values($ve);
+            $item['totalSuatChieu'] = $suatChieu[0]['total'] ?? 0;
+            $item['totalVe'] = $ve[0]['total'] ?? 0;
+            $item['totalMoney'] = $ve[0]['totalMoney'] ?? 0;
+            return $item;
+        }, $result);
+
+        return $result;
+
+    }
+
 }

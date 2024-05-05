@@ -21,7 +21,7 @@ require ('app/views/admin/header.php');
                                     id="inputGroupSelect01">
                                     <option selected value="">Tất cả rạp chiếu</option>
                                     <?php foreach ($cinemas as $cinema): ?>
-                                    <option value="<?= $cinema['MaRapChieu'] ?>"><?= $cinema['TenRapChieu'] ?></option>
+                                                <option value="<?= $cinema['MaRapChieu'] ?>"><?= $cinema['TenRapChieu'] ?></option>
 
                                     <?php endforeach; ?>
                                 </select>
@@ -423,7 +423,8 @@ require ('app/views/admin/header.php');
                                                 <td x-text="item.food?.totalAmount || 0"></td>
                                                 <td x-text="toVnd(item.ticket?.totalMoney || 0)"></td>
                                                 <td x-text="item.ticket?.total || 0"></td>
-                                                <td x-text="toVnd(item.total || 0)"></td>
+                                                <td
+                                                x-text="toVnd(item.totalMoney || 0)"></td>
                                             </tr>
                                         </template>
                                     </tbody>

@@ -121,5 +121,9 @@ class ShowController
             'canEdit' => ShowService::canEditShow($id)
         ]));
     }
-
+    #[Route(path: '/admin/suat-chieu/abc', method: 'GET')]
+    public static function abc()
+    {
+        return view('admin/suat-chieu/index');
+    }
 }

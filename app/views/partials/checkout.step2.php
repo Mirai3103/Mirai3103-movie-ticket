@@ -126,6 +126,7 @@
                      </div>
                  </label>
              </div>
+             <?php if($GLOBALS['config']['env'] =='dev') :?>
              <div>
                  <label class="checkout-button  tw-border-secondary tw-border-3"
                      for="<?= PaymentType::Mock_Succeed->value ?>">
@@ -156,6 +157,7 @@
                      </div>
                  </label>
              </div>
+             <?php endif; ?>
          </div>
          <?php if (Request::isAuthenicated()): ?>
          <div>

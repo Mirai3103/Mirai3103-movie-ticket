@@ -2,6 +2,7 @@
 
 use App\Dtos\JsonResponse;
 
+use App\Services\CategoryService;
 use App\Services\CinemaService;
 use App\Services\StatisticService;
 
@@ -112,11 +113,21 @@ class StatisticController
     #[Route(path: '/admin/thong-ke/phim', method: 'GET')]
     public static function movie()
     {
-        return view('admin/thong-ke/phim/index');
+        $categories = CategoryService::getAllCategories();
+
+        return view('admin/thong-ke/phim/index', [
+            'categories' => $categories
+        ]);
     }
     #[Route(path: '/admin/thong-ke/san-pham', method: 'GET')]
     public static function movieDetail()
     {
         return view('admin/thong-ke/san-pham/index');
+    }
+
+    #[Route(path: '/api/thong-ke/phim/tong-quan', method: 'GET')]
+    public static function movieGeneral()
+    {
+        return json(JsonResponse::ok(StatisticService::overviewMovie($_GET)));
     }
 }
