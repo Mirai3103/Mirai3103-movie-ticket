@@ -80,6 +80,44 @@ $watch('query',async (value) => {
 });
 
 ">
+    <dialog id="delete_modal" class="tw-modal">
+        <div class="tw-modal-box">
+            <h3 class="tw-font-bold tw-text-lg">
+                Cảnh báo
+            </h3>
+            <p class="tw-py-4 tw-text-lg">
+                Bạn có chắc chắn muốn xoá phòng #<span class='tw-font-bold' x-text="selected?.MaPhongChieu"></span>
+                không?
+            </p>
+
+            <div class="modal-action">
+                <form method="dialog" class='tw-flex tw-justify-end tw-gap-x-1'>
+                    <button class="tw-btn tw-px-4">
+                        Huỷ
+                    </button>
+                    <button x-on:click="
+                        axios.delete(`/api/phong-chieu/${selected?.MaPhongChieu}`).then(res=>{
+                            toast('Thành công', {
+                                position: 'bottom-center',
+                                type: 'success',
+                                description: 'Xoá suất chiếu thành công',
+                            });
+                            data = data.filter(x=>x.MaXuatChieu!=selected.MaXuatChieu);
+                           window['delete_modal'].close();
+                        }).catch(err=>{
+                            toast('Thất bại', {
+                                position: 'bottom-center',
+                                type: 'danger',
+                                description: err.response.data.message,
+                            });
+                        })
+                        " class="tw-btn tw-btn-error tw-px-4 tw-text-white" x-on:click="deleteItem()">
+                        Xoá
+                    </button>
+                </form>
+            </div>
+        </div>
+    </dialog>
     <div
         class='tw-m-10 tw-relative tw-flex tw-flex-col tw-bg-white tw-p-5 tw-rounded-2xl tw-shadow-md  tw-bg-clip-border'>
 
@@ -258,9 +296,27 @@ $watch('query',async (value) => {
                             <td>
 
                                 <div class="tw-p-2 tw-border-b tw-border-gray-50 tw-flex">
-                                    <a tabindex="0" role="button"
-                                        class="tw-btn  p-1 tw-btn-sm tw-btn-warning tw-text-warning tw-aspect-square  tw-btn-ghost"
-                                        type="button" :href="`/admin/phong-chieu/${item.MaPhongChieu}/sua`">
+                                    <button tabindex="0" role="button" x-on:click="
+                                        const url = `/api/phong-chieu/${item.MaPhongChieu}/can-edit`;
+                                        axios.get(url).then(res=>{
+                                            if(res.data.data['can_edit']) {
+                                                window.location.href = `/admin/phong-chieu/${item.MaPhongChieu}/sua`;
+                                            }else{
+                                                toast('Thất bại', {
+                                                    position: 'bottom-center',
+                                                    type: 'danger',
+                                                    description: 'Không thể chỉnh sửa phòng chiếu này vì đang hoặc sắp có suất chiếu',
+                                                });
+                                            }
+                                        }).catch(err=>{
+                                            toast('Thất bại', {
+                                                position: 'bottom-center',
+                                                type: 'danger',
+                                                description: err.response.data.message,
+                                            });
+                                        })
+                                    " class="tw-btn  p-1 tw-btn-sm tw-btn-warning tw-text-warning tw-aspect-square  tw-btn-ghost"
+                                        type="button">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
@@ -271,8 +327,9 @@ $watch('query',async (value) => {
                                                 d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
                                             <path d="M16 5l3 3" />
                                         </svg>
-                                    </a>
-                                    <a tabindex="0" role="button"
+                                    </button>
+                                    <button tabindex="0" role="button"
+                                        x-on:click="selected = item; window['delete_modal'].showModal()"
                                         class="tw-btn tw-btn-sm  p-1 tw-btn-warning tw-text-danger tw-aspect-square  tw-btn-ghost">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -285,12 +342,20 @@ $watch('query',async (value) => {
                                             <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
                                             <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
                                         </svg>
-                                    </a>
-                                    <a tabindex="0" role="button"
+                                    </button>
+                                    <button tabindex="0" role="button" x-on:click="axios.patch(`/api/phong-chieu/${item.MaPhongChieu}/toggle-status`).then(res=>{
+                                        refetch();
+                                    }).catch(err=>{
+                                        toast('Thất bại', {
+                                            position: 'bottom-center',
+                                            type: 'danger',
+                                            description: err.response.data.message,
+                                        });
+                                    })"
                                         class="tw-btn tw-btn-sm  p-1 tw-btn-warning tw-text-base-content tw-aspect-square  tw-btn-ghost">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
+                                        <svg x-show="item.TrangThai == 7" xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                                             class="icon icon-tabler icons-tabler-outline icon-tabler-eye-off">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" />
@@ -298,7 +363,16 @@ $watch('query',async (value) => {
                                                 d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.055 9.055 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87" />
                                             <path d="M3 3l18 18" />
                                         </svg>
-                                    </a>
+                                        <svg x-show="item.TrangThai ==6" xmlns="http://www.w3.org/2000/svg" width="24"
+                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-eye">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+                                            <path
+                                                d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
+                                        </svg>
+                                    </button>
                                 </div>
                             </td>
 

@@ -1,4 +1,5 @@
 <?php
+use App\Dtos\TrangThaiPhong;
 use App\Dtos\TrangThaiSuatChieu;
 
 title("Sửa suất chiếu");
@@ -57,7 +58,7 @@ formValidator({
                
                 return;
             }
-            const response = await axios.get(`/admin/rap-chieu/${data.RapChieu}/phong-chieu`);
+            const response = await axios.get(`/api/rap-chieu/${data.RapChieu}/phong-chieu?trang-thais[]=${<?= TrangThaiPhong::DangHoatDong->value ?>}`);
             this.listRoom = response.data.data;
             
         }
@@ -98,7 +99,7 @@ formValidator({
     " class="info-movie container-fluid tw-bg-white tw-rounded-md p-4 shadow">
 
         <div class='tw-flex tw-items-center tw-justify-between'>
-            <h3>TẠO SUẤT CHIẾU</h3>
+            <h3>Sửa SUẤT CHIẾU</h3>
             <a href="/admin/suat-chieu" data-ripple-light="true" class="  tw-btn tw-btn-ghost" type="button">
 
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"

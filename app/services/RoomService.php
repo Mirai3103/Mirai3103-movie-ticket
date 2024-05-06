@@ -99,7 +99,7 @@ class RoomService
     {
         $queryBuilder = new QueryBuilder();
         $keyword = getArrayValueSafe($query, 'tu-khoa');
-        $statuses = getArrayValueSafe($query, 'trang-thais');
+        $statuses = getArrayValueSafe($query, 'trang-thais', []);
         $page = ifNullOrEmptyString(getArrayValueSafe($query, 'trang'), 1);
         $limit = ifNullOrEmptyString(getArrayValueSafe($query, 'limit'), 10);
 
@@ -108,6 +108,7 @@ class RoomService
         ])->from('PhongChieu')
             ->where('MaRapChieu', '=', $cinemaId);
         if (!isNullOrEmptyArray($statuses)) {
+            $statuses = implode(',', $statuses);
             $queryBuilder->andWhere('TrangThai', 'IN', $statuses);
         }
         if (!isNullOrEmptyString($keyword)) {
@@ -125,6 +126,41 @@ class RoomService
         $rooms = $queryBuilder->get();
         return $rooms;
 
+    }
+
+
+    public static function canEditRoom($roomId)
+    {
+        $sql = "SELECT COUNT(*) as count FROM SuatChieu WHERE MaPhongChieu = ? AND NgayGioChieu >= CURDATE()";
+        $count = Database::queryOne($sql, [$roomId]);
+        return $count['count'] == 0;
+    }
+
+    public static function deleteRoom($roomId)
+    {
+        $sql = "SELECT COUNT(*) as count FROM SuatChieu WHERE MaPhongChieu = ? ";
+        $count = Database::queryOne($sql, [$roomId]);
+        $canDelete = $count['count'] == 0;
+        if ($canDelete) {
+            $result = Database::delete('PhongChieu', "MaPhongChieu = $roomId");
+            if ($result) {
+                return JsonResponse::ok();
+            }
+            return JsonResponse::error('Xóa phòng chiếu thất bại', 500);
+        }
+        return JsonResponse::error('Không thể xóa phòng chiếu vì đã có suất chiếu', 400);
+    }
+
+    public static function toggleHideRoom($roomId)
+    {
+        $sql = "SELECT TrangThai FROM PhongChieu WHERE MaPhongChieu = ?";
+        $status = Database::queryOne($sql, [$roomId]);
+        $newStatus = $status['TrangThai'] == TrangThaiPhong::DangBaoTri->value ? TrangThaiPhong::DangHoatDong->value : TrangThaiPhong::DangBaoTri->value;
+        $result = Database::update('PhongChieu', ['TrangThai' => $newStatus], "MaPhongChieu = $roomId");
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Cập nhật trạng thái phòng chiếu thất bại', 500);
     }
 
 }

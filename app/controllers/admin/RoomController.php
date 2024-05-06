@@ -89,11 +89,36 @@ class RoomController
         $rooms = RoomService::getRoomByIds($ids);
         return json(JsonResponse::ok($rooms));
     }
-    #[Route("/admin/rap-chieu/{id}/phong-chieu", "GET")]
+    #[Route("/api/rap-chieu/{id}/phong-chieu", "GET")]
     public static function getRoomsByCinemaId($id)
     {
-        needAnyPermissionOrDie([Permission::READ_PHONGCHIEU, Permission::UPDATE_PHONGCHIEU, Permission::DELETE_PHONGCHIEU, Permission::CREATE_PHONGCHIEU]);
         $rooms = RoomService::getAllRoomOfCinema(intval($id), $_GET);
         return json(JsonResponse::ok($rooms));
     }
+
+    #[Route("/api/phong-chieu/{id}/can-edit", "GET")]
+    public static function canEdit($id)
+    {
+        needAnyPermissionOrDie([Permission::UPDATE_PHONGCHIEU, Permission::DELETE_PHONGCHIEU, Permission::READ_PHONGCHIEU]);
+        $can_edit = RoomService::canEditRoom(intval($id));
+        return json(JsonResponse::ok([
+            'can_edit' => $can_edit
+        ]));
+    }
+    #[Route("/api/phong-chieu/{id}/toggle-status", "PATCH")]
+    public static function toggleStatus($id)
+    {
+        needAnyPermissionOrDie([Permission::UPDATE_PHONGCHIEU]);
+        $result = RoomService::toggleHideRoom(intval($id));
+        return json($result);
+    }
+    #[Route("/api/phong-chieu/{id}", "DELETE")]
+    public static function delete($id)
+    {
+        needAnyPermissionOrDie([Permission::DELETE_PHONGCHIEU]);
+        $result = RoomService::deleteRoom(intval($id));
+        return json($result);
+    }
+
+
 }

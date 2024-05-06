@@ -81,7 +81,7 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                                 description: 'Xoá suất chiếu thành công',
                             });
                             data = data.filter(x=>x.MaXuatChieu!=selected.MaXuatChieu);
-                            $refs.delete_modal.close();
+                            window['delete_modal'].close();
                         }).catch(err=>{
                             toast('Thất bại', {
                                 position: 'bottom-center',
@@ -103,10 +103,10 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                     :class="{'button-nav-active': query['trang-thai']==undefined}"
                     x-on:click="query['trang-thai']=undefined;refresh()" onclick="optionOfList(this)">
                 <?php foreach ($showStatuses as $status): ?>
-                        <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                            :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
-                            x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';refresh()"
-                            onclick="optionOfList(this)">
+                    <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
+                        :class="{'button-nav-active': query['trang-thai']=='<?= $status['MaTrangThai'] ?>'}"
+                        x-on:click="query['trang-thai']='<?= $status['MaTrangThai'] ?>';refresh()"
+                        onclick="optionOfList(this)">
                 <?php endforeach; ?>
             </div>
         </div>
@@ -192,9 +192,9 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                                         data-selected-text-format="count" multiple class="selectpicker !tw-w-full">
 
                                         <?php foreach ($cinemas as $cinema): ?>
-                                                <option data-tokens="<?= $cinema['TenRapChieu'] ?>"
-                                                    value="<?= $cinema['MaRapChieu'] ?>">
-                                                    <?= $cinema['TenRapChieu'] ?></option>
+                                            <option data-tokens="<?= $cinema['TenRapChieu'] ?>"
+                                                value="<?= $cinema['MaRapChieu'] ?>">
+                                                <?= $cinema['TenRapChieu'] ?></option>
                                         <?php endforeach; ?>
 
                                     </select>
@@ -214,8 +214,8 @@ const trangthais = <?= json_encode($showStatuses) ?>;
                                     <select x-model="query['phims']" data-selected-text-format="count"
                                         data-live-search="true" multiple class="selectpicker !tw-w-full">
                                         <?php foreach ($movies as $movie): ?>
-                                                <option data-tokens="<?= $movie['TenPhim'] ?>" value="<?= $movie['MaPhim'] ?>">
-                                                    <?= $movie['TenPhim'] ?></option>
+                                            <option data-tokens="<?= $movie['TenPhim'] ?>" value="<?= $movie['MaPhim'] ?>">
+                                                <?= $movie['TenPhim'] ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
