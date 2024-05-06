@@ -126,7 +126,7 @@
                      </div>
                  </label>
              </div>
-             <?php if($GLOBALS['config']['env'] =='dev') :?>
+             <?php if (isset($GLOBALS['config']['env']) && $GLOBALS['config']['env'] == 'dev'): ?>
              <div>
                  <label class="checkout-button  tw-border-secondary tw-border-3"
                      for="<?= PaymentType::Mock_Succeed->value ?>">

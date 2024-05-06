@@ -49,7 +49,7 @@ function refetchAjax() {
   $("#cinemaList").html(loadingHtml);
   const queryStr = queryString.stringify(queryObject);
   $.ajax({
-    url: "/ajax/rap-chieu",
+    url: "/api/rap-chieu",
     type: "GET",
     data: {
       ...queryObject,
@@ -177,10 +177,10 @@ $("#cinema-form").on("submit", function (e) {
   const status = cinemaStatusSelect.val();
   const des = cinemaDesInput.val();
   const img = $("#cinema-image").val();
-  let url = "/ajax/rap-chieu";
+  let url = "/api/rap-chieu";
   if (formState == "update") {
     const id = $("#cinema-id").val();
-    url = `/ajax/rap-chieu/${id}/sua`;
+    url = `/api/rap-chieu/${id}/sua`;
   }
   const formData = new FormData();
   formData.append("TenRapChieu", name);
@@ -246,7 +246,7 @@ function showEditModal(id) {
     },
   });
 }
-///ajax/rap-chieu/{id}/xoa
+///api/rap-chieu/{id}/xoa
 let currentSelectedId = null;
 function showDeleteModal(id) {
   currentSelectedId = id;
@@ -256,7 +256,7 @@ function showDeleteModal(id) {
 
 function onRecoverCinema(id) {
   $.ajax({
-    url: `/ajax/rap-chieu/${id}/xoa`,
+    url: `/api/rap-chieu/${id}/xoa`,
     type: "POST",
     success: function (data) {
       refetchAjax();
@@ -277,7 +277,7 @@ function onRecoverCinema(id) {
 
 $("#btn-delete").on("click", function () {
   $.ajax({
-    url: `/ajax/rap-chieu/${currentSelectedId}/xoa`,
+    url: `/api/rap-chieu/${currentSelectedId}/xoa`,
     type: "POST",
     success: function (data) {
       refetchAjax();

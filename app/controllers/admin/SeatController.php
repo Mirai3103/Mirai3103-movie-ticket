@@ -68,21 +68,21 @@ class SeatController
     }
 
 
-    #[Route("/ajax/loai-ghe", "POST")]
+    #[Route("/api/loai-ghe", "POST")]
     public static function create()
     {
         needAnyPermissionOrDie([Permission::CREATE_LOAIGHE]);
         $result = SeatTypeService::createNewSeatType($_POST);
         return json($result);
     }
-    #[Route("/ajax/loai-ghe/{id}/sua", "POST")]
+    #[Route("/api/loai-ghe/{id}/sua", "POST")]
     public static function update($id)
     {
         needAnyPermissionOrDie([Permission::UPDATE_LOAIGHE]);
         $result = SeatTypeService::updateSeatType($_POST, $id);
         return json($result);
     }
-    #[Route("/ajax/loai-ghe/{id}/toggleHienThi", "POST")]
+    #[Route("/api/loai-ghe/{id}/toggleHienThi", "POST")]
     public static function toggleHienThi($id)
     {
         needAnyPermissionOrDie([Permission::DELETE_LOAIGHE]);

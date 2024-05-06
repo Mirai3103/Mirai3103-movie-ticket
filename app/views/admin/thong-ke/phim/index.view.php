@@ -163,7 +163,8 @@ $watch('query', () => {
                         </tr>
                     </template>
                     <template x-for="(item, index) in data" :key="index">
-                        <tr>
+                        <tr x-on:click="window.location.href = '/admin/thong-ke/phim/' + item.MaPhim "
+                            class="tw-cursor-pointer">
                             <td>
                                 <div class="col-name">
                                     <span x-text="item.MaPhim"></span>
@@ -199,7 +200,6 @@ $watch('query', () => {
     </div>
 </div>
 </div>
-
 <?php
 require ("app/views/admin/footer.php");
 ?>

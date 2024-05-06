@@ -282,8 +282,8 @@ $watch('selectedId',async (value) => {
                                             <div class="fs-6 fw-light" x-text="thucpham['MoTa']">
                                             </div>
                                         </div>
-                                        <div class="col-1 text-end">
-                                            x<?= $thucpham['SoLuong'] ?>
+                                        <div class="col-1 text-end" x-text="'x' +thucpham['SoLuong']">
+
                                         </div>
                                         <div class="col-3 text-end tw-font-semibold tw-text-lg"
                                             x-text="toVnd(thucpham['ThanhTien'])">

@@ -105,7 +105,7 @@ function refetchAjax() {
   // gọi ajax để lấy dữ liệu
   $("#table-body").html(loadingRowHtml);
   $.ajax({
-    url: "/ajax/combo",
+    url: "/api/combo",
     type: "GET",
     data: {
       ...queryObj,

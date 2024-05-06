@@ -140,7 +140,7 @@ function refetchAjax() {
   // gọi ajax để lấy dữ liệu
   $("#table-body").html(loadingRowHtml);
   $.ajax({
-    url: "/ajax/san-pham",
+    url: "/api/san-pham",
     type: "GET",
     data: {
       ...queryObj,

@@ -48,7 +48,7 @@ class ProductController
         $result = ComboService::deleteFoodnDrink($id);
         return json($result);
     }
-    #[Route("/ajax/san-pham", "GET")]
+    #[Route("/api/san-pham", "GET")]
     public static function getProducts()
     {
         needAnyPermissionOrDie([Permission::READ_THUCPHAM, Permission::UPDATE_THUCPHAM, Permission::DELETE_THUCPHAM, Permission::CREATE_THUCPHAM]);

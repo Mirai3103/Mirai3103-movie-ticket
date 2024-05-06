@@ -255,72 +255,100 @@ $watch('query',async (value) => {
 
                                 </div>
                             </td>
-                            <td class="tw-p-2 tw-border-b tw-border-gray-50">
+                            <td>
 
-                                <a tabindex="0" role="button"
-                                    class="tw-btn tw-btn-sm tw-btn-warning tw-text-warning tw-aspect-square  tw-btn-ghost"
-                                    type="button" :href="`/admin/phong-chieu/${item.MaPhongChieu}/sua`">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
-                                        <path
-                                            d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
-                                        <path d="M16 5l3 3" />
-                                    </svg>
-                                </a>
+                                <div class="tw-p-2 tw-border-b tw-border-gray-50 tw-flex">
+                                    <a tabindex="0" role="button"
+                                        class="tw-btn  p-1 tw-btn-sm tw-btn-warning tw-text-warning tw-aspect-square  tw-btn-ghost"
+                                        type="button" :href="`/admin/phong-chieu/${item.MaPhongChieu}/sua`">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                            <path
+                                                d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                            <path d="M16 5l3 3" />
+                                        </svg>
+                                    </a>
+                                    <a tabindex="0" role="button"
+                                        class="tw-btn tw-btn-sm  p-1 tw-btn-warning tw-text-danger tw-aspect-square  tw-btn-ghost">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M4 7l16 0" />
+                                            <path d="M10 11l0 6" />
+                                            <path d="M14 11l0 6" />
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                        </svg>
+                                    </a>
+                                    <a tabindex="0" role="button"
+                                        class="tw-btn tw-btn-sm  p-1 tw-btn-warning tw-text-base-content tw-aspect-square  tw-btn-ghost">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-eye-off">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" />
+                                            <path
+                                                d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.055 9.055 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87" />
+                                            <path d="M3 3l18 18" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
         </div>
-        </td>
-        </tr>
-        </template>
+        <div class="tw-flex tw-items-center tw-p-4 tw-border-t tw-border-gray-50">
+            <div
+                class="tw-flex tw-grow tw-gap-x-2 tw-items-center tw-font-sans tw-text-sm tw-antialiased tw-font-normal tw-leading-normal text-blue-gray-900">
+                <span>
+                    Hiển thị:
+                </span>
+                <script>
+                const pageLimits = [10, 20, 30, 40, 50];
+                </script>
+                <select class="tw-select  tw-select-sm tw-select-bordered tw-w-full tw-max-w-20" x-model="query.limit">
+                    <template x-for="limit in pageLimits">
+                        <option x-text="limit" :value="limit" :selected="limit == query.limit"></option>
+                    </template>
+                </select>
+                <span x-text="` trên ${totalItems} kết quả`">
 
-
-        </tbody>
-        </table>
-    </div>
-    <div class="tw-flex tw-items-center tw-p-4 tw-border-t tw-border-gray-50">
-        <div
-            class="tw-flex tw-grow tw-gap-x-2 tw-items-center tw-font-sans tw-text-sm tw-antialiased tw-font-normal tw-leading-normal text-blue-gray-900">
-            <span>
-                Hiển thị:
-            </span>
-            <script>
-            const pageLimits = [10, 20, 30, 40, 50];
-            </script>
-            <select class="tw-select  tw-select-sm tw-select-bordered tw-w-full tw-max-w-20" x-model="query.limit">
-                <template x-for="limit in pageLimits">
-                    <option x-text="limit" :value="limit" :selected="limit == query.limit"></option>
-                </template>
-            </select>
-            <span x-text="` trên ${totalItems} kết quả`">
-
-            </span>
-        </div>
-
-        <div class="tw-flex tw-gap-2">
-
-            <button x-bind:disabled="query.page == 1" x-on:click="query.page = query.page - 1"
-                class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
-                type="button">
-                Trang trước
-            </button>
-            <div>
-                <div
-                    class="tw-relative tw-h-10 tw-max-h-[40px] tw-w-10 tw-max-w-[40px] tw-select-none tw-rounded-lg tw-bg-gray-900 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-medium tw-uppercase tw-text-white tw-shadow-md tw-shadow-gray-900/10 tw-transition-all hover:tw-shadow-lg hover:tw-shadow-gray-900/20 focus:tw-opacity-[0.85] focus:tw-shadow-none active:tw-opacity-[0.85] active:tw-shadow-none disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none">
-                    <span
-                        class="tw-absolute tw-transform tw--translate-x-1/2 tw--translate-y-1/2 tw-top-1/2 tw-left-1/2"
-                        x-text="query.page">1</span>
-                </div>
+                </span>
             </div>
-            <button x-bind:disabled="query.page * query.limit >= totalItems" x-on:click="query.page = query.page + 1"
-                class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
-                type="button">
-                Trang sau
-            </button>
+
+            <div class="tw-flex tw-gap-2">
+
+                <button x-bind:disabled="query.page == 1" x-on:click="query.page = query.page - 1"
+                    class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
+                    type="button">
+                    Trang trước
+                </button>
+                <div>
+                    <div
+                        class="tw-relative tw-h-10 tw-max-h-[40px] tw-w-10 tw-max-w-[40px] tw-select-none tw-rounded-lg tw-bg-gray-900 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-medium tw-uppercase tw-text-white tw-shadow-md tw-shadow-gray-900/10 tw-transition-all hover:tw-shadow-lg hover:tw-shadow-gray-900/20 focus:tw-opacity-[0.85] focus:tw-shadow-none active:tw-opacity-[0.85] active:tw-shadow-none disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none">
+                        <span
+                            class="tw-absolute tw-transform tw--translate-x-1/2 tw--translate-y-1/2 tw-top-1/2 tw-left-1/2"
+                            x-text="query.page">1</span>
+                    </div>
+                </div>
+                <button x-bind:disabled="query.page * query.limit >= totalItems"
+                    x-on:click="query.page = query.page + 1"
+                    class="tw-select-none tw-rounded-lg tw-border tw-border-gray-900 tw-py-2 tw-px-4 tw-text-center tw-align-middle tw-font-sans tw-text-xs tw-font-bold  tw-text-gray-900 tw-transition-all hover:tw-opacity-75 focus:tw-ring focus:tw-ring-gray-300 active:tw-opacity-[0.85] disabled:tw-pointer-events-none disabled:tw-opacity-50 disabled:tw-shadow-none"
+                    type="button">
+                    Trang sau
+                </button>
+            </div>
         </div>
-    </div>
     </div>
 </main>
 

@@ -52,9 +52,9 @@ $("#type-seat-detail-form").on("submit", function (e) {
   const price = txtPriceTypeSeat.value;
   const des = txtDesTypeSeat.value;
   const rong = $("#type-seat-seat").val();
-  let url = "/ajax/loai-ghe";
+  let url = "/api/loai-ghe";
   if (id) {
-    url = `/ajax/loai-ghe/${id}/sua`;
+    url = `/api/loai-ghe/${id}/sua`;
   }
   const formData = new FormData();
   formData.append("TenLoaiGhe", name);
@@ -135,7 +135,7 @@ function showDeleteModal(id) {
 
 function onRecoverLoaiGhe(id) {
   $.ajax({
-    url: `/ajax/loai-ghe/${id}/toggleHienThi`,
+    url: `/api/loai-ghe/${id}/toggleHienThi`,
     type: "POST",
     success: function (data) {
       refetchAjax();
@@ -156,7 +156,7 @@ function onRecoverLoaiGhe(id) {
 
 $("#btn-delete").on("click", function () {
   $.ajax({
-    url: `/ajax/loai-ghe/${currentSelectedId}/toggleHienThi`,
+    url: `/api/loai-ghe/${currentSelectedId}/toggleHienThi`,
     type: "POST",
     success: function (data) {
       refetchAjax();

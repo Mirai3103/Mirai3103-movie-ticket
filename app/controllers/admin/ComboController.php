@@ -67,7 +67,7 @@ class ComboController
         $result = ComboService::deleteCombo($id);
         return json($result);
     }
-    #[Route("/ajax/combo", "GET")]
+    #[Route("/api/combo", "GET")]
     public static function getProducts()
     {
         needAnyPermissionOrDie([Permission::READ_COMBO, Permission::UPDATE_COMBO, Permission::DELETE_COMBO, Permission::CREATE_COMBO]);

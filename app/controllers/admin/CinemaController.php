@@ -59,7 +59,7 @@ class CinemaController
         ]);
     }
 
-    #[Route("/ajax/rap-chieu", "GET")]
+    #[Route("/api/rap-chieu", "GET")]
     public static function getTableRowAjax()
     {
         needAnyPermissionOrDie([Permission::READ_RAPCHIEU, Permission::UPDATE_RAPCHIEU, Permission::DELETE_RAPCHIEU, Permission::CREATE_RAPCHIEU]);
@@ -70,21 +70,21 @@ class CinemaController
             'cinemaStatuses' => $cinemaStatuses
         ]);
     }
-    #[Route("/ajax/rap-chieu", "POST")]
+    #[Route("/api/rap-chieu", "POST")]
     public static function createCinema()
     {
         needAnyPermissionOrDie([Permission::CREATE_RAPCHIEU]);
         $result = CinemaService::createNewCinema($_POST);
         return json($result);
     }
-    #[Route("/ajax/rap-chieu/{id}/sua", "POST")]
+    #[Route("/api/rap-chieu/{id}/sua", "POST")]
     public static function editCinema($id)
     {
         needAnyPermissionOrDie([Permission::UPDATE_RAPCHIEU]);
         $result = CinemaService::updateCinema($_POST, $id);
         return json($result);
     }
-    #[Route("/ajax/rap-chieu/{id}/xoa", "POST")]
+    #[Route("/api/rap-chieu/{id}/xoa", "POST")]
     public static function toggleHideCinema($id)
     {
         needAnyPermissionOrDie([Permission::DELETE_RAPCHIEU]);
