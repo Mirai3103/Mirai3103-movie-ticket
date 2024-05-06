@@ -153,22 +153,32 @@ $watch('selectedId',async (value) => {
         </div>
         <dialog id="my_modal_2" class="tw-modal ">
             <div class="tw-modal-box tw-w-11/12 tw-max-w-5xl ">
+                <form method="dialog">
+                    <button
+                        class="tw-btn tw-btn-sm tw-btn-circle tw-btn-ghost tw-absolute tw-right-2 tw-top-2">✕</button>
+                </form>
                 <div class='tw-flex tw-flex-col tw-pl-6'>
-                    <h3 class="tw-font-bold tw-text-lg" x-text="'Chi tiết hóa đơn #' + selectedId"></h3>
+                    <div
+                        class='tw-flex tw-flex-col tw-gap-y-2 tw-pr-2 md:tw-flex-row tw-mb-3 tw-justify-between tw-items-center'>
+                        <h3 class="tw-font-bold md:tw-text-lg tw-text-base" x-text="'Chi tiết hóa đơn #' + selectedId">
+                        </h3>
+                        <img :src="selectedId?`https://barcode.orcascan.com/?type=code128&format=svg&data=${selectedId}`:''"
+                            class=" tw-h-14 tw-object-cover tw-rounded-md tw-border tw-border-gray-200" alt="">
+                    </div>
 
 
-                    <div class="row tw-w-full">
+                    <div class="row ">
                         <!-- chi tiết hóa đơn -->
                         <div class="detail-bill-container col-12 p-0 m-0">
                             <!-- chi tiết vé đã đặt -->
                             <div class="ticket-container row w-100 shadow p-3">
-                                <div class="fs-4 fw-bold mb-3" x-text="selectedOrder?.['SuatChieu']['TenPhim']">
-                                    >
+                                <div class="md:tw-text-lg fw-bold mb-3"
+                                    x-text="selectedOrder?.['SuatChieu']['TenPhim']">
                                 </div>
-                                <div class="fw-semibold fs-5" x-text="selectedOrder?.['SuatChieu']['TenRapChieu']">
+                                <div class="fw-semibold md:tw-text-lg"
+                                    x-text="selectedOrder?.['SuatChieu']['TenRapChieu']">
                                 </div>
                                 <div class="fw-normal" x-text="selectedOrder?.['SuatChieu']['DiaChi']">
-                                    >
                                 </div>
 
                                 <div class="d-flex align-items-stretch mt-3">
@@ -199,8 +209,10 @@ $watch('selectedId',async (value) => {
 
                                         <div class="fw-semibold">Số vé</div>
                                         <template x-for="([maLoaiVe, ve]) in Object.entries(groupByTicketType||[])">
-                                            <div class="fs-5 fw-normal" x-text="ve[0]['TenLoaiVe']"></div>
-                                            <div class="fs-5 fw-normal" x-text="ve.length"></div>
+                                            <div class="tw-flex tw-gap-x-2 tw-col-span-2 tw-items-center">
+                                                <div class="fs-5 fw-normal" x-text="ve[0]['TenLoaiVe']"></div>
+                                                <div class="fs-5 fw-normal" x-text="ve.length"></div>
+                                            </div>
                                         </template>
 
                                     </div>
@@ -214,8 +226,10 @@ $watch('selectedId',async (value) => {
 
 
                                         <template x-for="([maLoaiGhe, ve]) in Object.entries(groupBySeatType||[])">
-                                            <div class="fs-5 fw-normal" x-text="ve[0]['TenLoaiGhe']"></div>
-                                            <div class="fs-5 fw-normal" x-text="ve.map(v => v['SoGhe']).join(', ')">
+                                            <div class="tw-flex tw-gap-x-2 tw-col-span-2 tw-items-center">
+                                                <div class="fs-5 fw-normal" x-text="ve[0]['TenLoaiGhe']"></div>
+                                                <div class="fs-5 fw-normal" x-text="ve.map(v => v['SoGhe']).join(', ')">
+                                                </div>
                                             </div>
                                         </template>
 
@@ -225,7 +239,7 @@ $watch('selectedId',async (value) => {
 
                             <div style="min-height: 0"
                                 class="prucduct-container flex tw-flex-col -tw-ml-3 w-100 shadow p-3 tw-overflow-y-auto tw-max-h-[400px]">
-                                <div class="fs-4 fw-semibold mb-3">Bắp
+                                <div class="md:tw-text-lg fw-semibold mb-3">Bắp
                                     nước</div>
                                 <template
                                     x-if="selectedOrder?.['Combos'].length == 0 && selectedOrder?.['ThucPhams'].length == 0">
@@ -242,7 +256,7 @@ $watch('selectedId',async (value) => {
                                         <div class="col-7">
                                             <div class="fw-medium fs-5" x-text="combo['TenCombo']">
                                             </div>
-                                            <div class="fs-6 fw-light" x-text="combo['MoTa']">
+                                            <div class="fs-6 tw-hidden md:tw-block fw-light" x-text="combo['MoTa']">
                                             </div>
                                         </div>
                                         <div class="col-1 text-end">
@@ -282,7 +296,7 @@ $watch('selectedId',async (value) => {
                             <!-- hết combo bắp nước -->
                             <div class=" prucduct-container row w-100 shadow p-3 !tw-min-h-0 !tw-mt-7">
                                 <div class="">
-                                    <p class="fs-4 m-0 fw-semibold p-0 ">Khuyến
+                                    <p class="fs-4 m-0 fw-semibold p-0 md:tw-text-lg">Khuyến
                                         mãi</p>
                                 </div>
                                 <template x-if="selectedOrder?.['KhuyenMai']">
@@ -311,7 +325,7 @@ $watch('selectedId',async (value) => {
                             </div>
                             <div class=" prucduct-container row w-100 shadow p-3 !tw-min-h-0 !tw-mt-7">
                                 <div class="row pt-4 px-4">
-                                    <p class="fs-4 m-0 fw-semibold p-0 ">Thanh
+                                    <p class="fs-4 m-0 fw-semibold p-0 md:tw-text-lg">Thanh
                                         toán</p>
                                 </div>
 
@@ -328,6 +342,8 @@ $watch('selectedId',async (value) => {
 
 
                                 <div class="row justify-content-end p-4">
+                                    <p class="fs-4 m-0 fw-semibold p-0 md:tw-text-lg">Thành tiền</p>
+
                                     <table class="table table-sm table-borderless text-end">
                                         <tr>
                                             <td class="text-dark-emphasis">
@@ -382,7 +398,8 @@ $watch('selectedId',async (value) => {
                     query: {
                         trang: 1,
                         'sap-xep': 'NgayGioThanhToan',
-                        'thu-tu': 'DESC'
+                        'thu-tu': 'DESC',
+                        'limit': 10
                     },
                       createOrderFn: function (orderBy) {
                         if (this.query['sap-xep'] === orderBy) {
@@ -402,6 +419,9 @@ $watch('selectedId',async (value) => {
 
                         this.orders = data.data;
                         this.total = response.headers['x-total-count'];
+                    },
+                    getTotalPage: function() {
+                        return Math.ceil(this.total / this.query.limit);
                     },
                 }" x-init="fetchOrders" class="shadow bg-white rounded p-sm-0 p-md-4 tw-max-w-full tw-overflow-x-auto">
                     <table class="table">
@@ -453,6 +473,23 @@ $watch('selectedId',async (value) => {
                                 </tr>
                             </template>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="5">
+
+                                    <div class="tw-w-full tw-flex tw-items-center tw-justify-center">
+                                        <div class="tw-join">
+                                            <template x-for="(item, index) in Array.from({length: getTotalPage()})">
+                                                <button x-on:click="query.trang = index + 1; fetchOrders()"
+                                                    :class="{'tw-btn-active': query.trang == index + 1}"
+                                                    class="tw-join-item tw-btn" x-text="index + 1"></button>
+
+                                            </template>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
