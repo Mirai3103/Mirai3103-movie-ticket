@@ -462,20 +462,22 @@ $watch('selectedSchedule',async (value) => {
                     class="mv__schedule-heading justify-content-center text-center mt-xxl-0 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-5">
                     <span class="text-center text-warning"> LỊCH CHIẾU </span>
                 </div>
-                <div class="swiper-wrapper mt-5 justify-content-center tw-max-w-[100vh] tw-overflow-x-auto">
+                <div class="swiper-wrapper mt-5 justify-content-center   tw-max-w-[100vw] tw-overflow-x-auto">
+                    <div class='tw-invisible !tw-w-32 tw-min-w-32' x-show="window.innerWidth < 576"></div>
+
                     <template x-if="Object.keys(groupedShows).length === 0">
                         <div class="alert alert-warning tw-text-2xl" role="alert">
                             Phim chưa có lịch chiếu sắp tới
                         </div>
                     </template>
                     <template x-for="date in Object.keys(groupedShows)" :key="date">
-                        <button class="box-time text-center tw-px-2" x-on:click="
+                        <button class="box-time text-center tw-px-2 md:tw-px-0" x-on:click="
                         toggleActive($event.currentTarget);
                         selectedSchedule = date;
                         ">
                             <h4 class="date mt-3" x-text="dayjs(date).format('DD/MM')"></h4>
 
-                            <p class="day" x-text="dayjs(date).getDayOfWeek()">Thứ Ba</p>
+                            <p class="day tw-whitespace-nowrap" x-text="dayjs(date).getDayOfWeek()">Thứ Ba</p>
                         </button>
                     </template>
 
@@ -703,9 +705,10 @@ $watch('selectedSchedule',async (value) => {
                 <div class="carousel-inner">
 
                     <?php foreach ($combos as $combo): ?>
-                        <div class="carousel-item active">
-                            <div class="food-item">
-                                <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                        <div class="carousel-item ">
+                            <div class="food-item tw-w-36 sm:tw-w-auto">
+                                <div
+                                    class="food-item__image-container !tw-h-auto col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
                                     <img src="<?= $combo['HinhAnh'] ?>" alt="" class="food-item__img">
                                 </div>
 
@@ -713,7 +716,7 @@ $watch('selectedSchedule',async (value) => {
                                     class="food-item__detail col-xl-7 col-lg-7 col-md-7 col-12 tw-justify-between tw-flex tw-flex-col">
                                     <div>
                                         <span
-                                            class="food-item__name d-block justify-content-center align-items-center text-center">
+                                            class="food-item__name  d-block justify-content-center align-items-center text-center">
                                             <?= $combo['TenCombo'] ?>
                                         </span>
                                         <span class="food-item__des d-block tw-line-clamp-2">
@@ -725,8 +728,8 @@ $watch('selectedSchedule',async (value) => {
                                             <?= number_format($combo['GiaCombo']) ?>đ
                                         </span>
                                         <div
-                                            class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                            <div class="count-btn count-minus" x-on:click="
+                                            class="food-item__btn tw-w-full tw-max-w-32 d-flex mt-3 mb-2 justify-content-center align-items-center">
+                                            <div class="count-btn tw-px-2 count-minus" x-on:click="
                                             const index = selectedCombo.findIndex(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>);
                                             if(index !== -1) {
                                                 selectedCombo[index].count = Math.max(selectedCombo[index].count - 1, 0);
@@ -738,11 +741,11 @@ $watch('selectedSchedule',async (value) => {
                                             ">
                                                 <i class="fa-solid fa-minus"></i>
                                             </div>
-                                            <div class="count-number mx-2"
+                                            <div class="count-number mx-2 tw-text-center tw-flex-1"
                                                 x-text="selectedCombo.find(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>)?.count ?? 0">
                                                 0
                                             </div>
-                                            <div class="count-btn count-plus" x-on:click="
+                                            <div class="count-btn count-plus tw-px-1" x-on:click="
                                             const index = selectedCombo.findIndex(combo => combo.MaCombo == <?= $combo['MaCombo'] ?>);
                                             if(index !== -1) {
                                                 selectedCombo[index].count += 1;
@@ -767,8 +770,9 @@ $watch('selectedSchedule',async (value) => {
 
                     <?php foreach ($foods as $food): ?>
                         <div class="carousel-item">
-                            <div class="food-item">
-                                <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+                            <div class="food-item tw-w-36 sm:tw-w-auto">
+                                <div
+                                    class="food-item__image-container !tw-h-auto col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
                                     <img src="<?= $food['HinhAnh'] ?>" alt="" class="food-item__img">
                                 </div>
 
@@ -788,8 +792,8 @@ $watch('selectedSchedule',async (value) => {
                                             <?= number_format($food['GiaThucPham']) ?>đ
                                         </span>
                                         <div
-                                            class="food-item__btn d-flex mt-3 mb-2 justify-content-center align-items-center">
-                                            <div class="count-btn count-minus" x-on:click="
+                                            class="food-item__btn d-flex tw-max-w-32 tw-w-full mt-3 mb-2 justify-content-center align-items-center">
+                                            <div class="count-btn count-minus tw-px-2" x-on:click="
                                     const index = selectedFood.findIndex(food => food.MaThucPham == <?= $food['MaThucPham'] ?>);
                                     if(index !== -1) {
                                         selectedFood[index].count = Math.max(selectedFood[index].count - 1, 0);
@@ -808,11 +812,11 @@ $watch('selectedSchedule',async (value) => {
                                     ">
                                                 <i class="fa-solid fa-minus"></i>
                                             </div>
-                                            <div class="count-number mx-2"
+                                            <div class="count-number mx-2 tw-text-center tw-flex-1"
                                                 x-text="selectedFood.find(food => food.MaThucPham == <?= $food['MaThucPham'] ?>)?.count ?? 0">
                                                 0
                                             </div>
-                                            <div class="count-btn count-plus" x-on:click="
+                                            <div class="count-btn count-plus tw-px-2" x-on:click="
                                         const index = selectedFood.findIndex(food => food.MaThucPham == <?= $food['MaThucPham'] ?>);
                                         if(index !== -1) {
                                             selectedFood[index].count += 1;
