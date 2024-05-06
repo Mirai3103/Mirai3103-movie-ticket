@@ -15,7 +15,6 @@ RUN docker-php-ext-install \
     mbstring \
     zip \
     gd
-
 WORKDIR /var/www/html
 
 COPY . /var/www/html

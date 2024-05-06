@@ -130,4 +130,9 @@ class StatisticController
     {
         return json(JsonResponse::ok(StatisticService::overviewMovie($_GET)));
     }
+
+    #[Route(path:'/admin/thong-ke/chi-tiet-phim', method:'GET')]
+    public static function movieGeneralDetail() {
+        return view('admin/thong-ke/chi-tiet-phim/index');
+    }
 }
