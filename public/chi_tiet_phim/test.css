@@ -1,6 +1,3 @@
-.row {
-}
-
 /* Movie content */
 
 .detail__wr {
@@ -153,9 +150,6 @@
   background-color: #fff;
 }
 
-.mv__schedule-heading {
-}
-
 .mv__schedule-heading span {
   font-weight: 750;
   font-family: "Anton", sans-serif;
@@ -196,9 +190,6 @@
 
 .theater-address {
   font-size: 1.25rem;
-}
-
-.ctype-items {
 }
 
 .ctype__item {
@@ -322,9 +313,6 @@
   top: 50%;
 }
 
-.seat-table {
-}
-
 .seat-table table {
   width: 100%;
 }
@@ -348,9 +336,6 @@
   border-radius: 2px;
   border: solid #ebe62b;
   background-color: #ebe62b;
-}
-
-.seat-couple {
 }
 
 .seat-booked,

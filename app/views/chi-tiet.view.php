@@ -689,7 +689,7 @@ $watch('selectedSchedule',async (value) => {
 
 
     <!-- Combo -->
-    <div class="combo pt-sm-5 mb-5 mt-3" x-show="selectedShow !== null">
+    <div class="combo pt-sm-5 mb-5 mt-5 mt-sm-3">
         <div class="container-fluid combo__heading">
             <div class="row">
                 <div class="combo__title justify-content-center text-center">
@@ -703,7 +703,7 @@ $watch('selectedSchedule',async (value) => {
                 <div class="carousel-inner">
 
                     <?php foreach ($combos as $combo): ?>
-                    <div class="carousel-item ">
+                    <div class="carousel-item active">
                         <div class="food-item">
                             <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
                                 <img src="<?= $combo['HinhAnh'] ?>" alt="" class="food-item__img">
@@ -766,7 +766,7 @@ $watch('selectedSchedule',async (value) => {
                     <?php endforeach; ?>
 
                     <?php foreach ($foods as $food): ?>
-                    <div class="carousel-item ">
+                    <div class="carousel-item">
                         <div class="food-item">
                             <div class="food-item__image-container col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
                                 <img src="<?= $food['HinhAnh'] ?>" alt="" class="food-item__img">
@@ -904,8 +904,8 @@ $watch('selectedSchedule',async (value) => {
                     </div>
                 </div>
                 <div class="row text-warning d-flex mt-2">
-                    <div class="col-1"></div>
-                    <div class="bill-time col-2 justify-content-center align-items-center">
+                <div class="col-lg-1 col-1"></div>
+                    <div class="bill-time col-lg-2 col-4 justify-content-center align-items-center">
                         <span class="d-block">Thời gian giữ vé: </span>
                         <span class="bill-time-countdown fs-4" id="countdown">
                             <?php
@@ -915,7 +915,7 @@ $watch('selectedSchedule',async (value) => {
                             ?>
                         </span>
                     </div>
-                    <div class="col-3"></div>
+                    <div class="col-lg-3 col-1"></div>
                     <div class="bill-detail col-6">
                         <div class="ticket-price fs-5">
                             <span class="ticket-price__title"> Tạm tính: </span>
