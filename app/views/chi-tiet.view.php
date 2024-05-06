@@ -74,6 +74,8 @@ const ageTags = {
         width: 0,
         height: 0
     },
+    SEAT_SIZE: 40,
+    SEAT_GAP: 5,
     isDoneSelecting: false,
     getCurrentShowInfo: function() {
         return groupedShows[this.selectedSchedule].find(show => show.MaXuatChieu == this.selectedShow.MaXuatChieu);
@@ -217,6 +219,11 @@ const ageTags = {
     }
 }
 " x-init="
+const viewPortWidth = window.innerWidth;
+if(viewPortWidth < 576) {
+    SEAT_SIZE = 30;
+    SEAT_GAP = 3;
+}
 $watch('isDoneSelecting', (value) => {
     if(value) {
         const selectedTicketTypeIds = selectedTicketTypes.map(type => type.MaLoaiVe);
@@ -240,7 +247,7 @@ $watch('selectedShow',async (value) => {
       await axios.get(`/api/suat-chieu/${value.MaXuatChieu}/ghe`).then(res => {
        const ChieuDaiInt = parseInt(ChieuDai);
        const ChieuRongInt = parseInt(ChieuRong);
-       roomSize =calculateRoomSize(ChieuDaiInt,ChieuRongInt);
+       roomSize =calculateRoomSize(ChieuDaiInt,ChieuRongInt,SEAT_SIZE,SEAT_GAP);
        let cells = Array.from({length:ChieuDaiInt*ChieuRongInt},(v,i) => {
             return {
                 ...emptySeat,
@@ -455,14 +462,14 @@ $watch('selectedSchedule',async (value) => {
                     class="mv__schedule-heading justify-content-center text-center mt-xxl-0 mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0 mt-5">
                     <span class="text-center text-warning"> LỊCH CHIẾU </span>
                 </div>
-                <div class="swiper-wrapper mt-5 justify-content-center">
+                <div class="swiper-wrapper mt-5 justify-content-center tw-max-w-[100vh] tw-overflow-x-auto">
                     <template x-if="Object.keys(groupedShows).length === 0">
                         <div class="alert alert-warning tw-text-2xl" role="alert">
                             Phim chưa có lịch chiếu sắp tới
                         </div>
                     </template>
                     <template x-for="date in Object.keys(groupedShows)" :key="date">
-                        <button class="box-time text-center" x-on:click="
+                        <button class="box-time text-center tw-px-2" x-on:click="
                         toggleActive($event.currentTarget);
                         selectedSchedule = date;
                         ">
@@ -475,19 +482,19 @@ $watch('selectedSchedule',async (value) => {
                 </div>
             </div>
         </div>
-        <div x-show="Object.keys(groupedShows).length !== 0"
-            class="container-fluid movie__schedule-details   mt-4 pt-5 pb-1 position-relative">
-            <div class="movie__schedule-item container !tw-pb-2 bg-white rounded-2 pt-5 pt-lg-3 ps-5 my-xl-5">
+        <div x-show="Object.keys(groupedShows).length !== 0" class="container-fluid movie__schedule-details 
+            tw-px-2 md:tw-px-8
+            mt-4 pt-5 pb-1 position-relative">
+            <div
+                class="movie__schedule-item container !tw-pb-2 bg-white rounded-2 pt-5 pt-lg-3 px-3 md:tw-px-8 my-xl-5">
                 <template x-if="selectedSchedule === null">
-                    <div role="alert" class="tw-alert tw-my-3 tw-alert-info">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            class="stroke-current shrink-0 w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>
-                            Vui lòng chọn ngày để xem rạp chiếu
-                        </span>
+                    <div role="alert" class="tw-alert tw-my-3 tw-alert-info tw-flex tw-items-center tw-justify-center">
+                        <div>
+
+                            <span>
+                                Vui lòng chọn ngày để xem rạp chiếu
+                            </span>
+                        </div>
                     </div>
                 </template>
                 <template x-if="isFetchingCinemas">
@@ -560,7 +567,7 @@ $watch('selectedSchedule',async (value) => {
 
                         <div class="col-xl-4 col-lg-4 col-md-4 col-12 mt-xl-0 mt-lg-0 mt-md-0 mt-2">
                             <div class="ticket__item px-2">
-                                <div class="ticket-detail">
+                                <div class="ticket-detail tw-w-full tw-grow">
                                     <span class="ticket-type d-block">
                                         <?= $loaiVe['TenLoaiVe'] ?>
                                     </span>
@@ -970,10 +977,8 @@ const seatTypes = [...realSeats, emptySeat, bookedSeat].map((item) => {
 function darkerColor(color) {
     return tinycolor(color).darken(30).toString();
 }
-const SEAT_SIZE = 40;
-const SEAT_GAP = 5;
 
-function calculateRoomSize(ChieuDai, ChieuRong) {
+function calculateRoomSize(ChieuDai, ChieuRong, SEAT_SIZE, SEAT_GAP) {
     return {
         width: ChieuRong * SEAT_SIZE + (ChieuRong + 1) * SEAT_GAP,
         height: ChieuDai * SEAT_SIZE + (ChieuDai + 1) * SEAT_GAP

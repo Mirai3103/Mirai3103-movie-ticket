@@ -236,7 +236,8 @@ class UserService
         $secretKey = $GLOBALS['config']['Auth']['secret'];
         $rememberTime = $GLOBALS['config']['Auth']['remember_time_in_days'];
         $userId = $user['MaNguoiDung'];
-        $rawHash = "$userId";
+        $password = $user['TaiKhoan']['MatKhau'];
+        $rawHash = "$userId|$password"; // để tránh trường hợp người dùng đổi mật khẩu thì cookie vẫn còn
         $hash = hash_hmac('sha256', $rawHash, $secretKey);
         $cookieValue = "$userId|$hash";
         setcookie(
@@ -291,25 +292,30 @@ class UserService
                 return;
             }
             $userId = $parts[0];
+
+            $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
+            $user = Database::queryOne($query, [$userId]);
+
+            if ($user) {
+                $query = "SELECT MaTaiKhoan,MatKhau, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE MaNguoiDung = ?;";
+                $account = Database::queryOne($query, [$userId]);
+                $trangThai = $account['TrangThai'];
+                if ($trangThai == TrangThaiTaiKhoan::DangBiKhoa->value) {
+                    self::logout();
+                    return;
+                }
+                $user['TaiKhoan'] = $account;
+            }
             $hash = $parts[1];
-            $rawHash = "$userId";
+            $userPassword = $user['TaiKhoan']['MatKhau'];
+            $rawHash = "$userId|$userPassword";
             $expectedHash = hash_hmac('sha256', $rawHash, $secretKey);
             if ($hash === $expectedHash) {
-                $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
-                $user = Database::queryOne($query, [$userId]);
-
                 if ($user) {
-                    $query = "SELECT MaTaiKhoan, TrangThai,LoaiTaiKhoan,MaNhomQuyen FROM TaiKhoan WHERE MaNguoiDung = ?;";
-                    $account = Database::queryOne($query, [$userId]);
-                    $trangThai = $account['TrangThai'];
-                    if ($trangThai == TrangThaiTaiKhoan::DangBiKhoa->value) {
-                        self::logout();
-                        return;
-                    }
-                    $user['TaiKhoan'] = $account;
-
                     self::setSession($user);
                 }
+            } else {
+                self::logout();
             }
         }
     }

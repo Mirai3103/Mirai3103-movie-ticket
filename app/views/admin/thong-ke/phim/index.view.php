@@ -12,7 +12,7 @@ require ("app/views/admin/header.php");
         'the-loais': [],
     },
     isLoaded: false,
-    currentSortDirection: 'desc',
+    currentSortDirection: 'asc',
     currentSortColumn: 'totalMoney',
     sort(column) {
         if (this.currentSortColumn === column) {
@@ -59,8 +59,8 @@ $watch('query', () => {
                                 <select x-model="query['the-loais']" class="selectpicker" multiple
                                     data-live-search="true">
                                     <?php foreach ($categories as $category): ?>
-                                        <option value="<?= $category['MaTheLoai'] ?>"><?= $category['TenTheLoai'] ?>
-                                        </option>
+                                    <option value="<?= $category['MaTheLoai'] ?>"><?= $category['TenTheLoai'] ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
@@ -118,7 +118,7 @@ $watch('query', () => {
                                 Tên phim
                             </div>
                         </th>
-                        <th scope="col-1">
+                        <th scope="col-1" x-on:click="sort('totalVe')">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                 width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -128,7 +128,7 @@ $watch('query', () => {
                             </svg>
                             Vé bán
                         </th>
-                        <th scope="col-1">
+                        <th scope="col-1" x-on:click="sort('totalSuatChieu')">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                 width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -138,7 +138,7 @@ $watch('query', () => {
                             </svg>
                             Số suất chiếu
                         </th>
-                        <th scope="col-2">
+                        <th scope="col-2" x-on:click="sort('totalMoney')" style="cursor: pointer;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                 width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -199,16 +199,7 @@ $watch('query', () => {
     </div>
 </div>
 </div>
-<!-- javascript -->
-<!-- <script src="https://code.jquery.com/jquery-3.7.1.js"
-        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta3/js/bootstrap-select.min.js"
-        integrity="sha512-yrOmjPdp8qH8hgLfWpSFhC/+R9Cj9USL8uJxYIveJZGAiedxyIxwNw4RsLDlcjNlIRR4kkHaDHSmNHAkxFTmgg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="./assets/js/main.js"></script> -->
+
 <?php
 require ("app/views/admin/footer.php");
 ?>

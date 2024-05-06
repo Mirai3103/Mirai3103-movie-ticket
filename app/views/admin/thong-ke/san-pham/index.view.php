@@ -113,7 +113,7 @@ $watch('query', () => {
                                 Tên sản phẩm
                             </div>
                         </th>
-                        <th scope="col-1">
+                        <th scope="col-1" x-on:click="sort('totalAmount')">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                 width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -123,7 +123,7 @@ $watch('query', () => {
                             </svg>
                             Số lượng
                         </th>
-                        <th scope="col-2">
+                        <th scope="col-2" x-on:click="sort('totalMoney')">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-arrows-sort"
                                 width="16" height="16" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
                                 fill="none" stroke-linecap="round" stroke-linejoin="round">

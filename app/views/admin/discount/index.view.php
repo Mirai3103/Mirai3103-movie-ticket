@@ -77,9 +77,9 @@ const trangthais = <?= json_encode($statuses) ?>;
                     :class="{'button-nav-active': query['trang-thais']==undefined}"
                     x-on:click="query['trang-thais']=undefined;refresh()">
                 <?php foreach ($statuses as $status): ?>
-                    <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
-                        :class="{'button-nav-active': query['trang-thais'].includes('<?= $status['MaTrangThai'] ?>')}"
-                        x-on:click="query['trang-thais']=['<?= $status['MaTrangThai'] ?>'];refresh()">
+                <input type="button" class="btn button fw-semibold" value="<?= $status['Ten'] ?>"
+                    :class="{'button-nav-active': query['trang-thais']?.includes('<?= $status['MaTrangThai'] ?>')}"
+                    x-on:click="query['trang-thais']=['<?= $status['MaTrangThai'] ?>'];refresh()">
                 <?php endforeach; ?>
             </div>
         </div>

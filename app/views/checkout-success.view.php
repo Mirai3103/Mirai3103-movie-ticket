@@ -48,10 +48,12 @@ foreach ($seats as $seat) {
         <div
             class='tw-bg-[#045174] tw-mx-auto sm:tw-max-w-md md:tw-max-w-2xl tw-max-w-xs tw-p-3 md:tw-p-6 min-h-28 tw-border-2  tw-text-white tw-border-[#FFC700]'>
             <div class="tw-p-1 tw-flex tw-flex-col tw-gap-y-1">
-                <div class="tw-flex tw-gap-x-2 md:tw-gap-x-8">
-                    <div class="tw-flex-none tw-basis-1/3">
-                        <img class="tw-object-cover" style="display: inline-block;" src="<?= $show['HinhAnh'] ?>"
-                            alt="">
+                <div class="tw-flex tw-gap-x-2 md:tw-gap-x-8 tw-flex-col sm:tw-flex-row">
+                    <div class="tw-flex-none tw-basis-1/3 tw-flex tw-mb-4 sm:tw-mb-0">
+                        <img class="tw-object-cover
+                        tw-max-w-44
+                        tw-mx-auto
+                        " style="display: inline-block;" src="<?= $show['HinhAnh'] ?>" alt="">
                     </div>
                     <div class="tw-flex-1">
                         <div class='tw-flex tw-justify-between tw-items-center'>
@@ -89,14 +91,14 @@ foreach ($seats as $seat) {
                         <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Số vé</div>
                     </div>
                     <?php foreach ($ticketGroups as $ticketGroup): ?>
-                    <div class='tw-flex tw-flex-wrap tw-gap-x-4 tw-text-base'>
-                        <div class='tw-basis-1/3 tw-font-semibold '>
-                            <span><?= $ticketGroup[0]['TenLoaiVe'] ?></span>
+                        <div class='tw-flex tw-flex-wrap tw-gap-x-4 tw-text-base'>
+                            <div class='tw-basis-1/3 tw-font-semibold '>
+                                <span><?= $ticketGroup[0]['TenLoaiVe'] ?></span>
+                            </div>
+                            <div class='tw-basis-1/3 tw-font-semibold '>
+                                <span><?= count($ticketGroup) ?></span>
+                            </div>
                         </div>
-                        <div class='tw-basis-1/3 tw-font-semibold '>
-                            <span><?= count($ticketGroup) ?></span>
-                        </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
                 <div class='tw-flex tw-flex-col tw-mt-3  '>
@@ -105,17 +107,17 @@ foreach ($seats as $seat) {
                         <div class='tw-basis-1/3 tw-font-semibold tw-text-secondary'>Số Ghế</div>
                     </div>
                     <?php foreach ($seatGroups as $seatGroup): ?>
-                    <div class='tw-flex tw-flex-wrap tw-gap-x-4 tw-text-base'>
-                        <div class='tw-basis-1/3 tw-font-semibold '>
-                            <span><?= $seatGroup[0]['TenLoaiGhe'] ?></span>
-                        </div>
-                        <div class='tw-basis-1/3 tw-font-semibold '>
-                            <?php foreach ($seatGroup as $seat): ?>
-                            <span><?= $seat['SoGhe'] ?> </span>
+                        <div class='tw-flex tw-flex-wrap tw-gap-x-4 tw-text-base'>
+                            <div class='tw-basis-1/3 tw-font-semibold '>
+                                <span><?= $seatGroup[0]['TenLoaiGhe'] ?></span>
+                            </div>
+                            <div class='tw-basis-1/3 tw-font-semibold '>
+                                <?php foreach ($seatGroup as $seat): ?>
+                                    <span><?= $seat['SoGhe'] ?> </span>
 
-                            <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
 
@@ -123,16 +125,16 @@ foreach ($seats as $seat) {
                     <span class=' tw-font-semibold tw-text-secondary'>Bắp nước: </span>
                     <?php foreach ($foods as $food): ?>
 
-                    <span>
-                        <?= $food['TenThucPham'] ?> X
-                        <?= $bookingData['ThucPhams'][array_search($food['MaThucPham'], array_column($bookingData['ThucPhams'], 'MaThucPham'))]['SoLuong'] ?>
-                    </span>
+                        <span>
+                            <?= $food['TenThucPham'] ?> X
+                            <?= $bookingData['ThucPhams'][array_search($food['MaThucPham'], array_column($bookingData['ThucPhams'], 'MaThucPham'))]['SoLuong'] ?>
+                        </span>
                     <?php endforeach; ?>
                     <?php foreach ($combos as $combo): ?>
-                    <span>
-                        <?= $combo['TenCombo'] ?> X
-                        <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
-                    </span>
+                        <span>
+                            <?= $combo['TenCombo'] ?> X
+                            <?= $bookingData['Combos'][array_search($combo['MaCombo'], array_column($bookingData['Combos'], 'MaCombo'))]['SoLuong'] ?>
+                        </span>
                     <?php endforeach; ?>
                 </h4>
             </div>
