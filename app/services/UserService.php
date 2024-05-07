@@ -69,6 +69,24 @@ class UserService
         }
         return new JsonResponse(200, "Xóa thành công");
     }
+
+    public static function createNewUser($data){
+        $params = [
+            'TenNguoiDung' => $data['TenNguoiDung'],
+            'SoDienThoai' => ($data['SoDienThoai']),
+            'Email' => $data['Email'],
+            'DiaChi' => $data['DiaChi'],
+            'NgaySinh' => $data['NgaySinh'],
+            'TrangThai' => getArrayValueSafe($data, 'TrangThai', TrangThaiTaiKhoan::DangHoatDong->value),
+
+        ];
+        $result = Database::insert('NguoiDung', $params);
+        if ($result) {
+            return JsonResponse::ok();
+        }
+        return JsonResponse::error('Tạo người dùng thất bại', 500);
+
+    }
     public static function getUserInfo($userId)
     {
         $query = "SELECT * FROM NguoiDung WHERE MaNguoiDung = ?;";
@@ -82,6 +100,8 @@ class UserService
         $user = Database::queryOne($query, [$email]);
         return $user;
     }
+
+
 
     public static function getAllUser($params)
     {
