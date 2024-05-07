@@ -11,8 +11,29 @@ require ('app/views/admin/header.php');
 
 <link rel="stylesheet" href="/public/tiendat/showtime.css">
 
-<div x-data="{}" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
-    <div class="shadow showtime container-fluid">
+<div 
+
+style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
+    <div
+    
+    x-data="{
+    
+    onApllyFilter(){
+            console.log(query);
+            refresh({
+                   resetPage: true,
+             });
+        },
+        onClearFilter(){
+            query={};
+            $nextTick(()=>{
+                refresh();
+            })
+        },
+       
+
+}"
+    class="shadow showtime container-fluid">
         <dialog id="delete_modal" class="tw-modal">
             <div class="tw-modal-box">
                 <h3 class="tw-font-bold tw-text-lg">
@@ -39,9 +60,9 @@ require ('app/views/admin/header.php');
         <div class="px-5 row justify-content-between">
             <div class="col-6 tw-flex tw-items-center">
                 <div class="input-group">
-                    <input x-model.debounce.500ms="query['tu-khoa']" type="text" name id="searchMovie"
+                    <input x-on:keyup.enter="onApllyFilter()" x-model.debounce.500ms="query['tu-khoa']" type="text" name id="searchMovie"
                         placeholder="Nhập thông tin cần tìm" class="form-control">
-                    <button class="btn btn-outline-secondary align-items-center" type="button" id="searchMovie">
+                    <button x-on:click="onApllyFilter()" class="btn btn-outline-secondary align-items-center" type="button" id="searchMovie">
                         <i class="fa-solid fa-magnifying-glass" style="display: flex;"></i>
                     </button>
 
@@ -69,9 +90,9 @@ require ('app/views/admin/header.php');
                                     </div>
 
                                     <div class="d-flex flex-nowrap">
-                                        <button class="mx-2 btn btn-light">Xóa
+                                        <button x-on:click="onClearFilter()" class="mx-2 btn btn-light">Xóa
                                             lọc</button>
-                                        <button class="btn btn-primary">Áp
+                                        <button x-on:click="onApllyFilter()"class="btn btn-primary">Áp
                                             dụng</button>
                                     </div>
                                 </div>
@@ -201,84 +222,8 @@ require ('app/views/admin/header.php');
                             </td>
                         </tr>
                     </template>
-                    <tr>
-                        <th scope="row">
-                            <span>
-                                9
-                            </span>
-                        </th>
-                        <td>
-                            <span>
-                                Nguyễn Văn A
-                            </span>
-                        </td>
-                        <td>
-                            <span>
-                                nguyenvan@gmail.com
-                            </span>
-                        </td>
-                        <td>
-                            <span>
-                                13/09/2003
-                            </span>
-                        </td>
-                        <td>
-                            <span>
-                                10.000
-                            </span>
-                        </td>
-                        <td>
-                            <span>
-                                1
-                            </span>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <button type="button " class="btn btn-light btn-icon rounded-circle"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-                                        class="bi bi-three-dots-vertical" viewBox="0 0 16 16" class="icon">
-                                        <path
-                                            d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                                    </svg>
-                                </button>
-                                <ul class="dropdown-menu">
-
-                                    <li>
-                                        <a href="/admin/nguoi-dung/9/sua" class="dropdown-item !tw-text-yellow-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                            </svg>
-                                            <span class="px-xl-3 ">Sửa</span>
-                                        </a>
-                                    </li>
-
-                                    <li>
-                                        <div x-on:click="window['delete_modal'].showModal()"
-                                            class="dropdown-item !tw-text-red-500">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                                fill="currentColor" class="tw-w-6 tw-h-6">
-                                                <path
-                                                    d="M3.375 3C2.339 3 1.5 3.84 1.5 4.875v.75c0 1.036.84 1.875 1.875 1.875h17.25c1.035 0 1.875-.84 1.875-1.875v-.75C22.5 3.839 21.66 3 20.625 3H3.375Z" />
-                                                <path fill-rule="evenodd"
-                                                    d="m3.087 9 .54 9.176A3 3 0 0 0 6.62 21h10.757a3 3 0 0 0 2.995-2.824L20.913 9H3.087Zm6.133 2.845a.75.75 0 0 1 1.06 0l1.72 1.72 1.72-1.72a.75.75 0 1 1 1.06 1.06l-1.72 1.72 1.72 1.72a.75.75 0 1 1-1.06 1.06L12 15.685l-1.72 1.72a.75.75 0 1 1-1.06-1.06l1.72-1.72-1.72-1.72a.75.75 0 0 1 0-1.06Z"
-                                                    clip-rule="evenodd" />
-                                            </svg>
-    
-
-                                            <span class="px-xl-3 ">
-                                                Xoá người dùng
-                                            </span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
+              
+                    
                 </tbody>
             </table>
         </div>

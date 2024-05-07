@@ -15,7 +15,7 @@ class FilmCategoryController
     public static function getApiTheLoai()
     {
         needAnyPermissionOrDie([Permission::READ_THELOAI, Permission::UPDATE_THELOAI, Permission::DELETE_THELOAI, Permission::CREATE_THELOAI]);
-        $theLoai = CategoryService::getAllCategories();
+        $theLoai = CategoryService::getAllCategories($_GET);
         return json($theLoai);
     }
     #[Route("/api/the-loai", "POST")]
@@ -31,7 +31,7 @@ class FilmCategoryController
     {
         needAnyPermissionOrDie([Permission::UPDATE_THELOAI]);
         $data = request_body();
-        $result = CategoryService::updateCategory($id, $data);
+        $result = CategoryService::updateCategory( $data,$id);
         return json($result);
     }
     #[Route("/api/the-loai/{id}", "DELETE")]
