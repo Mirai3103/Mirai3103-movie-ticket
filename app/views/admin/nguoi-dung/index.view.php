@@ -17,8 +17,9 @@ require ('app/views/admin/header.php');
         'trang': 1,
         'limit': 10,
     }
-})"style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
+})" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
     <div x-data="{
+        selected:null,
         onApllyFilter(){
             console.log(query);
             refresh({
@@ -33,15 +34,15 @@ require ('app/views/admin/header.php');
         },
        
 
-}"
-    class="shadow showtime container-fluid">
+}" class="shadow showtime container-fluid">
         <dialog id="delete_modal" class="tw-modal">
             <div class="tw-modal-box">
                 <h3 class="tw-font-bold tw-text-lg">
                     Cảnh báo
                 </h3>
                 <p class="tw-py-4 tw-text-lg">
-                    Bạn có chắc chắn muốn xoá người dùng #<span class='tw-font-bold'></span> không?
+                    Bạn có chắc chắn muốn xoá người dùng #<span class='tw-font-bold'
+                        x-text="selected?.MaNguoiDung"></span> không?
                 </p>
 
                 <div class="modal-action">
@@ -61,9 +62,10 @@ require ('app/views/admin/header.php');
         <div class="px-5 row justify-content-between">
             <div class="col-6 tw-flex tw-items-center">
                 <div class="input-group">
-                    <input x-on:keyup.enter="onApllyFilter()" x-model.debounce.500ms="query['tu-khoa']" type="text" name id="searchMovie"
-                        placeholder="Nhập thông tin cần tìm" class="form-control">
-                    <button x-on:click="onApllyFilter()" class="btn btn-outline-secondary align-items-center" type="button" id="searchMovie">
+                    <input x-on:keyup.enter="onApllyFilter()" x-model.debounce.500ms="query['tu-khoa']" type="text" name
+                        id="searchMovie" placeholder="Nhập thông tin cần tìm" class="form-control">
+                    <button x-on:click="onApllyFilter()" class="btn btn-outline-secondary align-items-center"
+                        type="button" id="searchMovie">
                         <i class="fa-solid fa-magnifying-glass" style="display: flex;"></i>
                     </button>
 
@@ -93,7 +95,7 @@ require ('app/views/admin/header.php');
                                     <div class="d-flex flex-nowrap">
                                         <button x-on:click="onClearFilter()" class="mx-2 btn btn-light">Xóa
                                             lọc</button>
-                                        <button x-on:click="onApllyFilter()"class="btn btn-primary">Áp
+                                        <button x-on:click="onApllyFilter()" class="btn btn-primary">Áp
                                             dụng</button>
                                     </div>
                                 </div>
@@ -112,11 +114,13 @@ require ('app/views/admin/header.php');
 
                                     <div class="row d-flex tw-items-center flex-nowrap">
                                         <div class="col tw-grow">
-                                            <input class="form-control tw-w-full" x-model="query['diem-tich-luy-tu']" type="number">
+                                            <input class="form-control tw-w-full" x-model="query['diem-tich-luy-tu']"
+                                                type="number">
                                         </div>
                                         <span class='col tw-grow-0'>đến</span>
                                         <div class="col tw-grow">
-                                            <input class="form-control tw-w-full" x-model="query['diem-tich-luy-den']" type="number">
+                                            <input class="form-control tw-w-full" x-model="query['diem-tich-luy-den']"
+                                                type="number">
                                         </div>
                                     </div>
                                 </form>
@@ -223,7 +227,7 @@ require ('app/views/admin/header.php');
                             </td>
                         </tr>
                     </template>
-              
+
                     <template x-for="item in data">
                         <tr>
                             <td x-text="item.MaNguoiDung"></td>
@@ -232,6 +236,42 @@ require ('app/views/admin/header.php');
                             <td x-text="item.NgaySinh"></td>
                             <td x-text="item.DiemTichLuy"></td>
                             <td x-text="item.MaTaiKhoan"></td>
+                            <td>
+
+
+                                <div class="tw-p-2 tw-border-b tw-border-gray-50 tw-flex">
+                                    <a tabindex="0" role="button" :href="`/admin/nguoi-dung/${item.MaNguoiDung}/sua`"
+                                        class=" p-1 tw-btn tw-btn-sm tw-btn-warning tw-text-warning tw-aspect-square
+                                        tw-btn-ghost" type="button">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                            <path
+                                                d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                            <path d="M16 5l3 3" />
+                                        </svg>
+                                    </a>
+                                    <button tabindex="0" role="button"
+                                        x-on:click="selected = item; window['delete_modal'].showModal()"
+                                        class="p-1 tw-btn tw-btn-sm tw-btn-warning tw-text-danger tw-aspect-square tw-btn-ghost">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M4 7l16 0" />
+                                            <path d="M10 11l0 6" />
+                                            <path d="M14 11l0 6" />
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                                        </svg>
+                                    </button>
+
+                                </div>
+                            </td>
                         </tr>
                     </template>
                 </tbody>
