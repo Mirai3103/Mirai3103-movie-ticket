@@ -11,7 +11,19 @@ require ('app/views/admin/header.php');
     }
 </style>
 <div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
-    <form class="p-4 shadow info-account container-fluid">
+    <form class="p-4 shadow info-account container-fluid" x-on:submit.prevent="
+        var SDT=document.getElementById('sodienthoai').value;
+        var ten=document.getElementById('tennguoidung').value;
+        var ngaySinh=document.getElementById('ngaysinh').value;
+        var diaChi=document.getElementById('diachi').value;
+        var data={
+            "TenNguoiDung" : ten ,
+            "SoDienThoai" : SDT,
+            "DiaChi" : diaChi,
+            "NgaySinh" : ngaySinh,
+        }
+        axios.post('/api/nguoi-dung/thong-tin',data).then(console.log).catch(console.log)
+    ">
         <div class='tw-flex tw-justify-between tw-items-center'>
             <h4>Sửa người dùng</h4>
         <a href="/admin/nguoi-dung" data-ripple-light="true" class=" tw-btn tw-btn-ghost" type="button">

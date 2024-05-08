@@ -21,6 +21,7 @@ class UserManagerController
     #[Route('/admin/nguoi-dung/them', 'GET')]
     public static function themNguoiDung()
     {
+
         return view('admin/nguoi-dung/add');
     }
     #[Route('/admin/nguoi-dung/{id}/sua', 'GET')]
@@ -31,7 +32,7 @@ class UserManagerController
     }
 
     // #[Route('/api/nguoi-dung/{id}', 'GET')] -> lấy thông tin người dùng bằng id
-    #[Route('/admin/nguoi-dung/{id}', 'GET')]
+    #[Route('/api/nguoi-dung/{id}', 'GET')]
     public static function layThongTin($id){
         $user=UserService::getUserInfo($id);
         return view('admin/nguoi-dung/index',['user'=>$user]);
@@ -56,16 +57,16 @@ class UserManagerController
         return json($result);
     }
     // #[Route('/api/nguoi-dung', 'POST')] -> tạo mới người dùng
-    #[Route('/admin/nguoi-dung/{id}','POST')]
+    #[Route('/api/nguoi-dung','POST')]
     public static function taoNguoiDung(){
         needAnyPermissionOrDie([Permission::CREATE_NGUOIDUNG]);
-        $result = UserService::createNewUser($_POST);
+        $result = UserService::createNewUser(request_body());
         return json($result);
     }
 
     // #[Route('/api/nguoi-dung', 'GET')] -> lấy danh sách người dùng
 
-    #[Route('/admin/nguoi-dung/{id}','GET')]
+    #[Route('/api/nguoi-dung','GET')]
     public static function layDSNguoiDung(){
         $query = $_GET;
         $user = UserService::getAllUser($query);

@@ -80,6 +80,7 @@ class UserService
             'TrangThai' => getArrayValueSafe($data, 'TrangThai', TrangThaiTaiKhoan::DangHoatDong->value),
 
         ];
+        error_log(print_r($params,true));
         $result = Database::insert('NguoiDung', $params);
         if ($result) {
             return JsonResponse::ok();
@@ -106,7 +107,7 @@ class UserService
     public static function getAllUser($params)
     {
         $queryBuilder = new QueryBuilder();
-        $isHasAccount = getArrayValueSafe($params, 'co-tai-khoan', true);
+        $isHasAccount = getArrayValueSafe($params, 'co-tai-khoan', false);
         $page = getArrayValueSafe($params, 'trang', 1);
         $pageSize = getArrayValueSafe($params, 'limit', 20);
         $offset = ($page - 1) * $pageSize;

@@ -11,18 +11,19 @@ require ('app/views/admin/header.php');
 
 <link rel="stylesheet" href="/public/tiendat/showtime.css">
 
-<div 
-
-style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
-    <div
-    
-    x-data="{
-    
-    onApllyFilter(){
+<div x-data="dataTable({
+    endpoint:'/api/nguoi-dung',
+    initialQuery :{
+        'trang': 1,
+        'limit': 10,
+    }
+})"style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
+    <div x-data="{
+        onApllyFilter(){
             console.log(query);
             refresh({
                    resetPage: true,
-             });
+                });
         },
         onClearFilter(){
             query={};
@@ -111,11 +112,11 @@ style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" clas
 
                                     <div class="row d-flex tw-items-center flex-nowrap">
                                         <div class="col tw-grow">
-                                            <input class="form-control tw-w-full" type="number">
+                                            <input class="form-control tw-w-full" x-model="query['diem-tich-luy-tu']" type="number">
                                         </div>
                                         <span class='col tw-grow-0'>đến</span>
                                         <div class="col tw-grow">
-                                            <input class="form-control tw-w-full" type="number">
+                                            <input class="form-control tw-w-full" x-model="query['diem-tich-luy-den']" type="number">
                                         </div>
                                     </div>
                                 </form>
@@ -131,7 +132,7 @@ style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" clas
                                     <div class="row">
                                         <label class="form-label" for>Loại người dùng</label>
                                     </div>
-                                    <select class="selectpicker !tw-w-full">
+                                    <select class="selectpicker !tw-w-full" x-model="query['loai-tai-khoan']">
                                         <option value="">Tất cả</option>
                                         <option value="NULL">Chưa xác định</option>
                                         <option value="<?= LoaiTaiKhoan::NhanVien->value ?>">
@@ -223,7 +224,16 @@ style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" clas
                         </tr>
                     </template>
               
-                    
+                    <template x-for="item in data">
+                        <tr>
+                            <td x-text="item.MaNguoiDung"></td>
+                            <td x-text="item.TenNguoiDung"></td>
+                            <td x-text="item.Email"></td>
+                            <td x-text="item.NgaySinh"></td>
+                            <td x-text="item.DiemTichLuy"></td>
+                            <td x-text="item.MaTaiKhoan"></td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
         </div>
@@ -233,7 +243,7 @@ style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" clas
         <div class="d-flex justify-content-end column-gap-3">
             <div class="d-flex input-group h-50 w-25">
                 <label class="bg-white border-0 input-group-text " for="inputGroupSelect01">Hiển thị</label>
-                <select class="rounded form-select" id="inputGroupSelect01">
+                <select class="rounded form-select" id="inputGroupSelect01" x-model="query.limit">
                     <option value="20">20</option>
                     <option value="30">30</option>
                     <option value="40">40</option>
@@ -244,7 +254,10 @@ style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" clas
             <div>
                 <nav aria-label="Page navigation example">
                     <ul class="pagination">
-                        <li class="page-item">
+                        <li class="page-item" x-on:click="
+                            query.trang=Number(query.trang)-1;
+                            refresh();
+                        ">
                             <a class="page-link" href="#" aria-label="Previous">
                                 <span aria-hidden="true">&laquo;</span>
                             </a>
@@ -256,7 +269,10 @@ style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" clas
                                 <a class="page-link" href="#" x-text="item"></a>
                             </li> -->
                         <!-- </template> -->
-                        <li class="page-item">
+                        <li class="page-item" x-on:click="
+                            query.trang=Number(query.trang)+1;
+                            refresh();
+                        ">
                             <a class="page-link" href="#" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
                             </a>

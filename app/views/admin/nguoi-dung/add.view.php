@@ -10,8 +10,21 @@ require ('app/views/admin/header.php');
         font-weight:600;
     }
 </style>
-<div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
-    <form class="p-4 shadow info-account container-fluid">
+<div x-data="" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
+    <form class="p-4 shadow info-account container-fluid"x-on:submit.prevent="
+        let SDT=document.getElementById('sodienthoai').value;
+        let ten=document.getElementById('tennguoidung').value;
+        let ngaySinh=document.getElementById('ngaysinh').value;
+        let diaChi=document.getElementById('diachi').value;
+        let email=document.getElementById('email').value;
+        let data={
+            'TenNguoiDung' : ten ,
+            'SoDienThoai' : SDT,
+            'DiaChi' : diaChi,
+            'NgaySinh' : ngaySinh,
+            'Email': email
+        };
+        axios.post('/api/nguoi-dung',data).then(console.log).catch(console.log)">
           <div class='tw-flex tw-justify-between tw-items-center'>
         <h4>Thêm người dùng</h4>
         <a href="/admin/nguoi-dung" data-ripple-light="true" class=" tw-btn tw-btn-ghost" type="button">
