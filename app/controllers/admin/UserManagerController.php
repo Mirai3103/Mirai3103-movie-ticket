@@ -38,7 +38,7 @@ class UserManagerController
         return view('admin/nguoi-dung/index',['user'=>$user]);
     }
     // #[Route('/api/nguoi-dung/{id}', 'PUT')] -> cập nhật thông tin người dùng bằng id
-    #[Route('/admin/nguoi-dung/{id}','PUT')]
+    #[Route('/api/nguoi-dung/{id}','PUT')]
     public static function capnhatNguoiDung($id){
         needAnyPermissionOrDie([Permission::UPDATE_NGUOIDUNG]);
         $data = request_body();
@@ -50,7 +50,7 @@ class UserManagerController
         }
     }
     // #[Route('/api/nguoi-dung/{id}', 'DELETE')] -> xóa người dùng bằng id
-    #[Route('/admin/nguoi-dung/{id}','DELETE')]
+    #[Route('/api/nguoi-dung/{id}','DELETE')]
     public static function xoaNguoiDung($id){
         needAnyPermissionOrDie([Permission::DELETE_NGUOIDUNG]);
         $result=UserService::delete($id);

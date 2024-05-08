@@ -24,7 +24,20 @@ require ('app/views/admin/header.php');
             'NgaySinh' : ngaySinh,
             'Email': email
         };
-        axios.post('/api/nguoi-dung',data).then(console.log).catch(console.log)">
+        axios.post('/api/nguoi-dung',data).then(()=>{
+            toast('Tạo thành công', {
+                position: 'bottom-center',
+                type: 'success'
+            });
+            return;
+        }).catch((e)=>{
+            toast('Thất bại', {
+                position: 'bottom-center',
+                type: 'danger',
+                description: e.response.data.message
+            });
+            return;
+        })">
           <div class='tw-flex tw-justify-between tw-items-center'>
         <h4>Thêm người dùng</h4>
         <a href="/admin/nguoi-dung" data-ripple-light="true" class=" tw-btn tw-btn-ghost" type="button">

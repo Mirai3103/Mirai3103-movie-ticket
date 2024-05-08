@@ -82,6 +82,9 @@ class UserService
 
         ];
         error_log(print_r($params, true));
+        if (self::isMailExist($params['Email'])['isExist']) {
+            return JsonResponse::error('Email đã tồn tại', 403);
+        }
         $result = Database::insert('NguoiDung', $params);
         if ($result) {
             return JsonResponse::ok();
