@@ -50,7 +50,27 @@ require ('app/views/admin/header.php');
                         <button class="tw-btn tw-px-4">
                             Huỷ
                         </button>
-                        <button class="tw-btn tw-btn-error tw-px-4 tw-text-white">
+                        <button class="tw-btn tw-btn-error tw-px-4 tw-text-white" x-on:click="
+                            let id=selected.MaNguoiDung;
+                            axios.delete('/api/nguoi-dung/'+id).then(()=>
+                        {
+                            toast('Xóa thành công', {
+                            position: 'bottom-center',
+                            type: 'success'
+                        });
+                        refresh();
+                        return;
+                        }).catch((e)=>{
+                            toast('Thất bại', {
+                            position: 'bottom-center',
+                            type: 'danger',
+                            description: e.response.data.message
+                        });
+                        return;}).finally(()=>{
+                            window['delete_modal'].close();
+                        })
+
+                        ">
                             Xoá
                         </button>
                     </form>

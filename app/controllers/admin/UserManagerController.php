@@ -50,7 +50,7 @@ class UserManagerController
         }
     }
     // #[Route('/api/nguoi-dung/{id}', 'DELETE')] -> xóa người dùng bằng id
-    #[Route('/admin/nguoi-dung/{id}','DELETE')]
+    #[Route('/api/nguoi-dung/{id}','DELETE')]
     public static function xoaNguoiDung($id){
         needAnyPermissionOrDie([Permission::DELETE_NGUOIDUNG]);
         $result=UserService::delete($id);
