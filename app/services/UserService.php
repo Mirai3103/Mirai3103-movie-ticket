@@ -134,8 +134,8 @@ class UserService
         ]);
         $queryBuilder->from('NguoiDung');
         $queryBuilder->join('TaiKhoan', 'NguoiDung.MaNguoiDung = TaiKhoan.MaNguoiDung', 'left');
-        $queryBuilder->where('1', '=', '1');
-        if ($isHasAccount != null) {
+        $queryBuilder->where('NguoiDung.MaNguoiDung', '!=', 1); // ignore admin
+        if ($isHasAccount !== null) {
             if ($isHasAccount == true)
                 $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is not', null);
             else {

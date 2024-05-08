@@ -33,7 +33,9 @@ class AccountController
 
         $employees = UserService::getAllUser([
             'co-tai-khoan' => false,
-            'limit' => 10000
+            'limit' => 10000,
+            'diem-tich-luy-tu'=>0,
+            'diem-tich-luy-den'=>1
         ]);
         $roles = RoleService::getAllRole();
         $statuses = StatusService::getAllStatus('TaiKhoan');
