@@ -55,6 +55,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var videoModal = document.getElementById("videoModal");
   var btnClose;
   var href = showVideo.getAttribute("href");
+  if (!href.includes("https://www.youtube.com/watch?v="))
+    if (href.startsWith("http")) window.location.href = href;
+    else {
+      const url = `http://localhost:8000${href}`;
+      window.location.href = url;
+    }
   //https://www.youtube.com/watch?v=_UWBj1-_V5M
   var youtubeId = href.split("v=")[1];
   var youtubeEmbed = `https://www.youtube.com/embed/${youtubeId}`;
@@ -189,7 +195,7 @@ function toggleActive(btn) {
 
     times.forEach(function (time) {
       var li = document.createElement("li");
-      li.className = "ctype__item col-2 text-warning fs-col6 text-center";
+      li.className = "text-center ctype__item col-2 text-warning fs-col6";
       li.textContent = time;
       ulElement.appendChild(li);
     });
