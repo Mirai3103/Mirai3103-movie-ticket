@@ -70,7 +70,8 @@ class UserService
         return new JsonResponse(200, "Xóa thành công");
     }
 
-    public static function createNewUser($data){
+    public static function createNewUser($data)
+    {
         $params = [
             'TenNguoiDung' => $data['TenNguoiDung'],
             'SoDienThoai' => ($data['SoDienThoai']),
@@ -80,7 +81,7 @@ class UserService
             'TrangThai' => getArrayValueSafe($data, 'TrangThai', TrangThaiTaiKhoan::DangHoatDong->value),
 
         ];
-        error_log(print_r($params,true));
+        error_log(print_r($params, true));
         $result = Database::insert('NguoiDung', $params);
         if ($result) {
             return JsonResponse::ok();
@@ -107,7 +108,7 @@ class UserService
     public static function getAllUser($params)
     {
         $queryBuilder = new QueryBuilder();
-        $isHasAccount = getArrayValueSafe($params, 'co-tai-khoan', false);
+        $isHasAccount = getArrayValueSafe($params, 'co-tai-khoan', null);
         $page = getArrayValueSafe($params, 'trang', 1);
         $pageSize = getArrayValueSafe($params, 'limit', 20);
         $offset = ($page - 1) * $pageSize;
@@ -131,10 +132,12 @@ class UserService
         $queryBuilder->from('NguoiDung');
         $queryBuilder->join('TaiKhoan', 'NguoiDung.MaNguoiDung = TaiKhoan.MaNguoiDung', 'left');
         $queryBuilder->where('1', '=', '1');
-        if ($isHasAccount) {
-            $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is not', null);
-        } else {
-            $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is', null);
+        if ($isHasAccount != null) {
+            if ($isHasAccount == true)
+                $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is not', null);
+            else {
+                $queryBuilder->andWhere('TaiKhoan.MaTaiKhoan', 'is', null);
+            }
         }
         error_log($queryBuilder->__toString());
         if ($keyword != null) {
