@@ -10,19 +10,34 @@ require ('app/views/admin/header.php');
         font-weight:600;
     }
 </style>
-<div style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
+<script>
+    var id=<?php echo $user['MaNguoiDung']?>
+</script>
+<div x-data="" style="flex-grow: 1; flex-shrink: 1; overflow-y: auto ; max-height: 100vh;" class="p-5 wrapper">
     <form class="p-4 shadow info-account container-fluid" x-on:submit.prevent="
-        var SDT=document.getElementById('sodienthoai').value;
-        var ten=document.getElementById('tennguoidung').value;
-        var ngaySinh=document.getElementById('ngaysinh').value;
-        var diaChi=document.getElementById('diachi').value;
-        var data={
-            "TenNguoiDung" : ten ,
-            "SoDienThoai" : SDT,
-            "DiaChi" : diaChi,
-            "NgaySinh" : ngaySinh,
+        let SDT=document.getElementById('sodienthoai').value;
+        let ten=document.getElementById('tennguoidung').value;
+        let ngaySinh=document.getElementById('ngaysinh').value;
+        let diaChi=document.getElementById('diachi').value;
+        let data={
+            'TenNguoiDung' : ten ,
+            'SoDienThoai' : SDT,
+            'DiaChi' : diaChi,
+            'NgaySinh' : ngaySinh,
         }
-        axios.post('/api/nguoi-dung/thong-tin',data).then(console.log).catch(console.log)
+        axios.put('/api/nguoi-dung/'+id,data).then(()=>{
+            toast('Thành công', {
+                position: 'bottom-center',
+                type: 'success'
+            });
+            return;
+        }).catch((e)=>{
+            toast('Thất bại', {
+                position: 'bottom-center',
+                type: 'danger',
+                description: e.response.data.message
+            });
+            return;})
     ">
         <div class='tw-flex tw-justify-between tw-items-center'>
             <h4>Sửa người dùng</h4>
@@ -57,7 +72,7 @@ require ('app/views/admin/header.php');
 
                 <div class="col">
                     <label for="email" class="form-label">Email</label>
-                    <input
+                    <input disabled="true"
                     value="<?= $user['Email'] ?>"
                     type="email" class="form-control" id="email" required>
                 </div>
